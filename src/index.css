@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; background: #050816; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: #050816; color: #f8fafc; }
+button, input, select { font: inherit; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #070b18; }
+::-webkit-scrollbar-thumb { background: #27324f; border-radius: 999px; }
+.glass { background: linear-gradient(135deg, rgba(15,23,42,.86), rgba(15,23,42,.58)); border: 1px solid rgba(148,163,184,.15); backdrop-filter: blur(18px); }
+.text-gradient { background: linear-gradient(100deg, #fff 10%, #93c5fd 50%, #fb7185 100%); -webkit-background-clip: text; color: transparent; }

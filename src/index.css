@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; background: #050816; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: #050816; color: #f8fafc; }
+button, input, select { font: inherit; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #070b18; }
+::-webkit-scrollbar-thumb { background: #27324f; border-radius: 999px; }
+.glass { background: linear-gradient(135deg, rgba(15,23,42,.86), rgba(15,23,42,.58)); border: 1px solid rgba(148,163,184,.15); backdrop-filter: blur(18px); }
+.text-gradient { background: linear-gradient(100deg, #fff 10%, #93c5fd 50%, #fb7185 100%); -webkit-background-clip: text; color: transparent; }
+
+/* iPhone and mobile app ergonomics */
+html, body, #root { min-height: 100%; }
+body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+button, select, input { touch-action: manipulation; }
+button { -webkit-user-select: none; user-select: none; }
+.safe-header { padding-top: env(safe-area-inset-top); }
+.safe-toast { top: calc(.75rem + env(safe-area-inset-top)); width: min(calc(100vw - 1.5rem), 28rem); text-align: center; }
+.safe-modal { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+@media (max-width: 639px) {
+  input, select { min-height: 44px; font-size: 16px; }
+  .app-shell { min-height: 100dvh; }
+  .glass { backdrop-filter: blur(14px); }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+}
+
+.mobile-tab {
+  position: relative;
+  display: flex;
+  min-height: 48px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 800;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.mobile-tab:active { transform: scale(.95); }
+.mobile-tab-active { background: rgba(59,130,246,.12); color: #93c5fd; }
+
+/* Shared web/app landing experience */
+@media (min-width: 768px) {
+  .mobile-home { padding-bottom: 3rem; }
+}

@@ -1,0 +1,626 @@
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  BarChart3, Check, ChevronRight, CircleDollarSign, Copy, Crown, Gauge,
+  RefreshCcw, Search, Share2, Shield, Sparkles, Trophy, Users, X, Home, ListFilter, Layers3, LogOut, Medal,
+} from 'lucide-react';
+import rawPlayers from './data/players.json';
+import rawHistoricalPlayers from './data/historicalPlayers.json';
+import type { DetailedPosition, Difficulty, GameMode, Player, Position, TeamReport } from './types';
+import { isSupabaseConfigured, supabase } from './lib/supabase';
+import { getDailyLeaderboard, getMyHighScores, registerUserEmail, saveGameScore, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
+
+const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
+const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
+const POSITION_GROUP = { PG: 'G', SG: 'G', SF: 'F', PF: 'F', C: 'C' } as const;
+
+const normalizePlayer = (player: Player): Player => {
+  const percentages = player.positionPercentages;
+  const primary = player.primaryDetailedPosition
+    ?? (percentages ? [...POSITION_ORDER].sort((a, b) => (percentages[b] ?? 0) - (percentages[a] ?? 0))[0] : player.detailedPositions?.[0]);
+  const secondary = primary && percentages
+    ? (ADJACENT_POSITIONS[primary] ?? [])
+        .filter(position => (percentages[position] ?? 0) >= 25)
+        .sort((a, b) => (percentages[b] ?? 0) - (percentages[a] ?? 0))[0]
+    : primary
+      ? (ADJACENT_POSITIONS[primary] ?? []).find(position => player.detailedPositions?.includes(position))
+      : undefined;
+  const detailedPositions = primary
+    ? ([primary, ...(secondary ? [secondary] : [])] as Player['detailedPositions'])
+    : player.detailedPositions?.slice(0, 1);
+  const eligiblePositions = detailedPositions?.length
+    ? [...new Set(detailedPositions.map(position => POSITION_GROUP[position]))]
+    : (player.eligiblePositions?.length ? player.eligiblePositions.slice(0, 2) : [player.position]);
+  return { ...player, detailedPositions, primaryDetailedPosition: primary, eligiblePositions };
+};
+const players = (rawPlayers as Player[]).map(normalizePlayer);
+const historicalPlayers = (rawHistoricalPlayers as Player[]).map(normalizePlayer);
+const BUDGETS: Record<Difficulty, number> = { easy: 175, normal: 150, hard: 125 };
+const DAILY_BUDGET = 150;
+const localDateKey = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const formatCountdown = (milliseconds: number) => {
+  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+};
+
+const seededShuffle = <T,>(items: T[], seed: string) => {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i += 1) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    h += h << 13; h ^= h >>> 7; h += h << 3; h ^= h >>> 17; h += h << 5;
+    const j = Math.abs(h) % (i + 1);
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+const grade = (score: number) => score >= 95 ? 'A+' : score >= 90 ? 'A' : score >= 87 ? 'A-' : score >= 83 ? 'B+' : score >= 80 ? 'B' : score >= 77 ? 'B-' : score >= 73 ? 'C+' : score >= 70 ? 'C' : score >= 67 ? 'C-' : score >= 63 ? 'D+' : score >= 60 ? 'D' : 'F';
+const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v));
+const average = (values: number[]) => values.reduce((a, b) => a + b, 0) / Math.max(values.length, 1);
+
+function analyzeTeam(team: Player[]): TeamReport {
+  const scoring = clamp(average(team.map(p => p.points)) * 3.45);
+  const passing = clamp(average(team.map(p => p.assistPercentage)) * 2.9);
+  const rebounding = clamp(average(team.map(p => p.reboundPercentage)) * 6.0);
+  const efficiency = clamp((average(team.map(p => p.trueShooting)) - 48) * 6.0);
+  const defense = clamp(100 - (average(team.map(p => p.defensiveRating)) - 100) * 5.1 + average(team.map(p => p.stealPercentage + p.blockPercentage)) * 2.4);
+  const spacing = clamp((average(team.map(p => p.threePointPercentage)) - 25) * 6.2 + team.filter(p => p.threePointPercentage >= 37).length * 4);
+  const playmaking = clamp(passing + team.filter(p => p.assistPercentage >= 25).length * 5);
+  const assignedRoster = rosterAssignment(team);
+  const size = clamp((assignedRoster.forwards.length * 10 + assignedRoster.centers.length * 24) + average(team.map(p => p.reboundPercentage)) * 2.5);
+  const usageSpread = Math.max(...team.map(p => p.usageRate)) - Math.min(...team.map(p => p.usageRate));
+  const highUsage = team.filter(p => p.usageRate >= 29).length;
+  const usagePenalty = Math.max(0, highUsage - 2) * 8 + (usageSpread < 6 ? 7 : 0);
+  const guards = assignedRoster.guards.length;
+  const forwards = assignedRoster.forwards.length;
+  const centers = assignedRoster.centers.length;
+  const balance = clamp(100 - Math.abs(guards - 2) * 20 - Math.abs(forwards - 2) * 20 - Math.abs(centers - 1) * 28);
+  const fit = clamp((spacing + playmaking + defense + balance + size) / 5 - usagePenalty);
+  const offense = clamp(scoring * .28 + efficiency * .25 + spacing * .21 + playmaking * .20 + fit * .06 - usagePenalty * .4);
+  const defenseCategory = clamp(defense * .72 + rebounding * .16 + size * .12);
+  const benchDepth = clamp(62 + average(team.map(p => p.boxPlusMinus)) * 3.4 + team.filter(p => p.usageRate < 23 && p.trueShooting > 58).length * 5);
+  const overall = Math.round(clamp(offense * .27 + defenseCategory * .25 + playmaking * .13 + rebounding * .1 + spacing * .1 + fit * .15));
+  const offensiveRating = Math.round((103 + offense * .18) * 10) / 10;
+  const defensiveRating = Math.round((121 - defenseCategory * .17) * 10) / 10;
+  const netRating = Math.round((offensiveRating - defensiveRating) * 10) / 10;
+  const projectedWins = Math.round(clamp(41 + netRating * 2.15, 15, 69));
+  const strengths: string[] = [];
+  const weaknesses: string[] = [];
+  const cats = { Offense: offense, Defense: defenseCategory, Playmaking: playmaking, Rebounding: rebounding, Spacing: spacing, 'Team Fit': fit, 'Bench Depth': benchDepth };
+  Object.entries(cats).sort((a,b) => b[1]-a[1]).slice(0,3).forEach(([k]) => strengths.push(`${k} projects as a major advantage.`));
+  Object.entries(cats).sort((a,b) => a[1]-b[1]).slice(0,2).forEach(([k]) => weaknesses.push(`${k} is the clearest area to improve.`));
+  if (highUsage >= 4) weaknesses.push('Too many high-usage creators may reduce ball movement.');
+  if (team.filter(p => p.threePointPercentage >= 37).length < 2) weaknesses.push('Limited high-level shooting could compress the floor.');
+  if (defenseCategory >= 85) strengths.push('The lineup has championship-level defensive indicators.');
+  return { overall, grade: grade(overall), projectedWins, offensiveRating, defensiveRating, netRating, categories: Object.fromEntries(Object.entries(cats).map(([k,v]) => [k, Math.round(v)])), strengths, weaknesses };
+}
+
+
+const eligibility = (player: Player) => player.eligiblePositions?.length ? player.eligiblePositions : [player.position];
+const canPlayGuard = (player: Player) => eligibility(player).includes('G');
+const canPlayForward = (player: Player) => eligibility(player).includes('F');
+const canPlayCenter = (player: Player) => eligibility(player).includes('C');
+const positionText = (player: Player) => player.detailedPositions?.length ? player.detailedPositions.join('/') : eligibility(player).join('/');
+const positionBreakdownText = (player: Player) => {
+  if (!player.positionPercentages) return positionText(player);
+  const order = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
+  const breakdown = order.map(position => `${position} ${player.positionPercentages?.[position] ?? 0}%`).join(' · ');
+  return `${breakdown} · 25% eligibility threshold · maximum two positions`;
+};
+
+type RosterSlot = 'G1' | 'G2' | 'F1' | 'F2' | 'C';
+const ROSTER_SLOTS: RosterSlot[] = ['G1', 'G2', 'F1', 'F2', 'C'];
+const canFillSlot = (player: Player, slot: RosterSlot) =>
+  slot.startsWith('G') ? canPlayGuard(player) : slot.startsWith('F') ? canPlayForward(player) : canPlayCenter(player);
+
+function findRosterAssignment(team: Player[]) {
+  if (team.length > 5) return null;
+  const ordered = [...team].sort((a, b) => {
+    const aOptions = ROSTER_SLOTS.filter(slot => canFillSlot(a, slot)).length;
+    const bOptions = ROSTER_SLOTS.filter(slot => canFillSlot(b, slot)).length;
+    return aOptions - bOptions;
+  });
+  const assigned = new Map<RosterSlot, Player>();
+  const search = (index: number): boolean => {
+    if (index === ordered.length) return true;
+    const player = ordered[index];
+    for (const slot of ROSTER_SLOTS) {
+      if (assigned.has(slot) || !canFillSlot(player, slot)) continue;
+      assigned.set(slot, player);
+      if (search(index + 1)) return true;
+      assigned.delete(slot);
+    }
+    return false;
+  };
+  return search(0) ? assigned : null;
+}
+
+function rosterAssignment(team: Player[]) {
+  const assignment = findRosterAssignment(team);
+  if (!assignment) return { guards: [] as Player[], forwards: [] as Player[], centers: [] as Player[] };
+  return {
+    guards: [...assignment.entries()].filter(([slot]) => slot.startsWith('G')).map(([, player]) => player),
+    forwards: [...assignment.entries()].filter(([slot]) => slot.startsWith('F')).map(([, player]) => player),
+    centers: [...assignment.entries()].filter(([slot]) => slot === 'C').map(([, player]) => player),
+  };
+}
+
+function canStillBuildValidRoster(team: Player[]) {
+  return team.length <= 5 && findRosterAssignment(team) !== null;
+}
+
+function isValidRoster(team: Player[]) {
+  return team.length === 5 && findRosterAssignment(team) !== null;
+}
+
+
+const lineupKey = (team: Player[]) => team.map(player => String(player.id)).sort().join('|');
+const sameLineup = (a: Player[], b: Player[]) => lineupKey(a) === lineupKey(b);
+const individualValue = (player: Player) =>
+  player.points * 1.8 + player.assists * 1.5 + player.rebounds * 1.15 + player.steals * 2.2 + player.blocks * 2.0
+  + player.trueShooting * .22 + player.boxPlusMinus * 2.4 + player.estimatedPlusMinus * 2.2
+  - player.price * .12;
+
+function findIdealLineup(pool: Player[], budget: number) {
+  type State = { team: Player[]; spent: number; nextIndex: number; heuristic: number };
+  let beam: State[] = [{ team: [], spent: 0, nextIndex: 0, heuristic: 0 }];
+  const beamWidth = 7000;
+  for (let depth = 0; depth < 5; depth += 1) {
+    const next: State[] = [];
+    for (const state of beam) {
+      for (let index = state.nextIndex; index < pool.length; index += 1) {
+        const player = pool[index];
+        if (state.spent + player.price > budget) continue;
+        if (state.team.some(member => member.name === player.name)) continue;
+        const team = [...state.team, player];
+        if (!canStillBuildValidRoster(team)) continue;
+        next.push({ team, spent: state.spent + player.price, nextIndex: index + 1, heuristic: state.heuristic + individualValue(player) });
+      }
+    }
+    next.sort((a, b) => b.heuristic - a.heuristic);
+    beam = next.slice(0, beamWidth);
+  }
+  const finalists = beam.filter(state => isValidRoster(state.team));
+  if (!finalists.length) return [];
+  finalists.sort((a, b) => {
+    const reportA = analyzeTeam(a.team);
+    const reportB = analyzeTeam(b.team);
+    return reportB.overall - reportA.overall || reportB.netRating - reportA.netRating || b.spent - a.spent;
+  });
+  return finalists[0].team;
+}
+
+
+function PlayerImage({ player }: { player: Player }) {
+  const [failed, setFailed] = useState(false);
+  return failed ? (
+    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-3xl font-black text-slate-300">{player.name.split(' ').map(n => n[0]).slice(0,2).join('')}</div>
+  ) : <img src={player.photo} alt={player.name} onError={() => setFailed(true)} className="h-full w-full object-cover object-top" loading="lazy" />;
+}
+
+function Logo({ player }: { player: Player }) {
+  const [failed, setFailed] = useState(false);
+  return failed ? <span className="text-[10px] font-black">{player.teamAbbreviation}</span> : <img src={player.teamLogo} alt={player.team} onError={() => setFailed(true)} className="h-8 w-8 object-contain" />;
+}
+
+function App() {
+  const [mode, setMode] = useState<GameMode>('classic');
+  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
+  const [poolKey, setPoolKey] = useState(() => crypto.randomUUID());
+  const [selected, setSelected] = useState<Player[]>([]);
+  const [search, setSearch] = useState('');
+  const [teamFilter, setTeamFilter] = useState('ALL');
+  const [positionFilter, setPositionFilter] = useState<'ALL' | Position>('ALL');
+  const [maxPrice, setMaxPrice] = useState(80);
+  const [sort, setSort] = useState('price-desc');
+  const [report, setReport] = useState<TeamReport | null>(null);
+  const [submittedLineup, setSubmittedLineup] = useState<Player[]>([]);
+  const [idealLineup, setIdealLineup] = useState<Player[]>([]);
+  const [revealIdeal, setRevealIdeal] = useState(false);
+  const [view, setView] = useState<'game' | 'stats'>('game');
+  const [statsPage, setStatsPage] = useState(1);
+  const [statsSearch, setStatsSearch] = useState('');
+  const [statsSort, setStatsSort] = useState<'name' | 'price' | 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks' | 'trueShooting'>('name');
+  const [toast, setToast] = useState('');
+  const [mobileRosterOpen, setMobileRosterOpen] = useState(false);
+  const [mobileHomeOpen, setMobileHomeOpen] = useState(true);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [highScores, setHighScores] = useState<SavedHighScore[]>([]);
+  const [dailyLeaderboard, setDailyLeaderboard] = useState<DailyLeaderboardEntry[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [dailyDate, setDailyDate] = useState(() => localDateKey());
+  const [dailyTimeLeft, setDailyTimeLeft] = useState(() => {
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    return nextMidnight.getTime() - now.getTime();
+  });
+
+  const budget = mode === 'daily' ? DAILY_BUDGET : BUDGETS[difficulty];
+  const spent = selected.reduce((sum, p) => sum + p.price, 0);
+  const remaining = budget - spent;
+  const pool = useMemo(() => {
+    const source = mode === 'historic' ? historicalPlayers : players;
+    const seed = mode === 'daily' ? `daily-${dailyDate}` : `${mode}-${poolKey}`;
+    const shuffled = seededShuffle(source, seed);
+    if (mode !== 'historic') return shuffled.slice(0, Math.min(80, shuffled.length));
+    const names = new Set<string>();
+    return shuffled.filter(player => {
+      const key = player.name.toLowerCase();
+      if (names.has(key)) return false;
+      names.add(key);
+      return true;
+    }).slice(0, 100);
+  }, [mode, poolKey, dailyDate]);
+  const teams = useMemo(() => [...new Set(pool.map(p => p.teamAbbreviation))].sort(), [pool]);
+  const displayed = useMemo(() => {
+    const list = pool.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) && (teamFilter === 'ALL' || p.teamAbbreviation === teamFilter) && (positionFilter === 'ALL' || eligibility(p).includes(positionFilter)) && p.price <= maxPrice);
+    return [...list].sort((a,b) => {
+      if (sort === 'price-asc') return a.price - b.price;
+      if (sort === 'price-desc') return b.price - a.price;
+      if (sort === 'points') return b.points - a.points;
+      if (sort === 'rebounds') return b.rebounds - a.rebounds;
+      if (sort === 'assists') return b.assists - a.assists;
+      if (sort === 'steals') return b.steals - a.steals;
+      if (sort === 'blocks') return b.blocks - a.blocks;
+      return a.name.localeCompare(b.name);
+    });
+  }, [pool, search, teamFilter, positionFilter, maxPrice, sort]);
+
+  const resetAuctionFilters = () => {
+    setSearch('');
+    setTeamFilter('ALL');
+    setPositionFilter('ALL');
+    setMaxPrice(80);
+    setSort('price-desc');
+    setMobileFiltersOpen(false);
+  };
+
+  useEffect(() => {
+    if (!supabase) {
+      setAuthLoading(false);
+      return;
+    }
+    supabase.auth.getSession().then(({ data }) => {
+      const email = data.session?.user.email ?? null;
+      setUserEmail(email);
+      setAuthLoading(false);
+      if (email) registerUserEmail(email).catch(console.error);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const email = session?.user.email ?? null;
+      setUserEmail(email);
+      setAuthLoading(false);
+      if (email) registerUserEmail(email).catch(console.error);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const refreshAccountData = async (email = userEmail) => {
+    if (!email) return;
+    try {
+      const [records, daily] = await Promise.all([getMyHighScores(email), getDailyLeaderboard(dailyDate)]);
+      setHighScores(records);
+      setDailyLeaderboard(daily);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!userEmail) { setHighScores([]); setDailyLeaderboard([]); return; }
+    setLeaderboardLoading(true);
+    refreshAccountData(userEmail).finally(() => setLeaderboardLoading(false));
+  }, [userEmail, dailyDate]);
+
+  const signInWithGoogle = async () => {
+    if (!supabase) return;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) setToast(error.message);
+  };
+
+  const signOut = async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    setMobileHomeOpen(true);
+  };
+
+  useEffect(() => {
+    setSelected([]);
+    setReport(null);
+    setSubmittedLineup([]);
+    setIdealLineup([]);
+    setRevealIdeal(false);
+  }, [difficulty, mode, poolKey, dailyDate]);
+
+  useEffect(() => {
+    resetAuctionFilters();
+  }, [mode, poolKey, dailyDate]);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(''), 2200); return () => clearTimeout(t); }, [toast]);
+  useEffect(() => {
+    const updateDailyClock = () => {
+      const now = new Date();
+      const currentDate = localDateKey(now);
+      const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      setDailyTimeLeft(nextMidnight.getTime() - now.getTime());
+      setDailyDate(previousDate => previousDate === currentDate ? previousDate : currentDate);
+    };
+    updateDailyClock();
+    const timer = window.setInterval(updateDailyClock, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const assignment = rosterAssignment(selected);
+  const guardCount = assignment.guards.length;
+  const forwardCount = assignment.forwards.length;
+  const centerCount = assignment.centers.length;
+  const validRoster = isValidRoster(selected) && spent <= budget;
+  const isIdeal = idealLineup.length === 5 && sameLineup(submittedLineup, idealLineup);
+  const idealReport = idealLineup.length === 5 ? analyzeTeam(idealLineup) : null;
+
+  const selectPlayer = (player: Player) => {
+    if (selected.some(p => p.id === player.id)) return setSelected(s => s.filter(p => p.id !== player.id));
+    if (selected.some(p => p.name === player.name)) return setToast('Only one version of each player may be selected.');
+    if (selected.length >= 5) return setToast('Your roster is already full.');
+    if (player.price > remaining) return setToast('That player exceeds your remaining budget.');
+    const nextTeam = [...selected, player];
+    if (!canStillBuildValidRoster(nextTeam)) return setToast('That player would make a valid 2-guard, 2-forward, 1-center lineup impossible.');
+    setSelected(nextTeam);
+  };
+
+  const newPool = () => {
+    if (mode === 'daily') return;
+    resetAuctionFilters();
+    setPoolKey(crypto.randomUUID());
+  };
+  const startMobileMode = (nextMode: GameMode) => {
+    resetAuctionFilters();
+    setMode(nextMode);
+    setMobileHomeOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const leaveGameMode = () => {
+    resetAuctionFilters();
+    setMobileRosterOpen(false);
+    setMobileHomeOpen(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const submitLineup = async () => {
+    const ideal = findIdealLineup(pool, budget);
+    const userReport = analyzeTeam(selected);
+    const perfect = sameLineup(selected, ideal);
+    const submitted = [...selected];
+    setSubmittedLineup(submitted);
+    setIdealLineup(ideal);
+    setRevealIdeal(mode === 'classic' || mode === 'historic' || perfect);
+    setReport(userReport);
+    if (userEmail) {
+      try {
+        await saveGameScore({ email: userEmail, mode, challengeDate: dailyDate, lineup: submitted, report: userReport, spent });
+        await refreshAccountData(userEmail);
+      } catch (error) {
+        console.error(error);
+        setToast('Score could not be saved. Your game result is still available.');
+      }
+    }
+  };
+  const playAgain = () => {
+    if (mode === 'daily') return;
+    resetAuctionFilters();
+    setReport(null);
+    setSelected([]);
+    setSubmittedLineup([]);
+    setIdealLineup([]);
+    setRevealIdeal(false);
+    setPoolKey(crypto.randomUUID());
+  };
+  const continueUnlimited = () => {
+    setReport(null);
+    setSelected([]);
+    setSubmittedLineup([]);
+    setRevealIdeal(false);
+  };
+  const saveLineup = () => { localStorage.setItem('nba-stat-auction-best', JSON.stringify(selected)); setToast('Lineup saved on this device.'); };
+  const shareLineup = async () => {
+    const text = `My NBA Stat Auction lineup: ${selected.map(p => `${p.name}${p.season ? ` (${p.season})` : ''}`).join(', ')} — $${spent}/${budget}`;
+    try { await navigator.clipboard.writeText(text); setToast('Lineup copied to clipboard.'); } catch { setToast(text); }
+  };
+
+  if (authLoading) {
+    return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><Trophy className="mx-auto mb-4 text-blue-400"/><p className="font-bold">Loading NBA Stat Auction…</p></div></div>;
+  }
+
+  if (!isSupabaseConfigured) {
+    return <div className="min-h-screen bg-[#050816] px-5 py-16 text-white"><div className="mx-auto max-w-xl rounded-3xl border border-amber-300/20 bg-amber-400/10 p-7"><h1 className="text-3xl font-black">Backend setup required</h1><p className="mt-3 leading-6 text-slate-300">Create a Supabase project, run <code>supabase/schema.sql</code>, and copy <code>.env.example</code> to <code>.env</code> with your project URL and anon key.</p></div></div>;
+  }
+
+  if (!userEmail) {
+    return <div className="min-h-screen bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.25),transparent_30%),radial-gradient(circle_at_90%_10%,rgba(225,29,72,.18),transparent_28%)] px-5 py-16 text-white"><div className="mx-auto flex min-h-[75vh] max-w-lg flex-col items-center justify-center text-center"><div className="grid h-24 w-24 place-items-center rounded-[30px] bg-gradient-to-br from-blue-500 to-rose-500 shadow-[0_20px_70px_rgba(59,130,246,.35)]"><Trophy size={42}/></div><p className="mt-6 text-xs font-black uppercase tracking-[.3em] text-blue-400">NBA Stat Auction</p><h1 className="mt-2 text-4xl font-black">Sign in to play</h1><p className="mt-4 leading-6 text-slate-400">Use Google to save records, compete in the Daily Challenge, and appear anonymously on the leaderboard.</p><button onClick={signInWithGoogle} className="mt-7 flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 font-black text-slate-950 transition hover:bg-slate-100 active:scale-[.98]"><span className="grid h-7 w-7 place-items-center rounded-full border border-slate-200 text-sm font-black text-blue-600">G</span>Continue with Google</button><p className="mt-4 text-xs leading-5 text-slate-600">NBA Stat Auction stores your email as the only personal field in its application database. Google handles authentication and session data.</p></div></div>;
+  }
+
+  if (view === 'stats') {
+    const statsPerPage = 20;
+    const filteredStats = players
+      .filter(player => `${player.name} ${player.teamAbbreviation} ${positionText(player)}`.toLowerCase().includes(statsSearch.toLowerCase()))
+      .sort((a, b) => {
+        if (statsSort === 'price') return b.price - a.price;
+        if (statsSort === 'points') return b.points - a.points;
+        if (statsSort === 'rebounds') return b.rebounds - a.rebounds;
+        if (statsSort === 'assists') return b.assists - a.assists;
+        if (statsSort === 'steals') return b.steals - a.steals;
+        if (statsSort === 'blocks') return b.blocks - a.blocks;
+        if (statsSort === 'trueShooting') return b.trueShooting - a.trueShooting;
+        return a.name.localeCompare(b.name);
+      });
+    const statsPageCount = Math.max(1, Math.ceil(filteredStats.length / statsPerPage));
+    const safeStatsPage = Math.min(statsPage, statsPageCount);
+    const statsStart = (safeStatsPage - 1) * statsPerPage;
+    const statsPlayers = filteredStats.slice(statsStart, statsStart + statsPerPage);
+    const visiblePages = Array.from({ length: statsPageCount }, (_, index) => index + 1)
+      .filter(page => page === 1 || page === statsPageCount || Math.abs(page - safeStatsPage) <= 1);
+
+    return (
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#18254a_0,_#050816_42%)] px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(2rem+env(safe-area-inset-top))] sm:px-5 md:p-10">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-6 pt-3 sm:pt-0"><p className="text-xs font-bold uppercase tracking-[.3em] text-blue-400">League database</p><h1 className="mt-2 text-3xl font-black sm:text-4xl">Player Statistics</h1><p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400 sm:text-base">Advanced metrics are visible here and in the post-auction team report. Prices include PTS + REB + AST + STL + BLK.</p></div>
+          <button onClick={() => setView('game')} className="mb-7 min-h-12 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold hover:bg-white/10 active:scale-[.98]">← Back to game</button>
+          <div className="mb-5 grid gap-3 rounded-2xl border border-white/10 bg-slate-950/55 p-3 sm:grid-cols-[1fr_220px]">
+            <label className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18}/><input value={statsSearch} onChange={event => { setStatsSearch(event.target.value); setStatsPage(1); }} placeholder="Search player, team, or position" className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 pl-10 pr-4 text-base outline-none placeholder:text-slate-600 focus:border-blue-500/60"/></label>
+            <select value={statsSort} onChange={event => { setStatsSort(event.target.value as typeof statsSort); setStatsPage(1); }} className="min-h-12 rounded-xl border border-white/10 bg-slate-900 px-4 text-base outline-none focus:border-blue-500/60"><option value="name">Sort: Alphabetical</option><option value="price">Sort: Price</option><option value="points">Sort: Points</option><option value="rebounds">Sort: Rebounds</option><option value="assists">Sort: Assists</option><option value="steals">Sort: Steals</option><option value="blocks">Sort: Blocks</option><option value="trueShooting">Sort: True Shooting</option></select>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60">
+            <div className="overflow-x-auto"><table className="min-w-full text-left text-sm"><thead className="bg-white/5 text-xs uppercase text-slate-400"><tr>{['Player','Season','Pos','Price','PTS','REB','AST','STL','BLK','TS%','3P%','ORtg','DRtg','USG%','PER','BPM','EPM'].map(h => <th key={h} className="whitespace-nowrap px-4 py-4">{h}</th>)}</tr></thead><tbody>{statsPlayers.map(p => <tr key={p.id} className="border-t border-white/5 hover:bg-white/[.03]"><td className="whitespace-nowrap px-4 py-3 font-semibold">{p.name}<span className="ml-2 text-xs text-slate-500">{p.teamAbbreviation}</span></td><td className="whitespace-nowrap px-4">{p.season ?? '2025-26'}</td><td className="whitespace-nowrap px-4">{positionText(p)}</td><td className="px-4">${p.price}</td><td className="px-4">{p.points.toFixed(1)}</td><td className="px-4">{p.rebounds.toFixed(1)}</td><td className="px-4">{p.assists.toFixed(1)}</td><td className="px-4">{p.steals.toFixed(1)}</td><td className="px-4">{p.blocks.toFixed(1)}</td><td className="px-4">{p.trueShooting.toFixed(1)}</td><td className="px-4">{p.threePointPercentage.toFixed(1)}</td><td className="px-4">{p.offensiveRating}</td><td className="px-4">{p.defensiveRating}</td><td className="px-4">{p.usageRate.toFixed(1)}</td><td className="px-4">{p.playerEfficiencyRating.toFixed(1)}</td><td className="px-4">{p.boxPlusMinus.toFixed(1)}</td><td className="px-4">{p.estimatedPlusMinus.toFixed(1)}</td></tr>)}</tbody></table></div>
+            {statsPlayers.length === 0 && <div className="px-6 py-14 text-center text-slate-400">No players match that search.</div>}
+          </div>
+          <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-center text-sm text-slate-400 sm:text-left">Showing <span className="font-bold text-white">{filteredStats.length === 0 ? 0 : statsStart + 1}–{Math.min(statsStart + statsPerPage, filteredStats.length)}</span> of <span className="font-bold text-white">{filteredStats.length}</span> players</p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <button disabled={safeStatsPage === 1} onClick={() => setStatsPage(page => Math.max(1, page - 1))} className="min-h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-35">Previous</button>
+              {visiblePages.map((page, index) => {
+                const previous = visiblePages[index - 1];
+                return <span key={page} className="contents">{previous && page - previous > 1 ? <span className="px-1 text-slate-500">…</span> : null}<button onClick={() => setStatsPage(page)} aria-current={page === safeStatsPage ? 'page' : undefined} className={`grid h-11 min-w-11 place-items-center rounded-xl border text-sm font-black ${page === safeStatsPage ? 'border-blue-400 bg-blue-500 text-white' : 'border-white/10 bg-white/5 text-slate-300'}`}>{page}</button></span>;
+              })}
+              <button disabled={safeStatsPage === statsPageCount} onClick={() => setStatsPage(page => Math.min(statsPageCount, page + 1))} className="min-h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-35">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-shell min-h-screen overflow-x-hidden bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.22),transparent_28%),radial-gradient(circle_at_95%_10%,rgba(225,29,72,.16),transparent_24%)]">
+      <AnimatePresence>{toast && <motion.div initial={{opacity:0,y:-20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}} className="safe-toast fixed left-1/2 top-4 z-[80] -translate-x-1/2 rounded-full border border-white/15 bg-slate-900/90 px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur-xl">{toast}</motion.div>}</AnimatePresence>
+      <header className="safe-header sticky top-0 z-50 border-b border-white/10 bg-[#050816]/80 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4 md:px-7">
+          <div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-rose-500 shadow-glow"><Trophy size={23}/></div><div><p className="hidden text-[10px] font-black uppercase tracking-[.25em] text-blue-400 sm:block">Build five. Beat the cap.</p><h1 className="text-base font-black sm:text-lg md:text-2xl">NBA Stat Auction</h1></div></div>
+          <div className="hidden items-center gap-2 lg:flex"><button onClick={leaveGameMode} className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-white/5"><Home className="mr-2 inline" size={16}/>Home</button><button onClick={() => setView('stats')} className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-white/5"><BarChart3 className="mr-2 inline" size={16}/>Statistics</button><button onClick={signOut} title={userEmail ?? ''} className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-400 hover:bg-white/5 hover:text-white"><LogOut className="mr-2 inline" size={16}/>Sign out</button></div>
+          <div className="flex items-center gap-2 md:gap-4"><div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-right"><p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Budget left</p><motion.p key={remaining} initial={{scale:1.2}} animate={{scale:1}} className={`text-lg font-black ${remaining < 20 ? 'text-rose-400':'text-emerald-400'}`}>${remaining}</motion.p></div><div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-right"><p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Selected</p><p className="text-lg font-black">{selected.length}/5</p></div></div>
+        </div>
+      </header>
+
+      <AnimatePresence>{mobileHomeOpen && <motion.section className="mobile-home fixed inset-0 z-[55] overflow-y-auto bg-[#050816] bg-[radial-gradient(circle_at_18%_0%,rgba(37,99,235,.26),transparent_30%),radial-gradient(circle_at_88%_12%,rgba(225,29,72,.18),transparent_28%)] px-4 pb-10 pt-[calc(1rem+env(safe-area-inset-top))] sm:px-8 md:px-12" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
+        <div className="mx-auto flex min-h-full max-w-5xl flex-col">
+          <div className="mt-5 text-center md:mt-12"><div className="mx-auto grid h-20 w-20 place-items-center rounded-[28px] md:h-24 md:w-24 md:rounded-[32px] bg-gradient-to-br from-blue-500 to-rose-500 shadow-[0_20px_70px_rgba(59,130,246,.35)]"><Trophy size={38}/></div><p className="mt-6 text-xs font-black uppercase tracking-[.3em] text-blue-400">Build five. Beat the cap.</p><h1 className="mt-2 text-4xl font-black leading-tight md:text-6xl">NBA Stat<br/><span className="text-gradient">Auction</span></h1><p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-slate-400 md:text-base">Draft a balanced starting five, stay under budget, and see how your lineup projects.</p></div>
+          <div className="mt-8 grid gap-3 md:mt-10 md:grid-cols-2 md:gap-4">
+            {[{id:'daily',title:'Daily Challenge',copy:'Same pool and $150 cap for everyone today.',icon:'🏆'},{id:'classic',title:'Classic',copy:'One attempt, then compare with the ideal lineup.',icon:'🎲'},{id:'unlimited',title:'Unlimited',copy:'Keep solving the same pool until you find the best five.',icon:'♾️'},{id:'historic',title:'Historic',copy:'Draft 100 player-seasons from across NBA history.',icon:'🕰️'}].map(item => <button key={item.id} onClick={() => startMobileMode(item.id as GameMode)} className="group flex min-h-[96px] w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/[.055] p-4 text-left transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[.08] active:scale-[.98] md:p-5"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/5 text-2xl md:h-14 md:w-14 md:text-3xl">{item.icon}</span><span className="min-w-0 flex-1"><span className="block text-lg font-black md:text-xl">{item.title}</span><span className="mt-1 block text-xs leading-5 text-slate-400">{item.copy}</span></span><ChevronRight className="text-slate-600"/></button>)}
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-white/[.045] p-5 text-left"><div className="flex items-center gap-2"><Medal className="text-amber-300" size={18}/><h3 className="font-black">My Records</h3></div><div className="mt-4 grid grid-cols-2 gap-2">{(['classic','daily','unlimited','historic'] as GameMode[]).map(recordMode => { const record = highScores.find(item => item.mode === recordMode); return <div key={recordMode} className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{recordMode}</p><p className="mt-1 text-2xl font-black">{record?.score ?? '—'}</p><p className="text-[10px] text-slate-500">{record ? `${record.projected_wins} wins · ${record.net_rating > 0 ? '+' : ''}${record.net_rating} net` : 'No score yet'}</p></div>; })}</div></div>
+            <div className="rounded-2xl border border-amber-300/15 bg-amber-400/[.055] p-5 text-left"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><Crown className="text-amber-300" size={18}/><h3 className="font-black">Today’s Leaders</h3></div><span className="text-[10px] font-bold text-slate-500">TOP 3</span></div><div className="mt-4 space-y-2">{dailyLeaderboard.slice(0,3).map((entry,index)=><div key={`${entry.player_label}-${index}`} className="flex items-center gap-3 rounded-xl bg-black/20 p-3"><span className="grid h-8 w-8 place-items-center rounded-full bg-amber-400/10 text-xs font-black text-amber-200">{index+1}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{entry.player_label}</p><p className="truncate text-[10px] text-slate-500">{entry.lineup.map(player=>player.name).join(' · ')}</p></div><p className="text-xl font-black">{entry.score}</p></div>)}{!dailyLeaderboard.length && <p className="rounded-xl bg-black/20 p-4 text-sm text-slate-500">{leaderboardLoading ? 'Loading leaderboard…' : 'No Daily scores yet. Be the first.'}</p>}</div></div>
+          </div>
+          <button onClick={() => setView('stats')} className="mx-auto mt-5 flex min-h-14 w-full max-w-md items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 font-bold transition hover:bg-white/10"><BarChart3 size={18}/>Player Statistics</button>
+          <p className="mt-auto pt-8 text-center text-[11px] text-slate-600 md:text-xs">2 Guards · 2 Forwards · 1 Center</p>
+        </div>
+      </motion.section>}</AnimatePresence>
+
+      <main className="mx-auto max-w-[1600px] px-3 pb-28 pt-4 sm:px-4 sm:py-6 md:px-7 xl:pb-6">
+        <section className="mb-4 sm:hidden">
+          <div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-400">{mode === 'daily' ? 'Daily Challenge' : mode}</p><h2 className="text-2xl font-black">Draft Your Five</h2></div><button onClick={newPool} disabled={mode === 'daily'} className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5 disabled:opacity-30" aria-label="Reset player pool"><RefreshCcw size={18}/></button></div>
+          <div className="mt-3 grid grid-cols-3 gap-2"><div className="rounded-xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-bold uppercase text-slate-500">Budget</p><p className="text-xl font-black text-emerald-400">${remaining}</p></div><div className="rounded-xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-bold uppercase text-slate-500">Lineup</p><p className="text-xl font-black">{selected.length}/5</p></div><button onClick={() => setMobileFiltersOpen(true)} className="rounded-xl border border-white/10 bg-white/5 p-3 text-left"><p className="text-[9px] font-bold uppercase text-slate-500">Pool</p><p className="text-xl font-black">{pool.length}</p></button></div>
+          {mode === 'daily' && <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-400/10 px-3 py-2 text-xs text-amber-100">New challenge in <span className="font-mono font-black">{formatCountdown(dailyTimeLeft)}</span></div>}
+        </section>
+        {mode === 'daily' && <section className="mb-4 hidden sm:flex flex-col gap-3 rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Daily Challenge</p><p className="text-sm font-semibold text-slate-200">{new Date(`${dailyDate}T12:00:00`).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} · The same 80-player pool for everyone using this calendar date.</p></div>
+          <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">New pool in</p><p className="font-mono text-lg font-black text-amber-200">{formatCountdown(dailyTimeLeft)}</p></div>
+        </section>}
+        {mode === 'daily' && <section className="mb-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 sm:p-5"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Daily leaderboard</p><h3 className="text-xl font-black">Top lineups today</h3></div><button onClick={() => { setLeaderboardLoading(true); refreshAccountData().finally(()=>setLeaderboardLoading(false)); }} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5" aria-label="Refresh leaderboard"><RefreshCcw size={16}/></button></div><div className="mt-4 grid gap-2">{dailyLeaderboard.map((entry,index)=><div key={`${entry.player_label}-${index}`} className="grid grid-cols-[36px_1fr_auto] items-center gap-3 rounded-xl border border-white/5 bg-black/20 p-3"><span className="grid h-9 w-9 place-items-center rounded-full bg-amber-400/10 text-sm font-black text-amber-200">{index+1}</span><div className="min-w-0"><p className="font-bold">{entry.player_label}</p><p className="truncate text-xs text-slate-500">{entry.lineup.map(player=>player.name).join(' · ')}</p></div><div className="text-right"><p className="text-xl font-black">{entry.score}</p><p className="text-[10px] text-slate-500">{entry.projected_wins} wins</p></div></div>)}{!dailyLeaderboard.length && <p className="rounded-xl bg-black/20 p-4 text-sm text-slate-500">{leaderboardLoading ? 'Loading leaderboard…' : 'No Daily scores have been submitted yet.'}</p>}</div></section>}
+        <section className="mb-6 hidden overflow-hidden rounded-3xl sm:block border border-white/10 bg-gradient-to-br from-blue-950/70 via-slate-950/75 to-rose-950/60 p-5 shadow-2xl md:p-8">
+          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between"><div className="max-w-3xl"><div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-300"><Sparkles size={13}/>{mode === 'historic' ? 'Historic NBA · 100 Player-Seasons' : '2025–26 Regular Season · 80-Player Pool'}</div><h2 className="text-3xl font-black leading-tight md:text-5xl"><span className="text-gradient">Draft the perfect five.</span><br/>Every dollar matters.</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400 md:text-base">Choose exactly 2 guards, 2 forwards, and 1 center. Secondary positions can satisfy any eligible roster slot. Player prices equal rounded points + rebounds + assists + steals + blocks. Historic Mode uses each player's statistics from the season shown.</p></div>
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:w-[520px]"><div className="glass rounded-2xl p-3 sm:p-4"><p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">Game mode</p><div className="grid grid-cols-2 gap-1 rounded-xl bg-black/20 p-1">{(['classic','daily','unlimited','historic'] as GameMode[]).map(m => <button key={m} onClick={() => { resetAuctionFilters(); setMode(m); }} className={`rounded-lg px-2 py-2 text-xs font-bold capitalize transition ${mode===m?'bg-blue-500 text-white':'text-slate-400 hover:text-white'}`}>{m}</button>)}</div></div><div className="glass rounded-2xl p-3 sm:p-4"><p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">{mode === 'daily' ? 'Daily budget' : 'Difficulty'}</p>{mode === 'daily' ? <div className="rounded-xl border border-amber-300/15 bg-amber-400/10 px-4 py-3 text-center"><p className="text-2xl font-black text-amber-200">${DAILY_BUDGET}</p><p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-amber-100/70">Same cap for every player</p></div> : <div className="grid grid-cols-3 gap-1 rounded-xl bg-black/20 p-1">{(['easy','normal','hard'] as Difficulty[]).map(d => <button key={d} onClick={() => setDifficulty(d)} className={`rounded-lg px-2 py-2 text-xs font-bold capitalize transition ${difficulty===d?'bg-rose-500 text-white':'text-slate-400 hover:text-white'}`}>{d}<span className="block text-[9px] opacity-70">${BUDGETS[d]}</span></button>)}</div>}</div></div></div>
+        </section>
+
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+          <div>
+            <div className="glass mb-4 hidden rounded-2xl p-3 sm:mb-5 sm:block"><div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-[1.4fr_.7fr_.7fr_.8fr_auto]"><label className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search players..." className="col-span-2 w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-3 text-sm placeholder:text-slate-600"/></label><select value={teamFilter} onChange={e=>setTeamFilter(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All teams</option>{teams.map(t=><option key={t}>{t}</option>)}</select><select value={positionFilter} onChange={e=>setPositionFilter(e.target.value as 'ALL'|Position)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All positions</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select><select value={sort} onChange={e=>setSort(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="price-desc">Price: high to low</option><option value="price-asc">Price: low to high</option><option value="points">Points</option><option value="rebounds">Rebounds</option><option value="assists">Assists</option><option value="steals">Steals</option><option value="blocks">Blocks</option><option value="alpha">Alphabetical</option></select><button onClick={newPool} disabled={mode==='daily'} title={mode==='daily'?'Daily pool is fixed for everyone':'Generate a new player pool'} className="col-span-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold sm:col-span-1 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"><RefreshCcw className="mr-1 inline" size={17}/><span className="hidden 2xl:inline">Reset pool</span></button></div><div className="mt-3 flex items-center gap-3 px-1"><span className="text-xs font-bold text-slate-500">Max price ${maxPrice}</span><input type="range" min="0" max="80" value={maxPrice} onChange={e=>setMaxPrice(Number(e.target.value))} className="h-1 flex-1 accent-blue-500"/><span className="text-xs text-slate-600">{displayed.length} players</span></div></div>
+            {mode === 'historic' && historicalPlayers.length < 100 && <div className="mb-5 rounded-2xl border border-amber-400/25 bg-amber-400/10 p-5 text-sm text-amber-100"><p className="font-black">Historic data setup required</p><p className="mt-1 text-amber-100/75">Run <code className="rounded bg-black/30 px-1.5 py-0.5">npm run update-history</code> once, then restart the development server. The updater downloads season-by-season NBA player data and builds the Historic Mode database.</p></div>}
+            <motion.div layout className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-4">
+              <AnimatePresence>{displayed.map((p,index) => { const active=selected.some(s=>s.id===p.id); const unavailable=!active && (p.price>remaining || selected.length>=5 || !canStillBuildValidRoster([...selected, p])); return <motion.article layout initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} exit={{opacity:0,scale:.95}} transition={{delay:Math.min(index*.015,.25)}} key={p.id} className={`group relative overflow-hidden rounded-2xl border transition duration-300 touch-manipulation ${active?'border-blue-400 bg-blue-500/10 shadow-[0_0_35px_rgba(59,130,246,.22)]':'border-white/10 bg-slate-900/60 hover:-translate-y-1 hover:border-white/25 hover:bg-slate-900/90'}`}>
+                <div className="relative h-44 overflow-hidden bg-gradient-to-b from-slate-700 to-slate-950"><PlayerImage player={p}/><div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950 to-transparent"/><div className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-slate-950/75 backdrop-blur"><Logo player={p}/></div><div title={positionBreakdownText(p)} className="absolute right-3 top-3 rounded-full border border-white/10 bg-slate-950/80 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider">{positionText(p)}</div><div className="absolute bottom-3 left-4 right-4 flex items-end justify-between"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''}</p><h3 className="max-w-[155px] text-lg font-black leading-tight">{p.name}</h3></div><div className="rounded-xl bg-emerald-400 px-3 py-2 text-lg font-black text-emerald-950">${p.price}</div></div></div>
+                <div className="p-2.5 sm:p-4"><div className="mb-3 grid grid-cols-5 sm:mb-4 divide-x divide-white/10 rounded-xl bg-black/20 py-3 text-center"><div><p className="text-[9px] font-bold text-slate-500">PTS</p><p className="font-black">{p.points.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">REB</p><p className="font-black">{p.rebounds.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">AST</p><p className="font-black">{p.assists.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">STL</p><p className="font-black">{p.steals.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">BLK</p><p className="font-black">{p.blocks.toFixed(1)}</p></div></div><button onClick={()=>selectPlayer(p)} disabled={unavailable} className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-black transition ${active?'bg-blue-500 text-white hover:bg-blue-400':unavailable?'cursor-not-allowed bg-white/5 text-slate-600':'bg-white text-slate-950 hover:bg-blue-100'}`}>{active?<><Check size={17}/>Selected</>:<>Select Player<ChevronRight size={17}/></>}</button></div>
+              </motion.article>})}</AnimatePresence>
+            </motion.div>
+          </div>
+
+          <aside className="hidden xl:sticky xl:top-24 xl:block xl:self-start"><div className="glass overflow-hidden rounded-3xl shadow-2xl"><div className="border-b border-white/10 bg-gradient-to-r from-blue-500/15 to-rose-500/10 p-5"><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">Your roster</p><h3 className="text-2xl font-black">Starting Five</h3></div><Users className="text-slate-500"/></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Remaining</p><motion.p key={remaining} initial={{scale:1.15}} animate={{scale:1}} className="text-2xl font-black text-emerald-400">${remaining}</motion.p></div><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Spent</p><p className="text-2xl font-black">${spent}</p></div></div></div>
+                <div className="p-5"><div className="mb-5 grid grid-cols-3 gap-2"><div className={`rounded-xl border p-2 text-center ${guardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">GUARDS</p><p className="font-black">{guardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${forwardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">FORWARDS</p><p className="font-black">{forwardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${centerCount === 1?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">CENTER</p><p className="font-black">{centerCount}/1</p></div></div>
+                  <div className="space-y-2"><AnimatePresence mode="popLayout">{selected.map(p=><motion.div layout initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:20}} key={p.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-2.5"><div className="h-12 w-12 overflow-hidden rounded-lg bg-slate-800"><PlayerImage player={p}/></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{p.name}</p><p className="text-xs text-slate-500">{positionText(p)} · {p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''} · ${p.price}</p></div><button onClick={()=>selectPlayer(p)} className="rounded-lg p-2 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400" aria-label={`Remove ${p.name}`}><X size={16}/></button></motion.div>)}</AnimatePresence>{Array.from({length:5-selected.length}).map((_,i)=><div key={i} className="flex h-[69px] items-center justify-center rounded-xl border border-dashed border-white/10 text-xs font-semibold text-slate-700">Empty roster slot</div>)}</div>
+                  <button disabled={!validRoster} onClick={submitLineup} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 py-4 font-black shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-40"><Gauge size={18}/>Analyze My Team</button>
+                  <div className="mt-3 grid grid-cols-2 gap-2"><button disabled={!selected.length} onClick={saveLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Crown className="mr-1 inline" size={14}/>Save lineup</button><button disabled={!selected.length} onClick={shareLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Share2 className="mr-1 inline" size={14}/>Share</button></div>
+                </div></div></aside>
+        </div>
+      </main>
+
+      <nav className="mobile-tab-bar fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-slate-950/95 px-2 pb-[max(.55rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl xl:hidden">
+        <div className="mx-auto grid max-w-lg grid-cols-4 gap-1">
+          <button onClick={leaveGameMode} className="mobile-tab"><Home size={19}/><span>Home</span></button>
+          <button onClick={() => { setMobileHomeOpen(false); setMobileFiltersOpen(false); window.scrollTo({top:0,behavior:'smooth'}); }} className="mobile-tab mobile-tab-active"><Layers3 size={19}/><span>Players</span></button>
+          <button onClick={() => setMobileFiltersOpen(true)} className="mobile-tab"><ListFilter size={19}/><span>Search</span></button>
+          <button onClick={() => setMobileRosterOpen(true)} className="mobile-tab relative"><Users size={19}/><span>Lineup</span>{selected.length > 0 && <span className="absolute right-3 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-blue-500 px-1 text-[10px] font-black">{selected.length}</span>}</button>
+        </div>
+      </nav>
+
+      <AnimatePresence>{mobileFiltersOpen && <motion.div className="fixed inset-0 z-[64] bg-black/70 backdrop-blur-sm xl:hidden" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={() => setMobileFiltersOpen(false)}>
+        <motion.section initial={{y:'100%'}} animate={{y:0}} exit={{y:'100%'}} transition={{type:'spring',damping:28,stiffness:280}} onClick={event => event.stopPropagation()} className="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-3xl border-t border-white/10 bg-slate-950 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-white/20"/><div className="mb-5 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">Find players</p><h3 className="text-2xl font-black">Search & Filters</h3></div><button onClick={() => setMobileFiltersOpen(false)} className="grid h-11 w-11 place-items-center rounded-full bg-white/5"><X size={20}/></button></div>
+          <label className="relative block"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18}/><input autoFocus value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search player name" className="w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-3"/></label>
+          <div className="mt-3 grid grid-cols-2 gap-3"><select value={teamFilter} onChange={e=>setTeamFilter(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3"><option value="ALL">All teams</option>{teams.map(t=><option key={t}>{t}</option>)}</select><select value={positionFilter} onChange={e=>setPositionFilter(e.target.value as 'ALL'|Position)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3"><option value="ALL">All positions</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select></div>
+          <select value={sort} onChange={e=>setSort(e.target.value)} className="mt-3 w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-3"><option value="price-desc">Price: high to low</option><option value="price-asc">Price: low to high</option><option value="points">Points</option><option value="rebounds">Rebounds</option><option value="assists">Assists</option><option value="steals">Steals</option><option value="blocks">Blocks</option><option value="alpha">Alphabetical</option></select>
+          <div className="mt-5"><div className="mb-2 flex justify-between text-xs font-bold"><span>Maximum price</span><span>${maxPrice}</span></div><input type="range" min="0" max="80" value={maxPrice} onChange={e=>setMaxPrice(Number(e.target.value))} className="w-full accent-blue-500"/></div>
+          <button onClick={() => setMobileFiltersOpen(false)} className="mt-6 min-h-14 w-full rounded-xl bg-blue-500 font-black">Show {displayed.length} Players</button>
+        </motion.section>
+      </motion.div>}</AnimatePresence>
+
+      <AnimatePresence>{mobileRosterOpen && <motion.div className="fixed inset-0 z-[65] bg-black/70 backdrop-blur-sm xl:hidden" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={() => setMobileRosterOpen(false)}>
+        <motion.section initial={{y:'100%'}} animate={{y:0}} exit={{y:'100%'}} transition={{type:'spring',damping:28,stiffness:280}} onClick={event => event.stopPropagation()} className="safe-bottom-sheet absolute inset-x-0 bottom-0 max-h-[86vh] overflow-y-auto rounded-t-3xl border-t border-white/10 bg-slate-950 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-white/20"/>
+          <div className="mb-4 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">Your roster</p><h3 className="text-2xl font-black">Starting Five</h3></div><button onClick={() => setMobileRosterOpen(false)} className="grid h-11 w-11 place-items-center rounded-full bg-white/5" aria-label="Close roster"><X size={20}/></button></div>
+          <div className="mb-4 grid grid-cols-3 gap-2"><div className="rounded-xl bg-white/5 p-3 text-center"><p className="text-[9px] font-bold text-slate-500">GUARDS</p><p className="font-black">{guardCount}/2</p></div><div className="rounded-xl bg-white/5 p-3 text-center"><p className="text-[9px] font-bold text-slate-500">FORWARDS</p><p className="font-black">{forwardCount}/2</p></div><div className="rounded-xl bg-white/5 p-3 text-center"><p className="text-[9px] font-bold text-slate-500">CENTER</p><p className="font-black">{centerCount}/1</p></div></div>
+          <div className="space-y-2">{selected.map(player => <div key={player.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2.5"><div className="h-12 w-12 overflow-hidden rounded-lg"><PlayerImage player={player}/></div><div className="min-w-0 flex-1"><p className="truncate font-bold">{player.name}</p><p className="text-xs text-slate-500">{positionText(player)} · ${player.price}</p></div><button onClick={() => selectPlayer(player)} className="grid h-11 w-11 place-items-center rounded-xl bg-rose-500/10 text-rose-300"><X size={17}/></button></div>)}</div>
+          {!selected.length && <div className="rounded-2xl border border-dashed border-white/10 py-10 text-center text-sm text-slate-500">Select players to build your lineup.</div>}
+          <div className="mt-5 grid grid-cols-2 gap-2"><div className="rounded-xl bg-white/5 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Remaining</p><p className="text-2xl font-black text-emerald-400">${remaining}</p></div><div className="rounded-xl bg-white/5 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Spent</p><p className="text-2xl font-black">${spent}</p></div></div>
+          <button disabled={!validRoster} onClick={() => { setMobileRosterOpen(false); submitLineup(); }} className="mt-4 min-h-14 w-full rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 font-black disabled:grayscale disabled:opacity-40">Analyze My Team</button>
+        </motion.section>
+      </motion.div>}</AnimatePresence>
+
+      <AnimatePresence>{report && <motion.div className="safe-modal fixed inset-0 z-[70] overflow-y-auto bg-[#02040d]/95 p-0 sm:p-4 backdrop-blur-xl md:p-8" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
+        <motion.div initial={{opacity:0,y:30,scale:.98}} animate={{opacity:1,y:0,scale:1}} exit={{opacity:0,y:20,scale:.98}} className="mx-auto min-h-full max-w-6xl overflow-hidden border sm:min-h-0 sm:rounded-3xl border-white/10 bg-slate-950 shadow-2xl">
+          <div className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_right,_rgba(244,63,94,.28),transparent_32%),radial-gradient(circle_at_top_left,_rgba(59,130,246,.28),transparent_34%)] px-4 pb-6 pt-8 sm:p-6 md:p-10">
+            <p className="text-xs font-black uppercase tracking-[.28em] text-blue-400">Front office report</p>
+            <h2 className="mt-2 text-3xl font-black md:text-5xl">{isIdeal ? 'Congratulations!' : 'Team Analysis'}</h2>
+            <p className="mt-2 text-slate-400">{isIdeal ? 'You found the ideal lineup for this player pool.' : mode === 'unlimited' && !revealIdeal ? 'Keep trying with this pool or give up to reveal the model-optimal lineup.' : 'See how your lineup compares with the model-optimal roster.'}</p>
+            <div className="mt-8 grid gap-4 md:grid-cols-[1.2fr_2fr]"><div className="flex items-center gap-5 rounded-2xl border border-white/10 bg-white/5 p-5"><motion.div initial={{rotate:-12,scale:.8}} animate={{rotate:0,scale:1}} className="grid h-28 w-28 place-items-center rounded-full border-8 border-blue-500/70 bg-slate-950 text-center"><div><p className="text-4xl font-black">{report.overall}</p><p className="text-[10px] font-bold text-slate-500">OVERALL</p></div></motion.div><div><p className="text-sm text-slate-400">Letter grade</p><p className="text-6xl font-black text-gradient">{report.grade}</p></div></div><div className="grid grid-cols-2 gap-3 md:grid-cols-4">{[[report.projectedWins,'Projected Wins'],[report.offensiveRating,'Off. Rating'],[report.defensiveRating,'Def. Rating'],[`${report.netRating>0?'+':''}${report.netRating}`,'Net Rating']].map(([v,l])=><div key={l} className="rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-2xl font-black md:text-3xl">{v}</p><p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">{l}</p></div>)}</div></div>
+          </div>
+          <div className="grid gap-6 px-4 pb-10 pt-6 sm:p-6 md:gap-8 md:p-10 lg:grid-cols-[1.25fr_.75fr]">
+            <div><h3 className="mb-4 text-xl font-black">Category Grades</h3><div className="space-y-4">{Object.entries(report.categories).map(([name,score],i)=><motion.div initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:i*.07}} key={name}><div className="mb-1 flex items-center justify-between text-sm"><span className="font-semibold">{name}</span><span className="font-black">{score} · {grade(score)}</span></div><div className="h-2 overflow-hidden rounded-full bg-white/5"><motion.div initial={{width:0}} animate={{width:`${score}%`}} transition={{duration:.7,delay:i*.06}} className="h-full rounded-full bg-gradient-to-r from-blue-500 to-rose-500"/></div></motion.div>)}</div>
+              <h3 className="mb-3 mt-8 text-lg font-black">Your lineup</h3><div className="grid gap-3 sm:grid-cols-5">{submittedLineup.map(p=><div key={p.id} className="rounded-xl border border-white/10 bg-white/5 p-2 text-center"><div className="mx-auto h-16 w-16 overflow-hidden rounded-lg"><PlayerImage player={p}/></div><p className="mt-2 truncate text-xs font-bold">{p.name}</p><p className="text-[10px] text-slate-500">{positionText(p)} · ${p.price}</p></div>)}</div>
+              {revealIdeal && idealLineup.length === 5 && <div className="mt-8 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5"><div className="flex items-end justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Ideal lineup</p><h3 className="text-xl font-black">Best roster for this pool</h3></div>{idealReport && <p className="text-sm font-bold text-amber-200">{idealReport.overall} OVR · {idealReport.projectedWins} wins</p>}</div><div className="mt-4 grid gap-3 sm:grid-cols-5">{idealLineup.map(p=><div key={p.id} className="rounded-xl border border-amber-300/15 bg-black/20 p-2 text-center"><div className="mx-auto h-16 w-16 overflow-hidden rounded-lg"><PlayerImage player={p}/></div><p className="mt-2 truncate text-xs font-bold">{p.name}</p><p className="text-[10px] text-slate-500">{positionText(p)} · ${p.price}</p></div>)}</div></div>}
+            </div>
+            <div className="space-y-5"><div className="rounded-2xl border border-emerald-400/15 bg-emerald-400/5 p-5"><h3 className="mb-3 flex items-center gap-2 font-black text-emerald-300"><Shield size={18}/>Strengths</h3><ul className="space-y-3 text-sm text-slate-300">{report.strengths.map(item=><li key={item} className="flex gap-2"><Check className="mt-0.5 shrink-0 text-emerald-400" size={15}/>{item}</li>)}</ul></div><div className="rounded-2xl border border-rose-400/15 bg-rose-400/5 p-5"><h3 className="mb-3 font-black text-rose-300">Weaknesses</h3><ul className="space-y-3 text-sm text-slate-300">{report.weaknesses.map(item=><li key={item} className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400"/>{item}</li>)}</ul></div>
+              <button onClick={shareLineup} className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-3 font-bold hover:bg-white/5"><Copy size={16}/>Copy Team Result</button>
+              {mode === 'unlimited' && !revealIdeal && !isIdeal && <><button onClick={continueUnlimited} className="w-full rounded-xl bg-blue-500 py-3 font-black hover:bg-blue-400">Continue Playing</button><button onClick={()=>setRevealIdeal(true)} className="w-full rounded-xl border border-rose-400/25 bg-rose-500/10 py-3 font-black text-rose-200 hover:bg-rose-500/20">Give Up & Reveal Ideal</button></>}
+              {mode !== 'daily' && (mode !== 'unlimited' || revealIdeal || isIdeal) && <button onClick={playAgain} className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 py-3 font-black"><RefreshCcw size={17}/>Play Again</button>}
+              {mode === 'daily' && <><button onClick={() => setReport(null)} className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 font-black hover:bg-white/10"><X size={17}/>Close Results</button><div className="rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-slate-400">Today’s pool and ${DAILY_BUDGET} salary cap are the same for everyone. A new 80-player pool loads automatically in <span className="font-mono font-bold text-amber-200">{formatCountdown(dailyTimeLeft)}</span>.</div></>}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>}</AnimatePresence>
+    </div>
+  );
+}
+
+export default App;

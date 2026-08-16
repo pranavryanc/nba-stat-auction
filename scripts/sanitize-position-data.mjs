@@ -18,7 +18,7 @@ const THRESHOLD = 25;
 
 function sanitize(player) {
   const percentages = player.positionPercentages ?? {};
-  let primary = player.primaryDetailedPosition;
+  let primary = player.listedDetailedPosition ?? player.primaryDetailedPosition;
   if (!POSITIONS.includes(primary)) primary = player.detailedPositions?.[0];
   if (!POSITIONS.includes(primary)) return player;
 
@@ -33,6 +33,7 @@ function sanitize(player) {
   return {
     ...player,
     primaryDetailedPosition: primary,
+    listedDetailedPosition: player.listedDetailedPosition ?? primary,
     detailedPositions,
     eligiblePositions: [...new Set(detailedPositions.map(position => GROUP[position]))],
     position: GROUP[primary],

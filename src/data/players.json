@@ -12,6 +12,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 8,
       "SG": 68,
@@ -56,6 +57,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -100,6 +102,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -146,6 +149,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 37,
@@ -182,16 +186,17 @@
     "name": "Aaron Wiggins",
     "team": "Oklahoma City Thunder",
     "teamAbbreviation": "OKC",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 2,
       "SG": 31,
@@ -237,6 +242,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -314,6 +320,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -350,14 +357,16 @@
     "name": "Adou Thiero",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G"
+      "F"
     ],
     "detailedPositions": [
-      "PG"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 100,
       "SG": 11,
@@ -402,6 +411,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 17,
       "SG": 61,
@@ -447,6 +457,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 30,
       "SG": 60,
@@ -483,16 +494,17 @@
     "name": "Ajay Mitchell",
     "team": "Oklahoma City Thunder",
     "teamAbbreviation": "OKC",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 13,
       "SG": 40,
@@ -537,6 +549,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -578,10 +591,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -623,9 +637,11 @@
       "G"
     ],
     "detailedPositions": [
+      "SG",
       "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 24,
@@ -667,10 +683,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 45,
       "SG": 55,
@@ -707,16 +724,17 @@
     "name": "Alex Sarr",
     "team": "Washington Wizards",
     "teamAbbreviation": "WAS",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -762,6 +780,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 32,
       "SG": 53,
@@ -808,6 +827,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 53,
@@ -852,6 +872,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -888,14 +909,17 @@
     "name": "Amari Williams",
     "team": "Boston Celtics",
     "teamAbbreviation": "BOS",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -932,14 +956,15 @@
     "name": "Amen Thompson",
     "team": "Houston Rockets",
     "teamAbbreviation": "HOU",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F"
+      "G"
     ],
     "detailedPositions": [
-      "SF"
+      "PG"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 83,
       "SG": 16,
@@ -981,10 +1006,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 35,
@@ -1030,6 +1056,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -1066,16 +1093,17 @@
     "name": "Andre Drummond",
     "team": "Philadelphia 76ers",
     "teamAbbreviation": "PHI",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -1117,10 +1145,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 35,
@@ -1165,6 +1194,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 77,
       "SG": 23,
@@ -1201,14 +1231,16 @@
     "name": "Andrew Wiggins",
     "team": "Miami Heat",
     "teamAbbreviation": "MIA",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G"
+      "F"
     ],
     "detailedPositions": [
-      "PG"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 100,
       "SG": 16,
@@ -1250,10 +1282,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 49,
       "SG": 48,
@@ -1290,16 +1323,16 @@
     "name": "Anthony Black",
     "team": "Orlando Magic",
     "teamAbbreviation": "ORL",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
       "G"
     ],
     "detailedPositions": [
-      "SF",
+      "PG",
       "SG"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 49,
       "SG": 50,
@@ -1336,14 +1369,17 @@
     "name": "Anthony Davis",
     "team": "Washington Wizards",
     "teamAbbreviation": "WAS",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -1385,10 +1421,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 64,
@@ -1430,10 +1467,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -1478,6 +1516,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 12,
       "SG": 66,
@@ -1522,6 +1561,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -1563,10 +1603,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -1611,6 +1652,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 3,
@@ -1647,15 +1689,17 @@
     "name": "Austin Reaves",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 16,
       "SG": 50,
@@ -1701,6 +1745,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 29,
       "SG": 58,
@@ -1745,6 +1790,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -1781,15 +1827,17 @@
     "name": "Baylor Scheierman",
     "team": "Boston Celtics",
     "teamAbbreviation": "BOS",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 5,
       "SG": 53,
@@ -1836,6 +1884,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 16,
       "SG": 48,
@@ -1880,6 +1929,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 11,
       "SG": 69,
@@ -1916,14 +1966,17 @@
     "name": "Bennedict Mathurin",
     "team": "Los Angeles Clippers",
     "teamAbbreviation": "LAC",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "C"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 2,
       "SG": 35,
@@ -1968,6 +2021,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 23,
       "SG": 61,
@@ -2004,16 +2058,17 @@
     "name": "Bilal Coulibaly",
     "team": "Washington Wizards",
     "teamAbbreviation": "WAS",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 2,
       "SG": 41,
@@ -2050,16 +2105,17 @@
     "name": "Bismack Biyombo",
     "team": "San Antonio Spurs",
     "teamAbbreviation": "SAS",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -2098,14 +2154,14 @@
     "teamAbbreviation": "UTA",
     "position": "F",
     "eligiblePositions": [
-      "F",
-      "C"
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -2147,10 +2203,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 47,
       "SG": 36,
@@ -2195,6 +2252,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -2236,9 +2294,11 @@
       "F"
     ],
     "detailedPositions": [
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -2283,6 +2343,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 20,
       "SG": 56,
@@ -2327,6 +2388,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 92,
       "SG": 8,
@@ -2371,6 +2433,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 81,
@@ -2407,16 +2470,17 @@
     "name": "Branden Carlson",
     "team": "Oklahoma City Thunder",
     "teamAbbreviation": "OKC",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -2463,6 +2527,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 10,
       "SG": 49,
@@ -2504,9 +2569,11 @@
       "F"
     ],
     "detailedPositions": [
+      "PF",
       "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -2551,6 +2618,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -2595,6 +2663,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 3,
@@ -2636,10 +2705,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 99,
       "SG": 100,
@@ -2676,14 +2746,15 @@
     "name": "Brice Sensabaugh",
     "team": "Utah Jazz",
     "teamAbbreviation": "UTA",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C"
+      "F"
     ],
     "detailedPositions": [
-      "C"
+      "SF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 24,
@@ -2725,10 +2796,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 59,
       "SG": 41,
@@ -2773,6 +2845,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -2809,15 +2882,17 @@
     "name": "Brooks Barnhizer",
     "team": "Oklahoma City Thunder",
     "teamAbbreviation": "OKC",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 23,
@@ -2863,6 +2938,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 31,
       "SG": 64,
@@ -2909,6 +2985,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 6,
       "SG": 65,
@@ -2953,6 +3030,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 87,
       "SG": 13,
@@ -2997,6 +3075,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -3033,16 +3112,17 @@
     "name": "Buddy Hield",
     "team": "Atlanta Hawks",
     "teamAbbreviation": "ATL",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 26,
@@ -3087,6 +3167,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 83,
       "SG": 17,
@@ -3131,6 +3212,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 8,
@@ -3172,9 +3254,11 @@
       "G"
     ],
     "detailedPositions": [
+      "SG",
       "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 86,
       "SG": 12,
@@ -3211,15 +3295,17 @@
     "name": "Caleb Martin",
     "team": "Dallas Mavericks",
     "teamAbbreviation": "DAL",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "G"
     ],
     "detailedPositions": [
-      "PG",
+      "SF",
       "SG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 100,
       "SG": 56,
@@ -3265,6 +3351,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 40,
       "SG": 52,
@@ -3306,10 +3393,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 53,
       "SG": 43,
@@ -3355,6 +3443,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 32,
       "SG": 61,
@@ -3400,6 +3489,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 6,
@@ -3441,10 +3531,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -3489,6 +3580,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 95,
       "SG": 5,
@@ -3525,16 +3617,17 @@
     "name": "Caris LeVert",
     "team": "Detroit Pistons",
     "teamAbbreviation": "DET",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 4,
       "SG": 33,
@@ -3571,16 +3664,16 @@
     "name": "Carter Bryant",
     "team": "San Antonio Spurs",
     "teamAbbreviation": "SAS",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
       "F"
     ],
     "detailedPositions": [
-      "SG",
+      "PF",
       "SF"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -3625,6 +3718,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 19,
       "SG": 67,
@@ -3666,10 +3760,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 65,
@@ -3711,10 +3806,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 8,
@@ -3759,6 +3855,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -3803,6 +3900,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 15,
       "SG": 74,
@@ -3844,10 +3942,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -3894,6 +3993,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -3938,6 +4038,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -3974,16 +4075,17 @@
     "name": "Chris Mañon",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 12,
       "SG": 32,
@@ -4028,6 +4130,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -4064,16 +4167,17 @@
     "name": "Chris Youngblood",
     "team": "Portland Trail Blazers",
     "teamAbbreviation": "POR",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 14,
       "SG": 36,
@@ -4120,6 +4224,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 42,
@@ -4164,6 +4269,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -4208,6 +4314,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -4253,6 +4360,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -4297,6 +4405,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 77,
       "SG": 23,
@@ -4341,6 +4450,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -4382,10 +4492,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 47,
       "SG": 45,
@@ -4432,6 +4543,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 32,
@@ -4478,6 +4590,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 3,
       "SG": 46,
@@ -4514,14 +4627,17 @@
     "name": "Colby Jones",
     "team": "Detroit Pistons",
     "teamAbbreviation": "DET",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -4563,10 +4679,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 99,
       "SG": 100,
@@ -4611,6 +4728,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -4655,6 +4773,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 88,
       "SG": 12,
@@ -4699,6 +4818,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -4744,6 +4864,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 35,
       "SG": 54,
@@ -4780,16 +4901,17 @@
     "name": "Cooper Flagg",
     "team": "Dallas Mavericks",
     "teamAbbreviation": "DAL",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -4836,6 +4958,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 26,
@@ -4880,6 +5003,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 20,
       "SG": 72,
@@ -4924,6 +5048,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 86,
       "SG": 14,
@@ -4968,6 +5093,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 15,
       "SG": 77,
@@ -5012,6 +5138,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 77,
       "SG": 23,
@@ -5048,16 +5175,17 @@
     "name": "Daeqwon Plowden",
     "team": "Sacramento Kings",
     "teamAbbreviation": "SAC",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 6,
       "SG": 38,
@@ -5102,6 +5230,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 77,
       "SG": 23,
@@ -5138,16 +5267,17 @@
     "name": "Dalen Terry",
     "team": "Philadelphia 76ers",
     "teamAbbreviation": "PHI",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 7,
       "SG": 36,
@@ -5184,14 +5314,17 @@
     "name": "Dalton Knecht",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "C"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 48,
@@ -5236,6 +5369,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5280,6 +5414,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 92,
       "SG": 8,
@@ -5324,6 +5459,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5360,14 +5496,17 @@
     "name": "DaQuan Jeffries",
     "team": "Sacramento Kings",
     "teamAbbreviation": "SAC",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 16,
@@ -5404,14 +5543,17 @@
     "name": "Dario Saric",
     "team": "Sacramento Kings",
     "teamAbbreviation": "SAC",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
+      "C",
       "F"
     ],
     "detailedPositions": [
+      "C",
       "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5448,14 +5590,17 @@
     "name": "Dariq Whitehead",
     "team": "Memphis Grizzlies",
     "teamAbbreviation": "MEM",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "G"
     ],
     "detailedPositions": [
+      "SF",
       "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -5492,14 +5637,17 @@
     "name": "Darius Brown II",
     "team": "Cleveland Cavaliers",
     "teamAbbreviation": "CLE",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5544,6 +5692,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 92,
       "SG": 8,
@@ -5580,16 +5729,17 @@
     "name": "DaRon Holmes II",
     "team": "Denver Nuggets",
     "teamAbbreviation": "DEN",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5626,14 +5776,17 @@
     "name": "David Jones Garcia",
     "team": "San Antonio Spurs",
     "teamAbbreviation": "SAS",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "G"
     ],
     "detailedPositions": [
+      "SF",
       "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 6,
       "SG": 82,
@@ -5678,6 +5831,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5722,6 +5876,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -5766,6 +5921,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5807,10 +5963,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 99,
       "SG": 100,
@@ -5856,6 +6013,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -5900,6 +6058,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 76,
       "SG": 24,
@@ -5944,6 +6103,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -5988,6 +6148,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6032,6 +6193,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6076,6 +6238,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 12,
       "SG": 67,
@@ -6120,6 +6283,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 96,
       "SG": 4,
@@ -6161,10 +6325,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 6,
@@ -6209,6 +6374,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 23,
@@ -6253,6 +6419,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -6297,6 +6464,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6341,6 +6509,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6387,6 +6556,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 29,
@@ -6431,6 +6601,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 22,
       "SG": 75,
@@ -6477,6 +6648,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 2,
       "SG": 69,
@@ -6523,6 +6695,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 5,
       "SG": 54,
@@ -6567,6 +6740,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 95,
       "SG": 5,
@@ -6613,6 +6787,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 16,
       "SG": 54,
@@ -6654,9 +6829,11 @@
       "F"
     ],
     "detailedPositions": [
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6701,6 +6878,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 19,
@@ -6745,6 +6923,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6789,6 +6968,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6833,6 +7013,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -6879,6 +7060,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 19,
       "SG": 54,
@@ -6924,6 +7106,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 44,
       "SG": 50,
@@ -6965,10 +7148,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -7014,6 +7198,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -7055,10 +7240,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 45,
       "SG": 43,
@@ -7105,6 +7291,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7141,16 +7328,17 @@
     "name": "Drew Eubanks",
     "team": "Sacramento Kings",
     "teamAbbreviation": "SAC",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7195,6 +7383,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7231,16 +7420,17 @@
     "name": "Drew Timme",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7277,16 +7467,17 @@
     "name": "Dru Smith",
     "team": "Miami Heat",
     "teamAbbreviation": "MIA",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 72,
       "SG": 27,
@@ -7328,10 +7519,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 62,
@@ -7378,6 +7570,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7422,6 +7615,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7468,6 +7662,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7514,6 +7709,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 9,
       "SG": 60,
@@ -7555,10 +7751,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 46,
@@ -7595,16 +7792,17 @@
     "name": "E.J. Liddell",
     "team": "Brooklyn Nets",
     "teamAbbreviation": "BKN",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7674,16 +7872,17 @@
     "name": "Elijah Harkless",
     "team": "Utah Jazz",
     "teamAbbreviation": "UTA",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 48,
       "SG": 52,
@@ -7725,10 +7924,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7773,6 +7973,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7819,6 +8020,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 3,
       "SG": 61,
@@ -7863,6 +8065,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 12,
       "SG": 79,
@@ -7899,16 +8102,17 @@
     "name": "Evan Mobley",
     "team": "Cleveland Cavaliers",
     "teamAbbreviation": "CLE",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7945,16 +8149,16 @@
     "name": "Franz Wagner",
     "team": "Orlando Magic",
     "teamAbbreviation": "ORL",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
       "F"
     ],
     "detailedPositions": [
-      "C",
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -7996,10 +8200,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 99,
       "SG": 100,
@@ -8045,6 +8250,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 41,
       "SG": 55,
@@ -8089,6 +8295,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 78,
@@ -8135,6 +8342,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 8,
       "SG": 63,
@@ -8171,14 +8379,15 @@
     "name": "Gary Payton II",
     "team": "Golden State Warriors",
     "teamAbbreviation": "GSW",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F"
+      "G"
     ],
     "detailedPositions": [
-      "PF"
+      "SG"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 16,
       "SG": 62,
@@ -8215,15 +8424,17 @@
     "name": "Gary Trent Jr.",
     "team": "Milwaukee Bucks",
     "teamAbbreviation": "MIL",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 2,
       "SG": 36,
@@ -8260,16 +8471,17 @@
     "name": "GG Jackson",
     "team": "Memphis Grizzlies",
     "teamAbbreviation": "MEM",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8316,6 +8528,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8360,6 +8573,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8396,16 +8610,17 @@
     "name": "Gradey Dick",
     "team": "Toronto Raptors",
     "teamAbbreviation": "TOR",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 44,
@@ -8450,6 +8665,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8494,6 +8710,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8539,6 +8756,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 31,
       "SG": 53,
@@ -8585,6 +8803,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8629,6 +8848,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8673,6 +8893,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8709,16 +8930,17 @@
     "name": "Harrison Ingram",
     "team": "San Antonio Spurs",
     "teamAbbreviation": "SAS",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 48,
@@ -8763,6 +8985,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -8808,6 +9031,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 6,
@@ -8844,14 +9068,17 @@
     "name": "Herbert Jones",
     "team": "New Orleans Pelicans",
     "teamAbbreviation": "NOP",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "G"
     ],
     "detailedPositions": [
+      "SF",
       "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 17,
       "SG": 58,
@@ -8896,6 +9123,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 2,
       "SG": 21,
@@ -8940,6 +9168,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -8981,10 +9210,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 62,
       "SG": 36,
@@ -9029,6 +9259,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9073,6 +9304,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 80,
       "SG": 21,
@@ -9117,6 +9349,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9153,16 +9386,17 @@
     "name": "Isaac Okoro",
     "team": "Chicago Bulls",
     "teamAbbreviation": "CHI",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 33,
@@ -9208,6 +9442,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 52,
       "SG": 46,
@@ -9253,6 +9488,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -9297,6 +9533,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9341,6 +9578,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9382,10 +9620,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 55,
       "SG": 46,
@@ -9422,14 +9661,17 @@
     "name": "Isaiah Livers",
     "team": "Phoenix Suns",
     "teamAbbreviation": "PHX",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "SG"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -9474,6 +9716,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -9520,6 +9763,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9564,6 +9808,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9608,6 +9853,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -9652,6 +9898,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 12,
       "SG": 81,
@@ -9696,6 +9943,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9740,6 +9988,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9784,6 +10033,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -9829,6 +10079,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 27,
       "SG": 60,
@@ -9874,6 +10125,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 31,
       "SG": 62,
@@ -9910,16 +10162,17 @@
     "name": "Jaden McDaniels",
     "team": "Minnesota Timberwolves",
     "teamAbbreviation": "MIN",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -9956,14 +10209,15 @@
     "name": "Jae'Sean Tate",
     "team": "Houston Rockets",
     "teamAbbreviation": "HOU",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G"
+      "F"
     ],
     "detailedPositions": [
-      "PG"
+      "SF"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 100,
       "SG": 19,
@@ -10000,16 +10254,17 @@
     "name": "Jahmai Mashack",
     "team": "Memphis Grizzlies",
     "teamAbbreviation": "MEM",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 27,
       "SG": 26,
@@ -10054,6 +10309,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -10095,9 +10351,11 @@
       "F"
     ],
     "detailedPositions": [
+      "PF",
       "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -10134,14 +10392,16 @@
     "name": "Jaime Jaquez Jr.",
     "team": "Miami Heat",
     "teamAbbreviation": "MIA",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G"
+      "F"
     ],
     "detailedPositions": [
-      "PG"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 100,
       "SG": 12,
@@ -10178,16 +10438,17 @@
     "name": "Jake LaRavia",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -10232,6 +10493,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -10276,6 +10538,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 96,
       "SG": 4,
@@ -10320,6 +10583,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -10356,15 +10620,17 @@
     "name": "Jalen Green",
     "team": "Phoenix Suns",
     "teamAbbreviation": "PHX",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 9,
       "SG": 63,
@@ -10406,9 +10672,11 @@
       "F"
     ],
     "detailedPositions": [
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -10450,10 +10718,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 60,
       "SG": 40,
@@ -10498,6 +10767,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -10544,6 +10814,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -10588,6 +10859,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 89,
       "SG": 11,
@@ -10624,15 +10896,17 @@
     "name": "Jalen Williams",
     "team": "Oklahoma City Thunder",
     "teamAbbreviation": "OKC",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 18,
@@ -10669,16 +10943,16 @@
     "name": "Jalen Wilson",
     "team": "Brooklyn Nets",
     "teamAbbreviation": "BKN",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
       "F"
     ],
     "detailedPositions": [
-      "SG",
+      "PF",
       "SF"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -10725,6 +10999,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 46,
@@ -10769,6 +11044,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -10813,6 +11089,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -10857,6 +11134,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -10898,10 +11176,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 46,
       "SG": 52,
@@ -10946,6 +11225,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -10992,6 +11272,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 8,
       "SG": 44,
@@ -11028,16 +11309,16 @@
     "name": "Jamison Battle",
     "team": "Toronto Raptors",
     "teamAbbreviation": "TOR",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
       "F"
     ],
     "detailedPositions": [
-      "C",
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11079,10 +11360,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -11127,6 +11409,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 14,
       "SG": 67,
@@ -11163,16 +11446,17 @@
     "name": "Jaren Jackson Jr.",
     "team": "Utah Jazz",
     "teamAbbreviation": "UTA",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11218,6 +11502,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11262,6 +11547,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11307,6 +11593,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 35,
       "SG": 60,
@@ -11351,6 +11638,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 95,
       "SG": 5,
@@ -11395,6 +11683,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 23,
       "SG": 64,
@@ -11441,6 +11730,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 8,
       "SG": 60,
@@ -11485,6 +11775,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11529,6 +11820,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11573,6 +11865,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 13,
@@ -11619,6 +11912,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 11,
       "SG": 64,
@@ -11655,14 +11949,17 @@
     "name": "Jaylen Wells",
     "team": "Memphis Grizzlies",
     "teamAbbreviation": "MEM",
-    "position": "C",
+    "position": "G",
     "eligiblePositions": [
-      "C"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "C"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 9,
@@ -11699,16 +11996,17 @@
     "name": "Jaylin Williams",
     "team": "Oklahoma City Thunder",
     "teamAbbreviation": "OKC",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11745,14 +12043,17 @@
     "name": "Jaylon Tyson",
     "team": "Cleveland Cavaliers",
     "teamAbbreviation": "CLE",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 23,
@@ -11798,6 +12099,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11842,6 +12144,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11883,10 +12186,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 42,
       "SG": 59,
@@ -11933,6 +12237,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -11974,10 +12279,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12022,6 +12328,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 92,
       "SG": 8,
@@ -12066,6 +12373,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12112,6 +12420,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12156,6 +12465,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12201,6 +12511,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 22,
@@ -12245,6 +12556,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 94,
       "SG": 6,
@@ -12286,10 +12598,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 6,
@@ -12326,14 +12639,17 @@
     "name": "Joan Beringer",
     "team": "Minnesota Timberwolves",
     "teamAbbreviation": "MIN",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12378,6 +12694,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12423,6 +12740,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -12467,6 +12785,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12511,6 +12830,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12547,16 +12867,17 @@
     "name": "John Konchar",
     "team": "Utah Jazz",
     "teamAbbreviation": "UTA",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 3,
       "SG": 36,
@@ -12603,6 +12924,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 4,
       "SG": 49,
@@ -12647,6 +12969,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 80,
@@ -12691,6 +13014,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12737,6 +13061,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 49,
@@ -12773,16 +13098,17 @@
     "name": "Johnny Juzang",
     "team": "Minnesota Timberwolves",
     "teamAbbreviation": "MIN",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 39,
@@ -12827,6 +13153,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12871,6 +13198,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12912,10 +13240,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -12962,6 +13291,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -13003,10 +13333,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 65,
@@ -13048,10 +13379,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 40,
       "SG": 52,
@@ -13088,14 +13420,15 @@
     "name": "Jordan Hawkins",
     "team": "New Orleans Pelicans",
     "teamAbbreviation": "NOP",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F"
+      "G"
     ],
     "detailedPositions": [
-      "PF"
+      "SG"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 2,
       "SG": 91,
@@ -13140,6 +13473,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -13176,14 +13510,17 @@
     "name": "Jordan Miller",
     "team": "Los Angeles Clippers",
     "teamAbbreviation": "LAC",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "C"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 9,
       "SG": 41,
@@ -13220,16 +13557,16 @@
     "name": "Jordan Poole",
     "team": "New Orleans Pelicans",
     "teamAbbreviation": "NOP",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
       "G"
     ],
     "detailedPositions": [
-      "SF",
+      "PG",
       "SG"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 41,
       "SG": 59,
@@ -13275,6 +13612,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 3,
@@ -13319,6 +13657,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -13364,6 +13703,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 49,
       "SG": 48,
@@ -13400,14 +13740,15 @@
     "name": "Josh Green",
     "team": "Charlotte Hornets",
     "teamAbbreviation": "CHA",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F"
+      "G"
     ],
     "detailedPositions": [
-      "PF"
+      "SG"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 20,
       "SG": 66,
@@ -13454,6 +13795,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 41,
@@ -13500,6 +13842,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 9,
@@ -13544,6 +13887,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -13588,6 +13932,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 3,
       "SG": 74,
@@ -13633,6 +13978,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 75,
       "SG": 25,
@@ -13669,16 +14015,16 @@
     "name": "Julian Champagnie",
     "team": "San Antonio Spurs",
     "teamAbbreviation": "SAS",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
       "F"
     ],
     "detailedPositions": [
-      "C",
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -13724,6 +14070,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 9,
@@ -13760,14 +14107,17 @@
     "name": "Julian Reese",
     "team": "Washington Wizards",
     "teamAbbreviation": "WAS",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -13809,10 +14159,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 36,
@@ -13857,6 +14208,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -13893,14 +14245,15 @@
     "name": "Justin Champagnie",
     "team": "Washington Wizards",
     "teamAbbreviation": "WAS",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C"
+      "F"
     ],
     "detailedPositions": [
-      "C"
+      "SF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 16,
@@ -13945,6 +14298,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -13989,6 +14343,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -14035,6 +14390,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -14071,14 +14427,15 @@
     "name": "Kam Jones",
     "team": "Indiana Pacers",
     "teamAbbreviation": "IND",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F"
+      "G"
     ],
     "detailedPositions": [
-      "PF"
+      "SG"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 17,
       "SG": 60,
@@ -14123,6 +14480,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -14164,10 +14522,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -14212,6 +14571,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 85,
       "SG": 15,
@@ -14248,16 +14608,16 @@
     "name": "Kawhi Leonard",
     "team": "Los Angeles Clippers",
     "teamAbbreviation": "LAC",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
       "F"
     ],
     "detailedPositions": [
-      "C",
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 3,
@@ -14302,6 +14662,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 96,
       "SG": 4,
@@ -14346,6 +14707,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -14390,6 +14752,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -14434,6 +14797,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 22,
@@ -14478,6 +14842,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -14522,6 +14887,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -14566,6 +14932,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -14610,6 +14977,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -14654,6 +15022,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 3,
       "SG": 76,
@@ -14699,6 +15068,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 28,
       "SG": 56,
@@ -14740,10 +15110,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -14788,6 +15159,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 6,
       "SG": 83,
@@ -14834,6 +15206,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 32,
@@ -14880,6 +15253,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 27,
@@ -14926,6 +15300,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -14971,6 +15346,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 17,
@@ -15012,10 +15388,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 44,
       "SG": 56,
@@ -15062,6 +15439,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -15106,6 +15484,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -15150,6 +15529,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -15191,10 +15571,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -15239,6 +15620,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 85,
       "SG": 15,
@@ -15283,6 +15665,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 98,
       "SG": 2,
@@ -15329,6 +15712,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 5,
       "SG": 38,
@@ -15374,6 +15758,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -15419,6 +15804,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 36,
       "SG": 49,
@@ -15455,14 +15841,17 @@
     "name": "Kobe Sanders",
     "team": "Los Angeles Clippers",
     "teamAbbreviation": "LAC",
-    "position": "C",
+    "position": "G",
     "eligiblePositions": [
-      "C"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "C"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 17,
       "SG": 54,
@@ -15507,6 +15896,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 13,
       "SG": 87,
@@ -15553,6 +15943,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 46,
@@ -15597,6 +15988,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 85,
       "SG": 16,
@@ -15633,16 +16025,17 @@
     "name": "Kris Murray",
     "team": "Portland Trail Blazers",
     "teamAbbreviation": "POR",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 2,
       "SG": 46,
@@ -15687,6 +16080,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -15728,10 +16122,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -15776,6 +16171,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -15817,10 +16213,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 5,
@@ -15865,6 +16262,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -15901,16 +16299,17 @@
     "name": "Kyshawn George",
     "team": "Washington Wizards",
     "teamAbbreviation": "WAS",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -15955,6 +16354,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -15999,6 +16399,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 94,
       "SG": 6,
@@ -16043,6 +16444,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 3,
       "SG": 85,
@@ -16088,6 +16490,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -16132,6 +16535,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -16176,6 +16580,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -16221,6 +16626,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 19,
@@ -16265,6 +16671,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 22,
@@ -16310,6 +16717,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 3,
@@ -16346,16 +16754,17 @@
     "name": "Liam McNeeley",
     "team": "Charlotte Hornets",
     "teamAbbreviation": "CHA",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -16400,6 +16809,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 13,
       "SG": 75,
@@ -16444,6 +16854,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -16485,10 +16896,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 43,
       "SG": 54,
@@ -16533,6 +16945,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 16,
       "SG": 77,
@@ -16569,16 +16982,17 @@
     "name": "Luguentz Dort",
     "team": "Oklahoma City Thunder",
     "teamAbbreviation": "OKC",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -16623,6 +17037,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 86,
       "SG": 14,
@@ -16667,6 +17082,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -16703,15 +17119,17 @@
     "name": "Luke Kennard",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 10,
       "SG": 50,
@@ -16756,6 +17174,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -16802,6 +17221,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 51,
@@ -16838,15 +17258,17 @@
     "name": "Mac McClung",
     "team": "Chicago Bulls",
     "teamAbbreviation": "CHI",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 17,
       "SG": 53,
@@ -16892,6 +17314,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 29,
       "SG": 68,
@@ -16936,6 +17359,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 15,
       "SG": 67,
@@ -16977,10 +17401,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17026,6 +17451,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 35,
       "SG": 57,
@@ -17070,6 +17496,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -17115,6 +17542,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 25,
       "SG": 72,
@@ -17161,6 +17589,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 3,
       "SG": 32,
@@ -17205,6 +17634,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -17249,6 +17679,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17293,6 +17724,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -17329,14 +17761,17 @@
     "name": "Marvin Bagley III",
     "team": "Dallas Mavericks",
     "teamAbbreviation": "DAL",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17381,6 +17816,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17425,6 +17861,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17471,6 +17908,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 12,
       "SG": 51,
@@ -17507,14 +17945,16 @@
     "name": "Max Christie",
     "team": "Dallas Mavericks",
     "teamAbbreviation": "DAL",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F"
+      "G"
     ],
     "detailedPositions": [
-      "PF"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 26,
       "SG": 68,
@@ -17556,9 +17996,11 @@
       "G"
     ],
     "detailedPositions": [
+      "SG",
       "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 78,
       "SG": 22,
@@ -17595,16 +18037,17 @@
     "name": "Max Strus",
     "team": "Cleveland Cavaliers",
     "teamAbbreviation": "CLE",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -17641,14 +18084,17 @@
     "name": "Maxi Kleber",
     "team": "Los Angeles Lakers",
     "teamAbbreviation": "LAL",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17693,6 +18139,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17734,10 +18181,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 31,
@@ -17782,6 +18230,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -17826,6 +18275,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 3,
@@ -17871,6 +18321,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 8,
@@ -17915,6 +18366,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -17959,6 +18411,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18000,9 +18453,11 @@
       "G"
     ],
     "detailedPositions": [
+      "PG",
       "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 8,
       "SG": 92,
@@ -18048,6 +18503,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 33,
       "SG": 67,
@@ -18092,6 +18548,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18136,6 +18593,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18172,16 +18630,16 @@
     "name": "Mohamed Diawara",
     "team": "New York Knicks",
     "teamAbbreviation": "NYK",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
       "F"
     ],
     "detailedPositions": [
-      "C",
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18226,6 +18684,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 79,
       "SG": 22,
@@ -18270,6 +18729,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18306,14 +18766,17 @@
     "name": "Moses Moody",
     "team": "Golden State Warriors",
     "teamAbbreviation": "GSW",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 18,
@@ -18350,16 +18813,17 @@
     "name": "Mouhamadou Gueye",
     "team": "Chicago Bulls",
     "teamAbbreviation": "CHI",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18406,6 +18870,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18450,6 +18915,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18486,16 +18952,17 @@
     "name": "Moussa Diabaté",
     "team": "Charlotte Hornets",
     "teamAbbreviation": "CHA",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18540,6 +19007,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18585,6 +19053,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 25,
@@ -18629,6 +19098,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18673,6 +19143,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18717,6 +19188,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 22,
@@ -18753,15 +19225,17 @@
     "name": "Nate Williams",
     "team": "Golden State Warriors",
     "teamAbbreviation": "GSW",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 9,
@@ -18808,6 +19282,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18852,6 +19327,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18896,6 +19372,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18932,16 +19409,17 @@
     "name": "Nick Richards",
     "team": "Chicago Bulls",
     "teamAbbreviation": "CHI",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -18983,9 +19461,11 @@
       "G"
     ],
     "detailedPositions": [
+      "SG",
       "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 81,
       "SG": 19,
@@ -19031,6 +19511,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 33,
       "SG": 63,
@@ -19075,6 +19556,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19116,10 +19598,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 22,
@@ -19164,6 +19647,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19210,6 +19694,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19254,6 +19739,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -19290,16 +19776,17 @@
     "name": "Nikola Vučević",
     "team": "Boston Celtics",
     "teamAbbreviation": "BOS",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19346,6 +19833,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 20,
       "SG": 48,
@@ -19392,6 +19880,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19436,6 +19925,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19480,6 +19970,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 16,
@@ -19524,6 +20015,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 97,
       "SG": 3,
@@ -19560,16 +20052,17 @@
     "name": "Norchad Omier",
     "team": "Los Angeles Clippers",
     "teamAbbreviation": "LAC",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19614,6 +20107,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 9,
       "SG": 87,
@@ -19658,6 +20152,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19702,6 +20197,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 8,
       "SG": 71,
@@ -19746,6 +20242,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19790,6 +20287,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19834,6 +20332,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -19878,6 +20377,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19922,6 +20422,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -19966,6 +20467,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20010,6 +20512,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20046,14 +20549,17 @@
     "name": "Oso Ighodaro",
     "team": "Phoenix Suns",
     "teamAbbreviation": "PHX",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20090,16 +20596,17 @@
     "name": "Ousmane Dieng",
     "team": "Milwaukee Bucks",
     "teamAbbreviation": "MIL",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20144,6 +20651,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20180,15 +20688,17 @@
     "name": "Pacôme Dadiet",
     "team": "New York Knicks",
     "teamAbbreviation": "NYK",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 9,
       "SG": 53,
@@ -20233,6 +20743,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20277,6 +20788,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20321,6 +20833,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 8,
       "SG": 74,
@@ -20357,16 +20870,16 @@
     "name": "Pat Spencer",
     "team": "Golden State Warriors",
     "teamAbbreviation": "GSW",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
       "G"
     ],
     "detailedPositions": [
-      "SF",
+      "PG",
       "SG"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 63,
       "SG": 36,
@@ -20408,10 +20921,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20448,16 +20962,16 @@
     "name": "Patrick Williams",
     "team": "Chicago Bulls",
     "teamAbbreviation": "CHI",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
       "F"
     ],
     "detailedPositions": [
-      "SG",
+      "PF",
       "SF"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -20503,6 +21017,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20547,6 +21062,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20591,6 +21107,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -20636,6 +21153,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20677,10 +21195,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 28,
@@ -20717,16 +21236,16 @@
     "name": "Pete Nance",
     "team": "Milwaukee Bucks",
     "teamAbbreviation": "MIL",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
       "F"
     ],
     "detailedPositions": [
-      "SG",
+      "PF",
       "SF"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -20772,6 +21291,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 16,
@@ -20808,16 +21328,17 @@
     "name": "PJ Hall",
     "team": "Charlotte Hornets",
     "teamAbbreviation": "CHA",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F",
-      "C"
+      "C",
+      "F"
     ],
     "detailedPositions": [
-      "PF",
-      "C"
+      "C",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20854,14 +21375,17 @@
     "name": "Precious Achiuwa",
     "team": "Sacramento Kings",
     "teamAbbreviation": "SAC",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
+      "C",
       "F"
     ],
     "detailedPositions": [
+      "C",
       "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -20903,10 +21427,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 55,
@@ -20951,6 +21476,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 85,
       "SG": 15,
@@ -20987,14 +21513,17 @@
     "name": "Quinten Post",
     "team": "Golden State Warriors",
     "teamAbbreviation": "GSW",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21039,6 +21568,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21075,14 +21605,17 @@
     "name": "Rayan Rupert",
     "team": "Memphis Grizzlies",
     "teamAbbreviation": "MEM",
-    "position": "C",
+    "position": "G",
     "eligiblePositions": [
-      "C"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "C"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 4,
       "SG": 37,
@@ -21127,6 +21660,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -21172,6 +21706,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 29,
       "SG": 64,
@@ -21217,6 +21752,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 17,
@@ -21253,16 +21789,17 @@
     "name": "RJ Barrett",
     "team": "Toronto Raptors",
     "teamAbbreviation": "TOR",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 55,
@@ -21299,16 +21836,16 @@
     "name": "Rob Dillingham",
     "team": "Chicago Bulls",
     "teamAbbreviation": "CHI",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
       "G"
     ],
     "detailedPositions": [
-      "SF",
+      "PG",
       "SG"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 65,
       "SG": 34,
@@ -21353,6 +21890,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21397,6 +21935,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21441,6 +21980,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 17,
@@ -21518,6 +22058,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 7,
@@ -21562,6 +22103,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21603,10 +22145,11 @@
       "F"
     ],
     "detailedPositions": [
-      "SF",
-      "PF"
+      "PF",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21643,16 +22186,17 @@
     "name": "Russell Westbrook",
     "team": "Sacramento Kings",
     "teamAbbreviation": "SAC",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 8,
       "SG": 48,
@@ -21694,10 +22238,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -21742,6 +22287,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21786,6 +22332,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -21830,6 +22377,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 96,
       "SG": 4,
@@ -21875,6 +22423,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -21919,6 +22468,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -21955,16 +22505,17 @@
     "name": "Sam Merrill",
     "team": "Cleveland Cavaliers",
     "teamAbbreviation": "CLE",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F",
-      "G"
+      "G",
+      "F"
     ],
     "detailedPositions": [
-      "SF",
-      "SG"
+      "SG",
+      "SF"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 36,
@@ -22009,6 +22560,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -22053,6 +22605,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -22097,6 +22650,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -22143,6 +22697,7 @@
       "C"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -22187,6 +22742,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -22231,6 +22787,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -22275,6 +22832,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 19,
       "SG": 68,
@@ -22320,6 +22878,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 41,
       "SG": 53,
@@ -22364,6 +22923,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -22408,6 +22968,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -22444,16 +23005,17 @@
     "name": "Sidy Cissoko",
     "team": "Portland Trail Blazers",
     "teamAbbreviation": "POR",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 13,
       "SG": 38,
@@ -22495,9 +23057,11 @@
       "F"
     ],
     "detailedPositions": [
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -22544,6 +23108,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 10,
       "SG": 64,
@@ -22580,14 +23145,17 @@
     "name": "Skal Labissiere",
     "team": "Washington Wizards",
     "teamAbbreviation": "WAS",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -22629,10 +23197,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -22679,6 +23248,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 67,
@@ -22723,6 +23293,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -22764,10 +23335,11 @@
       "G"
     ],
     "detailedPositions": [
-      "SG",
-      "PG"
+      "PG",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 48,
       "SG": 52,
@@ -22812,6 +23384,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -22848,16 +23421,17 @@
     "name": "Svi Mykhailiuk",
     "team": "Utah Jazz",
     "teamAbbreviation": "UTA",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
-      "F"
+      "F",
+      "G"
     ],
     "detailedPositions": [
-      "SG",
-      "SF"
+      "SF",
+      "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 62,
@@ -22902,6 +23476,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -22943,10 +23518,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 61,
       "SG": 35,
@@ -22991,6 +23567,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23027,16 +23604,16 @@
     "name": "Tari Eason",
     "team": "Houston Rockets",
     "teamAbbreviation": "HOU",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G",
       "F"
     ],
     "detailedPositions": [
-      "SG",
+      "PF",
       "SF"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -23081,6 +23658,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 20,
@@ -23117,16 +23695,17 @@
     "name": "Taylor Hendricks",
     "team": "Memphis Grizzlies",
     "teamAbbreviation": "MEM",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23163,15 +23742,17 @@
     "name": "Terance Mann",
     "team": "Brooklyn Nets",
     "teamAbbreviation": "BKN",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 9,
       "SG": 61,
@@ -23213,10 +23794,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 29,
@@ -23253,14 +23835,17 @@
     "name": "Thanasis Antetokounmpo",
     "team": "Milwaukee Bucks",
     "teamAbbreviation": "MIL",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "G"
     ],
     "detailedPositions": [
+      "SF",
       "SG"
     ],
-    "primaryDetailedPosition": "SG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 100,
@@ -23305,6 +23890,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23349,6 +23935,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23395,6 +23982,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 4,
       "SG": 54,
@@ -23431,16 +24019,17 @@
     "name": "Tobias Harris",
     "team": "Detroit Pistons",
     "teamAbbreviation": "DET",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23477,14 +24066,15 @@
     "name": "Toby Okani",
     "team": "Memphis Grizzlies",
     "teamAbbreviation": "MEM",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
-      "F"
+      "G"
     ],
     "detailedPositions": [
-      "PF"
+      "SG"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -23521,14 +24111,17 @@
     "name": "Tolu Smith",
     "team": "Detroit Pistons",
     "teamAbbreviation": "DET",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
+      "F",
       "C"
     ],
     "detailedPositions": [
+      "PF",
       "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23565,14 +24158,15 @@
     "name": "Tony Bradley",
     "team": "Atlanta Hawks",
     "teamAbbreviation": "ATL",
-    "position": "F",
+    "position": "C",
     "eligiblePositions": [
-      "F"
+      "C"
     ],
     "detailedPositions": [
-      "SF"
+      "C"
     ],
-    "primaryDetailedPosition": "SF",
+    "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23617,6 +24211,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 9,
@@ -23661,6 +24256,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23705,6 +24301,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -23749,6 +24346,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23793,6 +24391,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 13,
       "SG": 71,
@@ -23837,6 +24436,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 98,
       "SG": 2,
@@ -23881,6 +24481,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 91,
       "SG": 9,
@@ -23925,6 +24526,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -23969,6 +24571,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -24046,6 +24649,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 79,
@@ -24091,6 +24695,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 26,
       "SG": 69,
@@ -24135,6 +24740,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -24181,6 +24787,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 29,
@@ -24225,6 +24832,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 4,
@@ -24271,6 +24879,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 7,
       "SG": 27,
@@ -24315,6 +24924,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -24361,6 +24971,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 0,
       "SG": 53,
@@ -24406,6 +25017,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 26,
       "SG": 64,
@@ -24447,10 +25059,11 @@
       "F"
     ],
     "detailedPositions": [
-      "PF",
-      "SF"
+      "SF",
+      "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -24495,6 +25108,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 5,
       "SG": 75,
@@ -24539,6 +25153,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 80,
       "SG": 20,
@@ -24583,6 +25198,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -24619,15 +25235,17 @@
     "name": "Tyrese Martin",
     "team": "Philadelphia 76ers",
     "teamAbbreviation": "PHI",
-    "position": "F",
+    "position": "G",
     "eligiblePositions": [
+      "G",
       "F"
     ],
     "detailedPositions": [
-      "PF",
+      "SG",
       "SF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 7,
       "SG": 64,
@@ -24672,6 +25290,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 98,
       "SG": 3,
@@ -24717,6 +25336,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 49,
       "SG": 49,
@@ -24761,6 +25381,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -24805,6 +25426,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 81,
       "SG": 19,
@@ -24849,6 +25471,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -24893,6 +25516,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -24934,9 +25558,11 @@
       "G"
     ],
     "detailedPositions": [
+      "SG",
       "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 93,
       "SG": 7,
@@ -24982,6 +25608,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 55,
       "SG": 42,
@@ -25027,6 +25654,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 28,
       "SG": 72,
@@ -25071,6 +25699,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25115,6 +25744,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25160,6 +25790,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 63,
       "SG": 36,
@@ -25204,6 +25835,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25245,10 +25877,11 @@
       "G"
     ],
     "detailedPositions": [
-      "PG",
-      "SG"
+      "SG",
+      "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 100,
       "SG": 25,
@@ -25293,6 +25926,7 @@
       "SG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 19,
       "SG": 55,
@@ -25334,9 +25968,11 @@
       "F"
     ],
     "detailedPositions": [
+      "SF",
       "PF"
     ],
-    "primaryDetailedPosition": "PF",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25381,6 +26017,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25425,6 +26062,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25469,6 +26107,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25513,6 +26152,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "PG",
+    "listedDetailedPosition": "PG",
     "positionPercentages": {
       "PG": 100,
       "SG": 0,
@@ -25557,6 +26197,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25601,6 +26242,7 @@
       "SF"
     ],
     "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 0,
       "SG": 2,
@@ -25645,6 +26287,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25689,6 +26332,7 @@
       "C"
     ],
     "primaryDetailedPosition": "C",
+    "listedDetailedPosition": "C",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25734,6 +26378,7 @@
       "PG"
     ],
     "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 33,
       "SG": 37,
@@ -25770,16 +26415,17 @@
     "name": "Zeke Nnaji",
     "team": "Denver Nuggets",
     "teamAbbreviation": "DEN",
-    "position": "C",
+    "position": "F",
     "eligiblePositions": [
-      "C",
-      "F"
+      "F",
+      "C"
     ],
     "detailedPositions": [
-      "C",
-      "PF"
+      "PF",
+      "C"
     ],
-    "primaryDetailedPosition": "C",
+    "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25816,14 +26462,15 @@
     "name": "Ziaire Williams",
     "team": "Brooklyn Nets",
     "teamAbbreviation": "BKN",
-    "position": "G",
+    "position": "F",
     "eligiblePositions": [
-      "G"
+      "F"
     ],
     "detailedPositions": [
-      "PG"
+      "SF"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SF",
+    "listedDetailedPosition": "SF",
     "positionPercentages": {
       "PG": 100,
       "SG": 22,
@@ -25868,6 +26515,7 @@
       "PF"
     ],
     "primaryDetailedPosition": "PF",
+    "listedDetailedPosition": "PF",
     "positionPercentages": {
       "PG": 0,
       "SG": 0,
@@ -25909,9 +26557,11 @@
       "G"
     ],
     "detailedPositions": [
+      "SG",
       "PG"
     ],
-    "primaryDetailedPosition": "PG",
+    "primaryDetailedPosition": "SG",
+    "listedDetailedPosition": "SG",
     "positionPercentages": {
       "PG": 89,
       "SG": 11,

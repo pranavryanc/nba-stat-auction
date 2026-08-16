@@ -72,6 +72,7 @@ export function parseBasketballReferencePositions(html, threshold = DEFAULT_THRE
 
   const playerIndex = headers.indexOf('Player');
   const teamIndex = headers.indexOf('Tm');
+  const listedPositionIndex = headers.indexOf('Pos');
   const positionIndexes = Object.fromEntries(POSITION_ORDER.map(position => [position, headers.indexOf(`${position}%`)]));
   const result = new Map();
 
@@ -88,7 +89,18 @@ export function parseBasketballReferencePositions(html, threshold = DEFAULT_THRE
     const maxPercentage = Math.max(...Object.values(percentages));
     if (maxPercentage <= 0) continue;
 
-    const primaryDetailedPosition = POSITION_ORDER.find(position => percentages[position] === maxPercentage) ?? 'SF';
+    // Basketball-Reference's listed Pos column is the source of truth for the
+    // player's primary position. The positional-minute percentages are used
+    // only to grant an adjacent secondary position. This prevents a high
+    // estimated percentage at an unusual spot from changing a player's
+    // primary position (for example, turning a wing into a point guard).
+    const listedPositionText = listedPositionIndex >= 0 ? String(cells[listedPositionIndex] ?? '') : '';
+    const listedDetailedPosition = POSITION_ORDER.find(position =>
+      new RegExp(`(^|[^A-Z])${position}([^A-Z]|$)`).test(listedPositionText.toUpperCase())
+    );
+    const primaryDetailedPosition = listedDetailedPosition
+      ?? POSITION_ORDER.find(position => percentages[position] === maxPercentage)
+      ?? 'SF';
     const secondaryDetailedPosition = (ADJACENT_POSITIONS[primaryDetailedPosition] ?? [])
       .filter(position => percentages[position] >= threshold)
       .sort((a, b) => percentages[b] - percentages[a])[0];
@@ -101,6 +113,7 @@ export function parseBasketballReferencePositions(html, threshold = DEFAULT_THRE
       teamAbbreviation: cells[teamIndex] ?? '',
       detailedPositions,
       primaryDetailedPosition,
+      listedDetailedPosition: listedDetailedPosition ?? primaryDetailedPosition,
       eligiblePositions,
       position: GROUP_BY_POSITION[primaryDetailedPosition],
       positionPercentages: Object.fromEntries(POSITION_ORDER.map(position => [position, Math.round(percentages[position] * 1000) / 10])),

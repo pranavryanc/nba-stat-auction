@@ -83,6 +83,7 @@ try {
         eligiblePositions: positionRecord?.eligiblePositions ?? inferEligiblePositions(p, position),
         detailedPositions: positionRecord?.detailedPositions,
         primaryDetailedPosition: positionRecord?.primaryDetailedPosition,
+        listedDetailedPosition: positionRecord?.listedDetailedPosition,
         positionPercentages: positionRecord?.positionPercentages,
         positionSource: positionRecord?.positionSource ?? 'statistical-fallback',
         photo: `https://cdn.nba.com/headshots/nba/latest/1040x760/${p.PLAYER_ID}.png`,

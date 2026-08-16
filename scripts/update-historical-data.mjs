@@ -76,6 +76,7 @@ function toPlayerSeason(p, season, positionMap) {
     eligiblePositions: positionRecord?.eligiblePositions ?? inferEligiblePositions(p, position),
     detailedPositions: positionRecord?.detailedPositions,
     primaryDetailedPosition: positionRecord?.primaryDetailedPosition,
+    listedDetailedPosition: positionRecord?.listedDetailedPosition,
     positionPercentages: positionRecord?.positionPercentages,
     positionSource: positionRecord?.positionSource ?? 'statistical-fallback',
     season,

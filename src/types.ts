@@ -14,6 +14,7 @@ export interface Player {
   eligiblePositions?: PositionEligibility;
   detailedPositions?: DetailedPosition[];
   primaryDetailedPosition?: DetailedPosition;
+  listedDetailedPosition?: DetailedPosition;
   positionPercentages?: Partial<Record<DetailedPosition, number>>;
   positionSource?: PositionSource;
   photo: string;

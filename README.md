@@ -118,3 +118,6 @@ This version uses Supabase for authentication and score storage.
 6. Run `npm install` and `npm run dev`.
 
 The application database stores email as its only personal user field. Supabase Auth itself necessarily maintains authentication/session identifiers and provider metadata. Public Daily leaderboard queries return an anonymous player label rather than the email address.
+
+## Position-data quality update
+Primary positions now come from Basketball-Reference's listed `Pos` column when positional data is available. The PG/SG/SF/PF/C minute estimates are used only for a secondary position. A secondary must be adjacent to the primary and reach 25% of estimated minutes. Run `npm run update-data`, `npm run update-history`, `npm run sanitize-positions`, and `npm run audit-positions` after installing this version.

@@ -10,7 +10,8 @@
     "update-data": "node scripts/update-player-data.mjs",
     "update-history": "node scripts/update-historical-data.mjs",
     "test-positions": "node scripts/test-position-parser.mjs",
-    "sanitize-positions": "node scripts/sanitize-position-data.mjs"
+    "sanitize-positions": "node scripts/sanitize-position-data.mjs",
+    "audit-positions": "node scripts/audit-position-data.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",

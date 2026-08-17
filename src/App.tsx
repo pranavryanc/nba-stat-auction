@@ -34,10 +34,12 @@ const normalizePlayer = (player: Player): Player => {
     : (player.eligiblePositions?.length ? player.eligiblePositions.slice(0, 2) : [player.position]);
   return { ...player, detailedPositions, primaryDetailedPosition: primary, eligiblePositions };
 };
+
 const players = (rawPlayers as Player[]).map(normalizePlayer);
 const historicalPlayers = (rawHistoricalPlayers as Player[]).map(normalizePlayer);
 const BUDGETS: Record<Difficulty, number> = { easy: 175, normal: 150, hard: 125 };
 const DAILY_BUDGET = 150;
+
 const localDateKey = (date = new Date()) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -65,47 +67,312 @@ const seededShuffle = <T,>(items: T[], seed: string) => {
   return arr;
 };
 
-const grade = (score: number) => score >= 95 ? 'A+' : score >= 90 ? 'A' : score >= 87 ? 'A-' : score >= 83 ? 'B+' : score >= 80 ? 'B' : score >= 77 ? 'B-' : score >= 73 ? 'C+' : score >= 70 ? 'C' : score >= 67 ? 'C-' : score >= 63 ? 'D+' : score >= 60 ? 'D' : 'F';
+const grade = (score: number) =>
+  score >= 90 ? 'A+' :
+  score >= 85 ? 'A' :
+  score >= 80 ? 'A-' :
+  score >= 75 ? 'B+' :
+  score >= 70 ? 'B' :
+  score >= 65 ? 'B-' :
+  score >= 60 ? 'C+' :
+  score >= 55 ? 'C' :
+  score >= 50 ? 'C-' :
+  score >= 45 ? 'D+' :
+  score >= 40 ? 'D' :
+  'F';
+
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v));
 const average = (values: number[]) => values.reduce((a, b) => a + b, 0) / Math.max(values.length, 1);
 
+type PlayoffFinish =
+  | 'NBA Champion'
+  | 'Finals Loss'
+  | 'Conference Finals'
+  | 'Second Round'
+  | 'First Round'
+  | 'Play-In'
+  | 'Missed Playoffs';
+
+function projectPlayoffFinish(
+  wins: number,
+  overall: number,
+  netRating: number,
+  offense: number,
+  defense: number,
+  fit: number,
+): PlayoffFinish {
+  const playoffStrength =
+    overall * 0.28 +
+    offense * 0.17 +
+    defense * 0.25 +
+    fit * 0.15 +
+    clamp(50 + netRating * 4) * 0.15;
+
+  // Middle-ground postseason model:
+  // deep runs require a legitimately strong regular season and playoff profile,
+  // while second-round appearances remain attainable for good teams.
+  if (
+    wins >= 57 &&
+    playoffStrength >= 86 &&
+    defense >= 76 &&
+    netRating >= 6
+  ) return 'NBA Champion';
+
+  if (
+    wins >= 54 &&
+    playoffStrength >= 82 &&
+    defense >= 72 &&
+    netRating >= 4.5
+  ) return 'Finals Loss';
+
+  if (
+    wins >= 51 &&
+    playoffStrength >= 77 &&
+    netRating >= 3
+  ) return 'Conference Finals';
+
+  if (
+    wins >= 47 &&
+    playoffStrength >= 70
+  ) return 'Second Round';
+
+  if (
+    wins >= 42 &&
+    playoffStrength >= 61
+  ) return 'First Round';
+
+  if (wins >= 37) return 'Play-In';
+  return 'Missed Playoffs';
+}
+
 function analyzeTeam(team: Player[]): TeamReport {
-  const scoring = clamp(average(team.map(p => p.points)) * 3.45);
-  const passing = clamp(average(team.map(p => p.assistPercentage)) * 2.9);
-  const rebounding = clamp(average(team.map(p => p.reboundPercentage)) * 6.0);
-  const efficiency = clamp((average(team.map(p => p.trueShooting)) - 48) * 6.0);
-  const defense = clamp(100 - (average(team.map(p => p.defensiveRating)) - 100) * 5.1 + average(team.map(p => p.stealPercentage + p.blockPercentage)) * 2.4);
-  const spacing = clamp((average(team.map(p => p.threePointPercentage)) - 25) * 6.2 + team.filter(p => p.threePointPercentage >= 37).length * 4);
-  const playmaking = clamp(passing + team.filter(p => p.assistPercentage >= 25).length * 5);
+  const avgPoints = average(team.map(p => p.points));
+  const avgAssistPct = average(team.map(p => p.assistPercentage));
+  const avgReboundPct = average(team.map(p => p.reboundPercentage));
+  const avgTrueShooting = average(team.map(p => p.trueShooting));
+  const avgDefensiveRating = average(team.map(p => p.defensiveRating));
+  const avgThreePointPct = average(team.map(p => p.threePointPercentage));
+  const avgStocksPct = average(team.map(p => p.stealPercentage + p.blockPercentage));
+
+  const scoring = clamp(60 + (avgPoints - 18) * 4);
+  const efficiency = clamp(55 + (avgTrueShooting - 55) * 4);
+
+  const creatorCount = team.filter(p => p.assistPercentage >= 25).length;
+  const eliteCreatorCount = team.filter(p => p.assistPercentage >= 35).length;
+  const playmaking = clamp(50 + (avgAssistPct - 15) * 2.3 + creatorCount * 3 + eliteCreatorCount * 2);
+
+  const rebounding = clamp(55 + (avgReboundPct - 10) * 5);
+
+  const goodShooters = team.filter(p => p.threePointPercentage >= 37).length;
+  const eliteShooters = team.filter(p => p.threePointPercentage >= 40).length;
+  const nonShooters = team.filter(p => p.threePointPercentage < 30).length;
+  const spacing = clamp(
+    55 +
+    (avgThreePointPct - 33) * 3.2 +
+    goodShooters * 3 +
+    eliteShooters * 2 -
+    Math.max(0, nonShooters - 1) * 5,
+  );
+
+  const defense = clamp(
+    70 +
+    (114 - avgDefensiveRating) * 2.4 +
+    (avgStocksPct - 3) * 3,
+  );
+
   const assignedRoster = rosterAssignment(team);
-  const size = clamp((assignedRoster.forwards.length * 10 + assignedRoster.centers.length * 24) + average(team.map(p => p.reboundPercentage)) * 2.5);
-  const usageSpread = Math.max(...team.map(p => p.usageRate)) - Math.min(...team.map(p => p.usageRate));
-  const highUsage = team.filter(p => p.usageRate >= 29).length;
-  const usagePenalty = Math.max(0, highUsage - 2) * 8 + (usageSpread < 6 ? 7 : 0);
   const guards = assignedRoster.guards.length;
   const forwards = assignedRoster.forwards.length;
   const centers = assignedRoster.centers.length;
-  const balance = clamp(100 - Math.abs(guards - 2) * 20 - Math.abs(forwards - 2) * 20 - Math.abs(centers - 1) * 28);
-  const fit = clamp((spacing + playmaking + defense + balance + size) / 5 - usagePenalty);
-  const offense = clamp(scoring * .28 + efficiency * .25 + spacing * .21 + playmaking * .20 + fit * .06 - usagePenalty * .4);
-  const defenseCategory = clamp(defense * .72 + rebounding * .16 + size * .12);
-  const benchDepth = clamp(62 + average(team.map(p => p.boxPlusMinus)) * 3.4 + team.filter(p => p.usageRate < 23 && p.trueShooting > 58).length * 5);
-  const overall = Math.round(clamp(offense * .27 + defenseCategory * .25 + playmaking * .13 + rebounding * .1 + spacing * .1 + fit * .15));
-  const offensiveRating = Math.round((103 + offense * .18) * 10) / 10;
-  const defensiveRating = Math.round((121 - defenseCategory * .17) * 10) / 10;
+
+  const balance = clamp(
+    100 -
+    Math.abs(guards - 2) * 20 -
+    Math.abs(forwards - 2) * 20 -
+    Math.abs(centers - 1) * 28,
+  );
+
+  const size = clamp(
+    55 +
+    assignedRoster.forwards.length * 4 +
+    assignedRoster.centers.length * 8 +
+    (avgReboundPct - 10) * 2,
+  );
+
+  const usageRates = team.map(p => p.usageRate);
+  const usageSpread = Math.max(...usageRates) - Math.min(...usageRates);
+  const highUsage = team.filter(p => p.usageRate >= 29).length;
+  const extremeUsage = team.filter(p => p.usageRate >= 34).length;
+
+  let usagePenalty = 0;
+  if (highUsage > 2) usagePenalty += (highUsage - 2) * 4;
+  if (extremeUsage > 2) usagePenalty += (extremeUsage - 2) * 3;
+  if (usageSpread < 5) usagePenalty += 4;
+
+  let fit = 72;
+  fit += (balance - 80) * 0.35;
+
+  if (goodShooters >= 3) fit += 6;
+  else if (goodShooters >= 2) fit += 3;
+  else fit -= 6;
+
+  if (creatorCount >= 2) fit += 5;
+  else if (creatorCount === 0) fit -= 8;
+
+  if (size >= 70) fit += 4;
+  if (size < 55) fit -= 5;
+  if (defense >= 80) fit += 4;
+  if (defense < 60) fit -= 5;
+
+  fit -= usagePenalty;
+  fit = clamp(fit);
+
+  const offense = clamp(
+    scoring * 0.45 +
+    efficiency * 0.35 +
+    spacing * 0.10 +
+    playmaking * 0.10 -
+    usagePenalty * 0.25,
+  );
+
+  const defenseCategory = clamp(
+    defense * 0.78 +
+    rebounding * 0.14 +
+    size * 0.08,
+  );
+
+  const overall = Math.round(
+    clamp(
+      offense * 0.30 +
+      defenseCategory * 0.25 +
+      playmaking * 0.125 +
+      rebounding * 0.10 +
+      spacing * 0.10 +
+      fit * 0.125,
+    ),
+  );
+
+  const offensiveRating = Math.round((104 + offense * 0.18) * 10) / 10;
+  const defensiveRating = Math.round((121 - defenseCategory * 0.17) * 10) / 10;
   const netRating = Math.round((offensiveRating - defensiveRating) * 10) / 10;
-  const projectedWins = Math.round(clamp(41 + netRating * 2.15, 15, 69));
+
+  const pythagoreanExponent = 14;
+  const offensePower = Math.pow(offensiveRating, pythagoreanExponent);
+  const defensePower = Math.pow(defensiveRating, pythagoreanExponent);
+  const expectedWinPct = offensePower / (offensePower + defensePower);
+
+  // Pull extreme Pythagorean records toward .500 so 55+ wins are harder to earn.
+  const rawProjectedWins = expectedWinPct * 82;
+  const baseProjectedWins = 41 + (rawProjectedWins - 41) * 0.85;
+
+  const starPlayers = team.filter(
+    p => p.boxPlusMinus >= 5 || p.estimatedPlusMinus >= 5 || p.playerEfficiencyRating >= 22,
+  ).length;
+
+  const superstarPlayers = team.filter(
+    p => p.boxPlusMinus >= 8 || p.estimatedPlusMinus >= 8 || p.playerEfficiencyRating >= 27,
+  ).length;
+
+  // Star power helps, but cannot inflate a record by itself.
+  const starPowerAdjustment = Math.min(
+    1.5,
+    starPlayers * 0.35 + superstarPlayers * 0.30,
+  );
+
+  const individualImpactScores = team.map(p =>
+    p.boxPlusMinus * 0.45 +
+    p.estimatedPlusMinus * 0.35 +
+    (p.playerEfficiencyRating - 15) * 0.20,
+  );
+
+  const weakestPlayerImpact = Math.min(...individualImpactScores);
+
+  // Weak starters hurt more than excellent fifth starters help.
+  let weakLinkAdjustment = 0;
+  if (weakestPlayerImpact >= 3) weakLinkAdjustment = 0.75;
+  else if (weakestPlayerImpact >= 1) weakLinkAdjustment = 0.25;
+  else if (weakestPlayerImpact < -4) weakLinkAdjustment = -4;
+  else if (weakestPlayerImpact < -2) weakLinkAdjustment = -2.5;
+  else if (weakestPlayerImpact < 0) weakLinkAdjustment = -1.25;
+
+  // Fit has modest upside but meaningful downside when construction is poor.
+  let fitAdjustment = 0;
+  if (fit >= 85) fitAdjustment = 1.25;
+  else if (fit >= 75) fitAdjustment = 0.5;
+  else if (fit < 50) fitAdjustment = -4;
+  else if (fit < 60) fitAdjustment = -2.5;
+  else if (fit < 70) fitAdjustment = -1;
+
+  const twoWayGap = Math.abs(offense - defenseCategory);
+  let twoWayAdjustment = 0;
+
+  if (offense >= 82 && defenseCategory >= 82) twoWayAdjustment = 1;
+  else if (offense < 55 && defenseCategory < 55) twoWayAdjustment = -5;
+  else if (offense < 60 && defenseCategory < 60) twoWayAdjustment = -3;
+  else if (twoWayGap >= 25) twoWayAdjustment = -2;
+  else if (twoWayGap >= 18) twoWayAdjustment = -1;
+
+  // Serious roster flaws should be visible in the final record.
+  let rosterFlawAdjustment = 0;
+  if (goodShooters < 2) rosterFlawAdjustment -= 1.5;
+  if (creatorCount === 0) rosterFlawAdjustment -= 2;
+  if (defenseCategory < 50) rosterFlawAdjustment -= 2.5;
+  if (rebounding < 45) rosterFlawAdjustment -= 1.5;
+
+  const projectedWins = Math.round(
+    clamp(
+      baseProjectedWins +
+      starPowerAdjustment +
+      weakLinkAdjustment +
+      fitAdjustment +
+      twoWayAdjustment +
+      rosterFlawAdjustment,
+      9,
+      73,
+    ),
+  );
+
   const strengths: string[] = [];
   const weaknesses: string[] = [];
-  const cats = { Offense: offense, Defense: defenseCategory, Playmaking: playmaking, Rebounding: rebounding, Spacing: spacing, 'Team Fit': fit, 'Bench Depth': benchDepth };
-  Object.entries(cats).sort((a,b) => b[1]-a[1]).slice(0,3).forEach(([k]) => strengths.push(`${k} projects as a major advantage.`));
-  Object.entries(cats).sort((a,b) => a[1]-b[1]).slice(0,2).forEach(([k]) => weaknesses.push(`${k} is the clearest area to improve.`));
-  if (highUsage >= 4) weaknesses.push('Too many high-usage creators may reduce ball movement.');
-  if (team.filter(p => p.threePointPercentage >= 37).length < 2) weaknesses.push('Limited high-level shooting could compress the floor.');
-  if (defenseCategory >= 85) strengths.push('The lineup has championship-level defensive indicators.');
-  return { overall, grade: grade(overall), projectedWins, offensiveRating, defensiveRating, netRating, categories: Object.fromEntries(Object.entries(cats).map(([k,v]) => [k, Math.round(v)])), strengths, weaknesses };
-}
 
+  const cats = {
+    Offense: offense,
+    Defense: defenseCategory,
+    Playmaking: playmaking,
+    Rebounding: rebounding,
+    Spacing: spacing,
+    'Team Fit': fit,
+  };
+
+  Object.entries(cats)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .forEach(([category]) => strengths.push(`${category} projects as a major advantage.`));
+
+  Object.entries(cats)
+    .sort((a, b) => a[1] - b[1])
+    .slice(0, 2)
+    .forEach(([category]) => weaknesses.push(`${category} is the clearest area to improve.`));
+
+  if (highUsage >= 4) weaknesses.push('Too many high-usage creators may reduce offensive balance.');
+  if (goodShooters < 2) weaknesses.push('Limited high-level shooting could compress the floor.');
+  if (creatorCount < 2) weaknesses.push('The lineup may lack enough secondary shot creation.');
+  if (defenseCategory >= 88) strengths.push('The lineup has championship-level defensive indicators.');
+  if (goodShooters >= 4) strengths.push('Elite shooting depth should create excellent floor spacing.');
+  if (creatorCount >= 3) strengths.push('Multiple capable creators give the offense strong playmaking versatility.');
+
+  return {
+    overall,
+    grade: grade(overall),
+    projectedWins,
+    offensiveRating,
+    defensiveRating,
+    netRating,
+    categories: Object.fromEntries(Object.entries(cats).map(([key, value]) => [key, Math.round(value)])),
+    strengths,
+    weaknesses,
+  };
+}
 
 const eligibility = (player: Player) => player.eligiblePositions?.length ? player.eligiblePositions : [player.position];
 const canPlayGuard = (player: Player) => eligibility(player).includes('G');
@@ -164,7 +431,6 @@ function isValidRoster(team: Player[]) {
   return team.length === 5 && findRosterAssignment(team) !== null;
 }
 
-
 const lineupKey = (team: Player[]) => team.map(player => String(player.id)).sort().join('|');
 const sameLineup = (a: Player[], b: Player[]) => lineupKey(a) === lineupKey(b);
 const individualValue = (player: Player) =>
@@ -200,7 +466,6 @@ function findIdealLineup(pool: Player[], budget: number) {
   });
   return finalists[0].team;
 }
-
 
 function PlayerImage({ player }: { player: Player }) {
   const [failed, setFailed] = useState(false);
@@ -270,7 +535,9 @@ function App() {
       return true;
     }).slice(0, 100);
   }, [mode, poolKey, dailyDate]);
+
   const teams = useMemo(() => [...new Set(pool.map(p => p.teamAbbreviation))].sort(), [pool]);
+
   const displayed = useMemo(() => {
     const list = pool.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) && (teamFilter === 'ALL' || p.teamAbbreviation === teamFilter) && (positionFilter === 'ALL' || eligibility(p).includes(positionFilter)) && p.price <= maxPrice);
     return [...list].sort((a,b) => {
@@ -404,7 +671,13 @@ function App() {
   useEffect(() => {
     resetAuctionFilters();
   }, [mode, poolKey, dailyDate]);
-  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(''), 2200); return () => clearTimeout(t); }, [toast]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(''), 2200);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   useEffect(() => {
     const updateDailyClock = () => {
       const now = new Date();
@@ -426,6 +699,28 @@ function App() {
   const isIdeal = idealLineup.length === 5 && sameLineup(submittedLineup, idealLineup);
   const idealReport = idealLineup.length === 5 ? analyzeTeam(idealLineup) : null;
 
+  const playoffFinish = report
+    ? projectPlayoffFinish(
+        report.projectedWins,
+        report.overall,
+        report.netRating,
+        report.categories.Offense ?? 0,
+        report.categories.Defense ?? 0,
+        report.categories['Team Fit'] ?? 0,
+      )
+    : null;
+
+  const idealPlayoffFinish = idealReport
+    ? projectPlayoffFinish(
+        idealReport.projectedWins,
+        idealReport.overall,
+        idealReport.netRating,
+        idealReport.categories.Offense ?? 0,
+        idealReport.categories.Defense ?? 0,
+        idealReport.categories['Team Fit'] ?? 0,
+      )
+    : null;
+
   const selectPlayer = (player: Player) => {
     if (selected.some(p => p.id === player.id)) return setSelected(s => s.filter(p => p.id !== player.id));
     if (selected.some(p => p.name === player.name)) return setToast('Only one version of each player may be selected.');
@@ -441,18 +736,21 @@ function App() {
     resetAuctionFilters();
     setPoolKey(crypto.randomUUID());
   };
+
   const startMobileMode = (nextMode: GameMode) => {
     resetAuctionFilters();
     setMode(nextMode);
     setMobileHomeOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
   const leaveGameMode = () => {
     resetAuctionFilters();
     setMobileRosterOpen(false);
     setMobileHomeOpen(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
   const submitLineup = async () => {
     const ideal = findIdealLineup(pool, budget);
     const userReport = analyzeTeam(selected);
@@ -472,6 +770,7 @@ function App() {
       }
     }
   };
+
   const playAgain = () => {
     if (mode === 'daily') return;
     resetAuctionFilters();
@@ -482,16 +781,27 @@ function App() {
     setRevealIdeal(false);
     setPoolKey(crypto.randomUUID());
   };
+
   const continueUnlimited = () => {
     setReport(null);
     setSelected([]);
     setSubmittedLineup([]);
     setRevealIdeal(false);
   };
-  const saveLineup = () => { localStorage.setItem('nba-stat-auction-best', JSON.stringify(selected)); setToast('Lineup saved on this device.'); };
+
+  const saveLineup = () => {
+    localStorage.setItem('nba-stat-auction-best', JSON.stringify(selected));
+    setToast('Lineup saved on this device.');
+  };
+
   const shareLineup = async () => {
     const text = `My NBA Stat Auction lineup: ${selected.map(p => `${p.name}${p.season ? ` (${p.season})` : ''}`).join(', ')} — $${spent}/${budget}`;
-    try { await navigator.clipboard.writeText(text); setToast('Lineup copied to clipboard.'); } catch { setToast(text); }
+    try {
+      await navigator.clipboard.writeText(text);
+      setToast('Lineup copied to clipboard.');
+    } catch {
+      setToast(text);
+    }
   };
 
   if (authLoading) {
@@ -528,6 +838,7 @@ function App() {
         if (statsSort === 'trueShooting') return b.trueShooting - a.trueShooting;
         return a.name.localeCompare(b.name);
       });
+
     const statsPageCount = Math.max(1, Math.ceil(filteredStats.length / statsPerPage));
     const safeStatsPage = Math.min(statsPage, statsPageCount);
     const statsStart = (safeStatsPage - 1) * statsPerPage;
@@ -567,15 +878,17 @@ function App() {
   return (
     <div className="app-shell min-h-screen overflow-x-hidden bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.22),transparent_28%),radial-gradient(circle_at_95%_10%,rgba(225,29,72,.16),transparent_24%)]">
       <AnimatePresence>{toast && <motion.div initial={{opacity:0,y:-20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}} className="safe-toast fixed left-1/2 top-4 z-[80] -translate-x-1/2 rounded-full border border-white/15 bg-slate-900/90 px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur-xl">{toast}</motion.div>}</AnimatePresence>
+
       <AnimatePresence>{usernameEditorOpen && <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-[90] grid place-items-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm" onClick={() => setUsernameEditorOpen(false)}>
         <motion.div initial={{opacity:0,y:20,scale:.97}} animate={{opacity:1,y:0,scale:1}} exit={{opacity:0,y:15,scale:.97}} onClick={event => event.stopPropagation()} className="my-6 w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
           <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.2em] text-blue-400">Profile</p><h2 className="mt-1 text-3xl font-black">@{username}</h2><p className="mt-2 text-sm text-slate-500">Your account and NBA Stat Auction records.</p></div><button onClick={() => setUsernameEditorOpen(false)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/5"><X size={18}/></button></div>
           <div className="mt-5 rounded-2xl border border-white/10 bg-white/[.035] p-4"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Google account</p><p className="mt-1 break-all text-sm font-semibold text-slate-300">{userEmail}</p></div>
-          <div className="mt-4 grid grid-cols-2 gap-2">{(['classic','daily','unlimited','historic'] as GameMode[]).map(recordMode => { const record = highScores.find(item => item.mode === recordMode); return <div key={recordMode} className="rounded-xl border border-white/10 bg-black/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{recordMode}</p><p className="mt-1 text-2xl font-black">{record?.score ?? '—'}</p><p className="text-[10px] text-slate-500">{record ? `${record.projected_wins} wins · ${record.net_rating > 0 ? '+' : ''}${record.net_rating} net` : 'No record yet'}</p></div>; })}</div>
+          <div className="mt-4 grid grid-cols-2 gap-2">{(['classic','daily','unlimited','historic'] as GameMode[]).map(recordMode => { const record = highScores.find(item => item.mode === recordMode); return <div key={recordMode} className="rounded-xl border border-white/10 bg-black/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{recordMode}</p><p className="mt-1 text-2xl font-black">{record?.score ?? '—'}</p><p className="text-[10px] text-slate-500">{record ? `${record.projected_wins}-${82 - record.projected_wins} · ${record.net_rating > 0 ? '+' : ''}${record.net_rating} net` : 'No record yet'}</p></div>; })}</div>
           <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-black">Change username</p><p className="mt-1 text-xs leading-5 text-slate-500">This is the public name shown on Daily leaderboards. Usernames are unique.</p><input value={usernameDraft} onChange={event => { setUsernameDraft(event.target.value); setUsernameError(''); }} onKeyDown={event => { if (event.key === 'Enter') saveUsername(); }} maxLength={20} className="mt-4 min-h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-lg font-bold outline-none focus:border-blue-500/60"/><div className="mt-2 flex justify-between text-xs"><span className={usernameError ? 'text-rose-400' : 'text-slate-600'}>{usernameError || '3–20 characters · letters, numbers, _ or .'}</span><span className="text-slate-600">{usernameDraft.trim().length}/20</span></div><button onClick={saveUsername} disabled={usernameSaving || usernameDraft.trim() === username} className="mt-4 min-h-13 w-full rounded-xl bg-blue-500 py-3 font-black hover:bg-blue-400 disabled:opacity-40">{usernameSaving ? 'Saving…' : 'Save Username'}</button></div>
           <button onClick={signOut} className="mt-3 min-h-12 w-full rounded-xl border border-white/10 bg-white/5 font-bold text-slate-400 hover:bg-white/10 hover:text-white"><LogOut className="mr-2 inline" size={16}/>Sign out</button>
         </motion.div>
       </motion.div>}</AnimatePresence>
+
       <header className="safe-header sticky top-0 z-50 border-b border-white/10 bg-[#050816]/80 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4 md:px-7">
           <div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-rose-500 shadow-glow"><Trophy size={23}/></div><div><p className="hidden text-[10px] font-black uppercase tracking-[.25em] text-blue-400 sm:block">Build five. Beat the cap.</p><h1 className="text-base font-black sm:text-lg md:text-2xl">NBA Stat Auction</h1></div></div>
@@ -591,7 +904,7 @@ function App() {
             {[{id:'daily',title:'Daily Challenge',copy:'Same pool and $150 cap for everyone today.',icon:'🏆'},{id:'classic',title:'Classic',copy:'One attempt, then compare with the ideal lineup.',icon:'🎲'},{id:'unlimited',title:'Unlimited',copy:'Keep solving the same pool until you find the best five.',icon:'♾️'},{id:'historic',title:'Historic',copy:'Draft 100 player-seasons from across NBA history.',icon:'🕰️'}].map(item => <button key={item.id} onClick={() => startMobileMode(item.id as GameMode)} className="group flex min-h-[96px] w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/[.055] p-4 text-left transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[.08] active:scale-[.98] md:p-5"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/5 text-2xl md:h-14 md:w-14 md:text-3xl">{item.icon}</span><span className="min-w-0 flex-1"><span className="block text-lg font-black md:text-xl">{item.title}</span><span className="mt-1 block text-xs leading-5 text-slate-400">{item.copy}</span></span><ChevronRight className="text-slate-600"/></button>)}
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-white/[.045] p-5 text-left"><div className="flex items-center gap-2"><Medal className="text-amber-300" size={18}/><h3 className="font-black">My Records</h3></div><div className="mt-4 grid grid-cols-2 gap-2">{(['classic','daily','unlimited','historic'] as GameMode[]).map(recordMode => { const record = highScores.find(item => item.mode === recordMode); return <div key={recordMode} className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{recordMode}</p><p className="mt-1 text-2xl font-black">{record?.score ?? '—'}</p><p className="text-[10px] text-slate-500">{record ? `${record.projected_wins} wins · ${record.net_rating > 0 ? '+' : ''}${record.net_rating} net` : 'No score yet'}</p></div>; })}</div></div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.045] p-5 text-left"><div className="flex items-center gap-2"><Medal className="text-amber-300" size={18}/><h3 className="font-black">My Records</h3></div><div className="mt-4 grid grid-cols-2 gap-2">{(['classic','daily','unlimited','historic'] as GameMode[]).map(recordMode => { const record = highScores.find(item => item.mode === recordMode); return <div key={recordMode} className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{recordMode}</p><p className="mt-1 text-2xl font-black">{record?.score ?? '—'}</p><p className="text-[10px] text-slate-500">{record ? `${record.projected_wins}-${82 - record.projected_wins} · ${record.net_rating > 0 ? '+' : ''}${record.net_rating} net` : 'No score yet'}</p></div>; })}</div></div>
             <div className="rounded-2xl border border-amber-300/15 bg-amber-400/[.055] p-5 text-left"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><Crown className="text-amber-300" size={18}/><h3 className="font-black">Today’s Leaders</h3></div><span className="text-[10px] font-bold text-slate-500">TOP 3</span></div><div className="mt-4 space-y-2">{dailyLeaderboard.slice(0,3).map((entry,index)=><div key={`${entry.player_label}-${index}`} className="flex items-center gap-3 rounded-xl bg-black/20 p-3"><span className="grid h-8 w-8 place-items-center rounded-full bg-amber-400/10 text-xs font-black text-amber-200">{index+1}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{entry.player_label}</p><p className="truncate text-[10px] text-slate-500">{entry.lineup.map(player=>player.name).join(' · ')}</p></div><p className="text-xl font-black">{entry.score}</p></div>)}{!dailyLeaderboard.length && <p className="rounded-xl bg-black/20 p-4 text-sm text-slate-500">{leaderboardLoading ? 'Loading leaderboard…' : 'No Daily scores yet. Be the first.'}</p>}</div></div>
           </div>
           <div className="mx-auto mt-5 flex w-full max-w-md items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] p-3"><div className="min-w-0 text-left"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Signed in as</p><p className="truncate font-black text-blue-300">@{username}</p></div><div className="flex gap-2"><button onClick={() => { setUsernameDraft(username); setUsernameError(''); setUsernameEditorOpen(true); }} className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold hover:bg-white/10">Profile</button><button onClick={signOut} className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-slate-400 hover:bg-white/10 hover:text-white">Sign out</button></div></div>
@@ -606,11 +919,14 @@ function App() {
           <div className="mt-3 grid grid-cols-3 gap-2"><div className="rounded-xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-bold uppercase text-slate-500">Budget</p><p className="text-xl font-black text-emerald-400">${remaining}</p></div><div className="rounded-xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-bold uppercase text-slate-500">Lineup</p><p className="text-xl font-black">{selected.length}/5</p></div><button onClick={() => setMobileFiltersOpen(true)} className="rounded-xl border border-white/10 bg-white/5 p-3 text-left"><p className="text-[9px] font-bold uppercase text-slate-500">Pool</p><p className="text-xl font-black">{pool.length}</p></button></div>
           {mode === 'daily' && <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-400/10 px-3 py-2 text-xs text-amber-100">New challenge in <span className="font-mono font-black">{formatCountdown(dailyTimeLeft)}</span></div>}
         </section>
+
         {mode === 'daily' && <section className="mb-4 hidden sm:flex flex-col gap-3 rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Daily Challenge</p><p className="text-sm font-semibold text-slate-200">{new Date(`${dailyDate}T12:00:00`).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} · The same 80-player pool for everyone using this calendar date.</p></div>
           <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">New pool in</p><p className="font-mono text-lg font-black text-amber-200">{formatCountdown(dailyTimeLeft)}</p></div>
         </section>}
-        {mode === 'daily' && <section className="mb-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 sm:p-5"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Daily leaderboard</p><h3 className="text-xl font-black">Top lineups today</h3></div><button onClick={() => { setLeaderboardLoading(true); refreshAccountData().finally(()=>setLeaderboardLoading(false)); }} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5" aria-label="Refresh leaderboard"><RefreshCcw size={16}/></button></div><div className="mt-4 grid gap-2">{dailyLeaderboard.map((entry,index)=><div key={`${entry.player_label}-${index}`} className="grid grid-cols-[36px_1fr_auto] items-center gap-3 rounded-xl border border-white/5 bg-black/20 p-3"><span className="grid h-9 w-9 place-items-center rounded-full bg-amber-400/10 text-sm font-black text-amber-200">{index+1}</span><div className="min-w-0"><p className="font-bold">{entry.player_label}</p><p className="truncate text-xs text-slate-500">{entry.lineup.map(player=>player.name).join(' · ')}</p></div><div className="text-right"><p className="text-xl font-black">{entry.score}</p><p className="text-[10px] text-slate-500">{entry.projected_wins} wins</p></div></div>)}{!dailyLeaderboard.length && <p className="rounded-xl bg-black/20 p-4 text-sm text-slate-500">{leaderboardLoading ? 'Loading leaderboard…' : 'No Daily scores have been submitted yet.'}</p>}</div></section>}
+
+        {mode === 'daily' && <section className="mb-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 sm:p-5"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Daily leaderboard</p><h3 className="text-xl font-black">Top lineups today</h3></div><button onClick={() => { setLeaderboardLoading(true); refreshAccountData().finally(()=>setLeaderboardLoading(false)); }} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5" aria-label="Refresh leaderboard"><RefreshCcw size={16}/></button></div><div className="mt-4 grid gap-2">{dailyLeaderboard.map((entry,index)=><div key={`${entry.player_label}-${index}`} className="grid grid-cols-[36px_1fr_auto] items-center gap-3 rounded-xl border border-white/5 bg-black/20 p-3"><span className="grid h-9 w-9 place-items-center rounded-full bg-amber-400/10 text-sm font-black text-amber-200">{index+1}</span><div className="min-w-0"><p className="font-bold">{entry.player_label}</p><p className="truncate text-xs text-slate-500">{entry.lineup.map(player=>player.name).join(' · ')}</p></div><div className="text-right"><p className="text-xl font-black">{entry.score}</p><p className="text-[10px] text-slate-500">{entry.projected_wins}-{82 - entry.projected_wins}</p></div></div>)}{!dailyLeaderboard.length && <p className="rounded-xl bg-black/20 p-4 text-sm text-slate-500">{leaderboardLoading ? 'Loading leaderboard…' : 'No Daily scores have been submitted yet.'}</p>}</div></section>}
+
         <section className="mb-6 hidden overflow-hidden rounded-3xl sm:block border border-white/10 bg-gradient-to-br from-blue-950/70 via-slate-950/75 to-rose-950/60 p-5 shadow-2xl md:p-8">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between"><div className="max-w-3xl"><div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-300"><Sparkles size={13}/>{mode === 'historic' ? 'Historic NBA · 100 Player-Seasons' : '2025–26 Regular Season · 80-Player Pool'}</div><h2 className="text-3xl font-black leading-tight md:text-5xl"><span className="text-gradient">Draft the perfect five.</span><br/>Every dollar matters.</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400 md:text-base">Choose exactly 2 guards, 2 forwards, and 1 center. Secondary positions can satisfy any eligible roster slot. Player prices equal rounded points + rebounds + assists + steals + blocks. Historic Mode uses each player's statistics from the season shown.</p></div>
           <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:w-[520px]"><div className="glass rounded-2xl p-3 sm:p-4"><p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">Game mode</p><div className="grid grid-cols-2 gap-1 rounded-xl bg-black/20 p-1">{(['classic','daily','unlimited','historic'] as GameMode[]).map(m => <button key={m} onClick={() => { resetAuctionFilters(); setMode(m); }} className={`rounded-lg px-2 py-2 text-xs font-bold capitalize transition ${mode===m?'bg-blue-500 text-white':'text-slate-400 hover:text-white'}`}>{m}</button>)}</div></div><div className="glass rounded-2xl p-3 sm:p-4"><p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">{mode === 'daily' ? 'Daily budget' : 'Difficulty'}</p>{mode === 'daily' ? <div className="rounded-xl border border-amber-300/15 bg-amber-400/10 px-4 py-3 text-center"><p className="text-2xl font-black text-amber-200">${DAILY_BUDGET}</p><p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-amber-100/70">Same cap for every player</p></div> : <div className="grid grid-cols-3 gap-1 rounded-xl bg-black/20 p-1">{(['easy','normal','hard'] as Difficulty[]).map(d => <button key={d} onClick={() => setDifficulty(d)} className={`rounded-lg px-2 py-2 text-xs font-bold capitalize transition ${difficulty===d?'bg-rose-500 text-white':'text-slate-400 hover:text-white'}`}>{d}<span className="block text-[9px] opacity-70">${BUDGETS[d]}</span></button>)}</div>}</div></div></div>
@@ -619,7 +935,9 @@ function App() {
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
           <div>
             <div className="glass mb-4 hidden rounded-2xl p-3 sm:mb-5 sm:block"><div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-[1.4fr_.7fr_.7fr_.8fr_auto]"><label className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search players..." className="col-span-2 w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-3 text-sm placeholder:text-slate-600"/></label><select value={teamFilter} onChange={e=>setTeamFilter(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All teams</option>{teams.map(t=><option key={t}>{t}</option>)}</select><select value={positionFilter} onChange={e=>setPositionFilter(e.target.value as 'ALL'|Position)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All positions</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select><select value={sort} onChange={e=>setSort(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="price-desc">Price: high to low</option><option value="price-asc">Price: low to high</option><option value="points">Points</option><option value="rebounds">Rebounds</option><option value="assists">Assists</option><option value="steals">Steals</option><option value="blocks">Blocks</option><option value="alpha">Alphabetical</option></select><button onClick={newPool} disabled={mode==='daily'} title={mode==='daily'?'Daily pool is fixed for everyone':'Generate a new player pool'} className="col-span-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold sm:col-span-1 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"><RefreshCcw className="mr-1 inline" size={17}/><span className="hidden 2xl:inline">Reset pool</span></button></div><div className="mt-3 flex items-center gap-3 px-1"><span className="text-xs font-bold text-slate-500">Max price ${maxPrice}</span><input type="range" min="0" max="80" value={maxPrice} onChange={e=>setMaxPrice(Number(e.target.value))} className="h-1 flex-1 accent-blue-500"/><span className="text-xs text-slate-600">{displayed.length} players</span></div></div>
+
             {mode === 'historic' && historicalPlayers.length < 100 && <div className="mb-5 rounded-2xl border border-amber-400/25 bg-amber-400/10 p-5 text-sm text-amber-100"><p className="font-black">Historic data setup required</p><p className="mt-1 text-amber-100/75">Run <code className="rounded bg-black/30 px-1.5 py-0.5">npm run update-history</code> once, then restart the development server. The updater downloads season-by-season NBA player data and builds the Historic Mode database.</p></div>}
+
             <motion.div layout className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-4">
               <AnimatePresence>{displayed.map((p,index) => { const active=selected.some(s=>s.id===p.id); const unavailable=!active && (p.price>remaining || selected.length>=5 || !canStillBuildValidRoster([...selected, p])); return <motion.article layout initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} exit={{opacity:0,scale:.95}} transition={{delay:Math.min(index*.015,.25)}} key={p.id} className={`group relative overflow-hidden rounded-2xl border transition duration-300 touch-manipulation ${active?'border-blue-400 bg-blue-500/10 shadow-[0_0_35px_rgba(59,130,246,.22)]':'border-white/10 bg-slate-900/60 hover:-translate-y-1 hover:border-white/25 hover:bg-slate-900/90'}`}>
                 <div className="relative h-44 overflow-hidden bg-gradient-to-b from-slate-700 to-slate-950"><PlayerImage player={p}/><div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950 to-transparent"/><div className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-slate-950/75 backdrop-blur"><Logo player={p}/></div><div title={positionBreakdownText(p)} className="absolute right-3 top-3 rounded-full border border-white/10 bg-slate-950/80 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider">{positionText(p)}</div><div className="absolute bottom-3 left-4 right-4 flex items-end justify-between"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''}</p><h3 className="max-w-[155px] text-lg font-black leading-tight">{p.name}</h3></div><div className="rounded-xl bg-emerald-400 px-3 py-2 text-lg font-black text-emerald-950">${p.price}</div></div></div>
@@ -629,11 +947,11 @@ function App() {
           </div>
 
           <aside className="hidden xl:sticky xl:top-24 xl:block xl:self-start"><div className="glass overflow-hidden rounded-3xl shadow-2xl"><div className="border-b border-white/10 bg-gradient-to-r from-blue-500/15 to-rose-500/10 p-5"><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">Your roster</p><h3 className="text-2xl font-black">Starting Five</h3></div><Users className="text-slate-500"/></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Remaining</p><motion.p key={remaining} initial={{scale:1.15}} animate={{scale:1}} className="text-2xl font-black text-emerald-400">${remaining}</motion.p></div><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Spent</p><p className="text-2xl font-black">${spent}</p></div></div></div>
-                <div className="p-5"><div className="mb-5 grid grid-cols-3 gap-2"><div className={`rounded-xl border p-2 text-center ${guardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">GUARDS</p><p className="font-black">{guardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${forwardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">FORWARDS</p><p className="font-black">{forwardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${centerCount === 1?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">CENTER</p><p className="font-black">{centerCount}/1</p></div></div>
-                  <div className="space-y-2"><AnimatePresence mode="popLayout">{selected.map(p=><motion.div layout initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:20}} key={p.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-2.5"><div className="h-12 w-12 overflow-hidden rounded-lg bg-slate-800"><PlayerImage player={p}/></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{p.name}</p><p className="text-xs text-slate-500">{positionText(p)} · {p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''} · ${p.price}</p></div><button onClick={()=>selectPlayer(p)} className="rounded-lg p-2 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400" aria-label={`Remove ${p.name}`}><X size={16}/></button></motion.div>)}</AnimatePresence>{Array.from({length:5-selected.length}).map((_,i)=><div key={i} className="flex h-[69px] items-center justify-center rounded-xl border border-dashed border-white/10 text-xs font-semibold text-slate-700">Empty roster slot</div>)}</div>
-                  <button disabled={!validRoster} onClick={submitLineup} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 py-4 font-black shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-40"><Gauge size={18}/>Analyze My Team</button>
-                  <div className="mt-3 grid grid-cols-2 gap-2"><button disabled={!selected.length} onClick={saveLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Crown className="mr-1 inline" size={14}/>Save lineup</button><button disabled={!selected.length} onClick={shareLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Share2 className="mr-1 inline" size={14}/>Share</button></div>
-                </div></div></aside>
+            <div className="p-5"><div className="mb-5 grid grid-cols-3 gap-2"><div className={`rounded-xl border p-2 text-center ${guardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">GUARDS</p><p className="font-black">{guardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${forwardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">FORWARDS</p><p className="font-black">{forwardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${centerCount === 1?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">CENTER</p><p className="font-black">{centerCount}/1</p></div></div>
+              <div className="space-y-2"><AnimatePresence mode="popLayout">{selected.map(p=><motion.div layout initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:20}} key={p.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-2.5"><div className="h-12 w-12 overflow-hidden rounded-lg bg-slate-800"><PlayerImage player={p}/></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{p.name}</p><p className="text-xs text-slate-500">{positionText(p)} · {p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''} · ${p.price}</p></div><button onClick={()=>selectPlayer(p)} className="rounded-lg p-2 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400" aria-label={`Remove ${p.name}`}><X size={16}/></button></motion.div>)}</AnimatePresence>{Array.from({length:5-selected.length}).map((_,i)=><div key={i} className="flex h-[69px] items-center justify-center rounded-xl border border-dashed border-white/10 text-xs font-semibold text-slate-700">Empty roster slot</div>)}</div>
+              <button disabled={!validRoster} onClick={submitLineup} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 py-4 font-black shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-40"><Gauge size={18}/>Analyze My Team</button>
+              <div className="mt-3 grid grid-cols-2 gap-2"><button disabled={!selected.length} onClick={saveLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Crown className="mr-1 inline" size={14}/>Save lineup</button><button disabled={!selected.length} onClick={shareLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Share2 className="mr-1 inline" size={14}/>Share</button></div>
+            </div></div></aside>
         </div>
       </main>
 
@@ -675,14 +993,56 @@ function App() {
             <p className="text-xs font-black uppercase tracking-[.28em] text-blue-400">Front office report</p>
             <h2 className="mt-2 text-3xl font-black md:text-5xl">{isIdeal ? 'Congratulations!' : 'Team Analysis'}</h2>
             <p className="mt-2 text-slate-400">{isIdeal ? 'You found the ideal lineup for this player pool.' : mode === 'unlimited' && !revealIdeal ? 'Keep trying with this pool or give up to reveal the model-optimal lineup.' : 'See how your lineup compares with the model-optimal roster.'}</p>
-            <div className="mt-8 grid gap-4 md:grid-cols-[1.2fr_2fr]"><div className="flex items-center gap-5 rounded-2xl border border-white/10 bg-white/5 p-5"><motion.div initial={{rotate:-12,scale:.8}} animate={{rotate:0,scale:1}} className="grid h-28 w-28 place-items-center rounded-full border-8 border-blue-500/70 bg-slate-950 text-center"><div><p className="text-4xl font-black">{report.overall}</p><p className="text-[10px] font-bold text-slate-500">OVERALL</p></div></motion.div><div><p className="text-sm text-slate-400">Letter grade</p><p className="text-6xl font-black text-gradient">{report.grade}</p></div></div><div className="grid grid-cols-2 gap-3 md:grid-cols-4">{[[report.projectedWins,'Projected Wins'],[report.offensiveRating,'Off. Rating'],[report.defensiveRating,'Def. Rating'],[`${report.netRating>0?'+':''}${report.netRating}`,'Net Rating']].map(([v,l])=><div key={l} className="rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-2xl font-black md:text-3xl">{v}</p><p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">{l}</p></div>)}</div></div>
-          </div>
-          <div className="grid gap-6 px-4 pb-10 pt-6 sm:p-6 md:gap-8 md:p-10 lg:grid-cols-[1.25fr_.75fr]">
-            <div><h3 className="mb-4 text-xl font-black">Category Grades</h3><div className="space-y-4">{Object.entries(report.categories).map(([name,score],i)=><motion.div initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:i*.07}} key={name}><div className="mb-1 flex items-center justify-between text-sm"><span className="font-semibold">{name}</span><span className="font-black">{score} · {grade(score)}</span></div><div className="h-2 overflow-hidden rounded-full bg-white/5"><motion.div initial={{width:0}} animate={{width:`${score}%`}} transition={{duration:.7,delay:i*.06}} className="h-full rounded-full bg-gradient-to-r from-blue-500 to-rose-500"/></div></motion.div>)}</div>
-              <h3 className="mb-3 mt-8 text-lg font-black">Your lineup</h3><div className="grid gap-3 sm:grid-cols-5">{submittedLineup.map(p=><div key={p.id} className="rounded-xl border border-white/10 bg-white/5 p-2 text-center"><div className="mx-auto h-16 w-16 overflow-hidden rounded-lg"><PlayerImage player={p}/></div><p className="mt-2 truncate text-xs font-bold">{p.name}</p><p className="text-[10px] text-slate-500">{positionText(p)} · ${p.price}</p></div>)}</div>
-              {revealIdeal && idealLineup.length === 5 && <div className="mt-8 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5"><div className="flex items-end justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Ideal lineup</p><h3 className="text-xl font-black">Best roster for this pool</h3></div>{idealReport && <p className="text-sm font-bold text-amber-200">{idealReport.overall} OVR · {idealReport.projectedWins} wins</p>}</div><div className="mt-4 grid gap-3 sm:grid-cols-5">{idealLineup.map(p=><div key={p.id} className="rounded-xl border border-amber-300/15 bg-black/20 p-2 text-center"><div className="mx-auto h-16 w-16 overflow-hidden rounded-lg"><PlayerImage player={p}/></div><p className="mt-2 truncate text-xs font-bold">{p.name}</p><p className="text-[10px] text-slate-500">{positionText(p)} · ${p.price}</p></div>)}</div></div>}
+
+            <div className="mt-8 grid gap-4 md:grid-cols-[1.2fr_2fr]">
+              <div className="flex items-center gap-5 rounded-2xl border border-white/10 bg-white/5 p-5">
+                <motion.div initial={{ rotate: -12, scale: .8 }} animate={{ rotate: 0, scale: 1 }} className="grid h-28 w-28 place-items-center rounded-full border-8 border-blue-500/70 bg-slate-950 text-center">
+                  <div><p className="text-4xl font-black">{report.overall}</p><p className="text-[10px] font-bold text-slate-500">OVERALL</p></div>
+                </motion.div>
+                <div><p className="text-sm text-slate-400">Letter grade</p><p className="text-6xl font-black text-gradient">{report.grade}</p></div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {[
+                  [`${report.projectedWins}-${82 - report.projectedWins}`, 'Projected Record'],
+                  [report.offensiveRating, 'Off. Rating'],
+                  [report.defensiveRating, 'Def. Rating'],
+                  [`${report.netRating > 0 ? '+' : ''}${report.netRating}`, 'Net Rating'],
+                ].map(([v, l]) => (
+                  <div key={l} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p className="text-2xl font-black md:text-3xl">{v}</p>
+                    <p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">{l}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="space-y-5"><div className="rounded-2xl border border-emerald-400/15 bg-emerald-400/5 p-5"><h3 className="mb-3 flex items-center gap-2 font-black text-emerald-300"><Shield size={18}/>Strengths</h3><ul className="space-y-3 text-sm text-slate-300">{report.strengths.map(item=><li key={item} className="flex gap-2"><Check className="mt-0.5 shrink-0 text-emerald-400" size={15}/>{item}</li>)}</ul></div><div className="rounded-2xl border border-rose-400/15 bg-rose-400/5 p-5"><h3 className="mb-3 font-black text-rose-300">Weaknesses</h3><ul className="space-y-3 text-sm text-slate-300">{report.weaknesses.map(item=><li key={item} className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400"/>{item}</li>)}</ul></div>
+
+            {playoffFinish && <div className="mt-4 rounded-2xl border border-amber-400/20 bg-gradient-to-r from-amber-400/10 to-orange-500/5 p-5">
+              <div className="flex items-center gap-4">
+                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-amber-400/10"><Trophy className="text-amber-300" size={28}/></div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[.2em] text-amber-300">Projected Playoff Finish</p>
+                  <p className="mt-1 text-2xl font-black text-white md:text-3xl">{playoffFinish}</p>
+                  <p className="mt-1 text-xs text-slate-400">Based on regular-season projection, two-way strength, and lineup fit.</p>
+                </div>
+              </div>
+            </div>}
+          </div>
+
+          <div className="grid gap-6 px-4 pb-10 pt-6 sm:p-6 md:gap-8 md:p-10 lg:grid-cols-[1.25fr_.75fr]">
+            <div>
+              <h3 className="mb-4 text-xl font-black">Category Grades</h3>
+              <div className="space-y-4">{Object.entries(report.categories).map(([name,score],i)=><motion.div initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:i*.07}} key={name}><div className="mb-1 flex items-center justify-between text-sm"><span className="font-semibold">{name}</span><span className="font-black">{score} · {grade(score)}</span></div><div className="h-2 overflow-hidden rounded-full bg-white/5"><motion.div initial={{width:0}} animate={{width:`${score}%`}} transition={{duration:.7,delay:i*.06}} className="h-full rounded-full bg-gradient-to-r from-blue-500 to-rose-500"/></div></motion.div>)}</div>
+
+              <h3 className="mb-3 mt-8 text-lg font-black">Your lineup</h3>
+              <div className="grid gap-3 sm:grid-cols-5">{submittedLineup.map(p=><div key={p.id} className="rounded-xl border border-white/10 bg-white/5 p-2 text-center"><div className="mx-auto h-16 w-16 overflow-hidden rounded-lg"><PlayerImage player={p}/></div><p className="mt-2 truncate text-xs font-bold">{p.name}</p><p className="text-[10px] text-slate-500">{positionText(p)} · ${p.price}</p></div>)}</div>
+
+              {revealIdeal && idealLineup.length === 5 && <div className="mt-8 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5"><div className="flex items-end justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Ideal lineup</p><h3 className="text-xl font-black">Best roster for this pool</h3></div>{idealReport && <div className="text-right"><p className="text-sm font-bold text-amber-200">{idealReport.overall} OVR · {idealReport.projectedWins}-{82 - idealReport.projectedWins}</p>{idealPlayoffFinish && <p className="text-[10px] font-bold uppercase tracking-wide text-amber-100/60">{idealPlayoffFinish}</p>}</div>}</div><div className="mt-4 grid gap-3 sm:grid-cols-5">{idealLineup.map(p=><div key={p.id} className="rounded-xl border border-amber-300/15 bg-black/20 p-2 text-center"><div className="mx-auto h-16 w-16 overflow-hidden rounded-lg"><PlayerImage player={p}/></div><p className="mt-2 truncate text-xs font-bold">{p.name}</p><p className="text-[10px] text-slate-500">{positionText(p)} · ${p.price}</p></div>)}</div></div>}
+            </div>
+
+            <div className="space-y-5">
+              <div className="rounded-2xl border border-emerald-400/15 bg-emerald-400/5 p-5"><h3 className="mb-3 flex items-center gap-2 font-black text-emerald-300"><Shield size={18}/>Strengths</h3><ul className="space-y-3 text-sm text-slate-300">{report.strengths.map(item=><li key={item} className="flex gap-2"><Check className="mt-0.5 shrink-0 text-emerald-400" size={15}/>{item}</li>)}</ul></div>
+              <div className="rounded-2xl border border-rose-400/15 bg-rose-400/5 p-5"><h3 className="mb-3 font-black text-rose-300">Weaknesses</h3><ul className="space-y-3 text-sm text-slate-300">{report.weaknesses.map(item=><li key={item} className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400"/>{item}</li>)}</ul></div>
               <button onClick={shareLineup} className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-3 font-bold hover:bg-white/5"><Copy size={16}/>Copy Team Result</button>
               {mode === 'unlimited' && !revealIdeal && !isIdeal && <><button onClick={continueUnlimited} className="w-full rounded-xl bg-blue-500 py-3 font-black hover:bg-blue-400">Continue Playing</button><button onClick={()=>setRevealIdeal(true)} className="w-full rounded-xl border border-rose-400/25 bg-rose-500/10 py-3 font-black text-rose-200 hover:bg-rose-500/20">Give Up & Reveal Ideal</button></>}
               {mode !== 'daily' && (mode !== 'unlimited' || revealIdeal || isIdeal) && <button onClick={playAgain} className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 py-3 font-black"><RefreshCcw size={17}/>Play Again</button>}

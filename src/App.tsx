@@ -4,11 +4,10 @@ import {
   BarChart3, Check, ChevronRight, CircleDollarSign, Copy, Crown, Gauge,
   RefreshCcw, Search, Share2, Shield, Sparkles, Trophy, Users, X, Home, ListFilter, Layers3, LogOut, Medal,
 } from 'lucide-react';
-import rawPlayers from './data/players.json';
-import rawHistoricalPlayers from './data/historicalPlayers.json';
 import type { DetailedPosition, Difficulty, GameMode, Player, Position, TeamReport } from './types';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
 import { getDailyLeaderboard, getMyHighScores, getMyUsername, registerUserEmail, saveGameScore, setMyUsername, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
+import { getCurrentPlayers, getHistoricPlayerPool } from './lib/playerBackend';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -35,8 +34,6 @@ const normalizePlayer = (player: Player): Player => {
   return { ...player, detailedPositions, primaryDetailedPosition: primary, eligiblePositions };
 };
 
-const players = (rawPlayers as Player[]).map(normalizePlayer);
-const historicalPlayers = (rawHistoricalPlayers as Player[]).map(normalizePlayer);
 const BUDGETS: Record<Difficulty, number> = { easy: 175, normal: 150, hard: 125 };
 const DAILY_BUDGET = 150;
 
@@ -483,6 +480,12 @@ function App() {
   const [mode, setMode] = useState<GameMode>('classic');
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   const [poolKey, setPoolKey] = useState(() => crypto.randomUUID());
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [historicalPlayers, setHistoricalPlayers] = useState<Player[]>([]);
+  const [playerDataLoading, setPlayerDataLoading] = useState(true);
+  const [historicalPoolLoading, setHistoricalPoolLoading] = useState(false);
+  const [playerDataError, setPlayerDataError] = useState('');
+  const [playerDataReloadKey, setPlayerDataReloadKey] = useState(0);
   const [selected, setSelected] = useState<Player[]>([]);
   const [search, setSearch] = useState('');
   const [teamFilter, setTeamFilter] = useState('ALL');
@@ -523,18 +526,10 @@ function App() {
   const spent = selected.reduce((sum, p) => sum + p.price, 0);
   const remaining = budget - spent;
   const pool = useMemo(() => {
-    const source = mode === 'historic' ? historicalPlayers : players;
+    if (mode === 'historic') return historicalPlayers;
     const seed = mode === 'daily' ? `daily-${dailyDate}` : `${mode}-${poolKey}`;
-    const shuffled = seededShuffle(source, seed);
-    if (mode !== 'historic') return shuffled.slice(0, Math.min(80, shuffled.length));
-    const names = new Set<string>();
-    return shuffled.filter(player => {
-      const key = player.name.toLowerCase();
-      if (names.has(key)) return false;
-      names.add(key);
-      return true;
-    }).slice(0, 100);
-  }, [mode, poolKey, dailyDate]);
+    return seededShuffle(players, seed).slice(0, Math.min(80, players.length));
+  }, [mode, poolKey, dailyDate, players, historicalPlayers]);
 
   const teams = useMemo(() => [...new Set(pool.map(p => p.teamAbbreviation))].sort(), [pool]);
 
@@ -560,6 +555,62 @@ function App() {
     setSort('price-desc');
     setMobileFiltersOpen(false);
   };
+
+  useEffect(() => {
+    if (!supabase) {
+      setPlayerDataLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setPlayerDataLoading(true);
+    setPlayerDataError('');
+
+    getCurrentPlayers()
+      .then(data => {
+        if (!cancelled) setPlayers(data.map(normalizePlayer));
+      })
+      .catch(error => {
+        console.error(error);
+        if (!cancelled) {
+          setPlayerDataError(error instanceof Error ? error.message : 'Current player data could not be loaded.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setPlayerDataLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [playerDataReloadKey]);
+
+  useEffect(() => {
+    if (mode !== 'historic') {
+      setHistoricalPoolLoading(false);
+      return;
+    }
+    if (!supabase) return;
+
+    let cancelled = false;
+    setHistoricalPoolLoading(true);
+    setHistoricalPlayers([]);
+    setPlayerDataError('');
+
+    getHistoricPlayerPool(100)
+      .then(data => {
+        if (!cancelled) setHistoricalPlayers(data.map(normalizePlayer));
+      })
+      .catch(error => {
+        console.error(error);
+        if (!cancelled) {
+          setPlayerDataError(error instanceof Error ? error.message : 'Historic player data could not be loaded.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setHistoricalPoolLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [mode, poolKey, playerDataReloadKey]);
 
   useEffect(() => {
     if (!supabase) {
@@ -734,6 +785,7 @@ function App() {
   const newPool = () => {
     if (mode === 'daily') return;
     resetAuctionFilters();
+    if (mode === 'historic') setHistoricalPoolLoading(true);
     setPoolKey(crypto.randomUUID());
   };
 
@@ -779,6 +831,7 @@ function App() {
     setSubmittedLineup([]);
     setIdealLineup([]);
     setRevealIdeal(false);
+    if (mode === 'historic') setHistoricalPoolLoading(true);
     setPoolKey(crypto.randomUUID());
   };
 
@@ -822,6 +875,14 @@ function App() {
 
   if (!username) {
     return <div className="min-h-screen bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.25),transparent_30%),radial-gradient(circle_at_90%_10%,rgba(225,29,72,.18),transparent_28%)] px-5 py-16 text-white"><div className="mx-auto flex min-h-[75vh] max-w-lg flex-col items-center justify-center text-center"><div className="grid h-20 w-20 place-items-center rounded-[26px] bg-gradient-to-br from-blue-500 to-rose-500 shadow-[0_20px_70px_rgba(59,130,246,.35)]"><Users size={34}/></div><p className="mt-6 text-xs font-black uppercase tracking-[.3em] text-blue-400">One last step</p><h1 className="mt-2 text-4xl font-black">Choose your username</h1><p className="mt-4 leading-6 text-slate-400">This is the name other players will see on Daily leaderboards. Your email stays private.</p><input autoFocus value={usernameDraft} onChange={event => { setUsernameDraft(event.target.value); setUsernameError(''); }} onKeyDown={event => { if (event.key === 'Enter') saveUsername(); }} maxLength={20} placeholder="Example: PranavHoops" className="mt-7 min-h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-center text-lg font-bold outline-none placeholder:text-slate-600 focus:border-blue-500/60"/><div className="mt-2 flex w-full justify-between px-1 text-xs"><span className={usernameError ? 'text-rose-400' : 'text-slate-600'}>{usernameError || 'Letters, numbers, _ and . only'}</span><span className="text-slate-600">{usernameDraft.trim().length}/20</span></div><button onClick={saveUsername} disabled={usernameSaving || !usernameDraft.trim()} className="mt-5 min-h-14 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-rose-500 px-5 font-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40">{usernameSaving ? 'Saving…' : 'Enter NBA Stat Auction'}</button><button onClick={signOut} className="mt-3 min-h-11 px-4 text-sm font-bold text-slate-500 hover:text-white">Use a different Google account</button></div></div>;
+  }
+
+  if (playerDataLoading || (mode === 'historic' && historicalPoolLoading)) {
+    return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><RefreshCcw className="mx-auto mb-4 animate-spin text-blue-400"/><p className="font-bold">{mode === 'historic' ? 'Building a historic player pool…' : 'Loading player database…'}</p></div></div>;
+  }
+
+  if (playerDataError) {
+    return <div className="min-h-screen bg-[#050816] px-5 py-16 text-white"><div className="mx-auto max-w-xl rounded-3xl border border-rose-300/20 bg-rose-400/10 p-7"><h1 className="text-3xl font-black">Player database unavailable</h1><p className="mt-3 leading-6 text-slate-300">{playerDataError}</p><button onClick={() => { setPlayerDataError(''); setPlayerDataReloadKey(value => value + 1); setPoolKey(crypto.randomUUID()); }} className="mt-6 rounded-xl bg-white px-5 py-3 font-black text-slate-950">Try Again</button></div></div>;
   }
 
   if (view === 'stats') {
@@ -935,8 +996,6 @@ function App() {
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
           <div>
             <div className="glass mb-4 hidden rounded-2xl p-3 sm:mb-5 sm:block"><div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-[1.4fr_.7fr_.7fr_.8fr_auto]"><label className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search players..." className="col-span-2 w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-3 text-sm placeholder:text-slate-600"/></label><select value={teamFilter} onChange={e=>setTeamFilter(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All teams</option>{teams.map(t=><option key={t}>{t}</option>)}</select><select value={positionFilter} onChange={e=>setPositionFilter(e.target.value as 'ALL'|Position)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All positions</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select><select value={sort} onChange={e=>setSort(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="price-desc">Price: high to low</option><option value="price-asc">Price: low to high</option><option value="points">Points</option><option value="rebounds">Rebounds</option><option value="assists">Assists</option><option value="steals">Steals</option><option value="blocks">Blocks</option><option value="alpha">Alphabetical</option></select><button onClick={newPool} disabled={mode==='daily'} title={mode==='daily'?'Daily pool is fixed for everyone':'Generate a new player pool'} className="col-span-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold sm:col-span-1 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"><RefreshCcw className="mr-1 inline" size={17}/><span className="hidden 2xl:inline">Reset pool</span></button></div><div className="mt-3 flex items-center gap-3 px-1"><span className="text-xs font-bold text-slate-500">Max price ${maxPrice}</span><input type="range" min="0" max="80" value={maxPrice} onChange={e=>setMaxPrice(Number(e.target.value))} className="h-1 flex-1 accent-blue-500"/><span className="text-xs text-slate-600">{displayed.length} players</span></div></div>
-
-            {mode === 'historic' && historicalPlayers.length < 100 && <div className="mb-5 rounded-2xl border border-amber-400/25 bg-amber-400/10 p-5 text-sm text-amber-100"><p className="font-black">Historic data setup required</p><p className="mt-1 text-amber-100/75">Run <code className="rounded bg-black/30 px-1.5 py-0.5">npm run update-history</code> once, then restart the development server. The updater downloads season-by-season NBA player data and builds the Historic Mode database.</p></div>}
 
             <motion.div layout className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-4">
               <AnimatePresence>{displayed.map((p,index) => { const active=selected.some(s=>s.id===p.id); const unavailable=!active && (p.price>remaining || selected.length>=5 || !canStillBuildValidRoster([...selected, p])); return <motion.article layout initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} exit={{opacity:0,scale:.95}} transition={{delay:Math.min(index*.015,.25)}} key={p.id} className={`group relative overflow-hidden rounded-2xl border transition duration-300 touch-manipulation ${active?'border-blue-400 bg-blue-500/10 shadow-[0_0_35px_rgba(59,130,246,.22)]':'border-white/10 bg-slate-900/60 hover:-translate-y-1 hover:border-white/25 hover:bg-slate-900/90'}`}>

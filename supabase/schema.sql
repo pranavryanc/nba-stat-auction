@@ -38,17 +38,79 @@ create table if not exists public.daily_scores (
   primary key (challenge_date, email)
 );
 
+create table if not exists public.player_seasons (
+  id text primary key,
+  original_player_id bigint not null,
+  name text not null,
+  season text not null,
+  team_name text,
+  team_abbreviation text not null,
+  position text not null,
+  eligible_positions text[] not null default '{}',
+  detailed_positions text[],
+  primary_detailed_position text,
+  listed_detailed_position text,
+  position_percentages jsonb,
+  position_source text not null,
+  photo text,
+  team_logo text,
+  points double precision not null,
+  rebounds double precision not null,
+  assists double precision not null,
+  steals double precision not null,
+  blocks double precision not null,
+  price integer not null,
+  three_point_percentage double precision not null,
+  true_shooting double precision not null,
+  offensive_rating double precision not null,
+  defensive_rating double precision not null,
+  usage_rate double precision not null,
+  assist_percentage double precision not null,
+  rebound_percentage double precision not null,
+  steal_percentage double precision not null,
+  block_percentage double precision not null,
+  player_efficiency_rating double precision not null,
+  win_shares double precision not null,
+  box_plus_minus double precision not null,
+  estimated_plus_minus double precision not null,
+  is_current boolean not null default false,
+  source_file text not null,
+  updated_at timestamptz not null default now(),
+  constraint player_seasons_player_season_unique unique (original_player_id, season),
+  constraint player_seasons_season_format check (season ~ '^[0-9]{4}-[0-9]{2}$'),
+  constraint player_seasons_position check (position in ('G', 'F', 'C')),
+  constraint player_seasons_price_nonnegative check (price >= 0)
+);
+
+create index if not exists player_seasons_season_idx
+  on public.player_seasons (season);
+create index if not exists player_seasons_current_idx
+  on public.player_seasons (is_current)
+  where is_current = true;
+create index if not exists player_seasons_name_idx
+  on public.player_seasons (name);
+create index if not exists player_seasons_position_idx
+  on public.player_seasons (position);
+
 alter table public.app_users enable row level security;
 alter table public.high_scores enable row level security;
 alter table public.daily_scores enable row level security;
+alter table public.player_seasons enable row level security;
 
+drop policy if exists "Users can read their email row" on public.app_users;
 create policy "Users can read their email row" on public.app_users
 for select to authenticated using (email = (auth.jwt() ->> 'email'));
+drop policy if exists "Users can insert their email row" on public.app_users;
 create policy "Users can insert their email row" on public.app_users
 for insert to authenticated with check (email = (auth.jwt() ->> 'email'));
 
+drop policy if exists "Users can read their own high scores" on public.high_scores;
 create policy "Users can read their own high scores" on public.high_scores
 for select to authenticated using (email = (auth.jwt() ->> 'email'));
+
+drop policy if exists "Public player data is readable" on public.player_seasons;
+create policy "Public player data is readable" on public.player_seasons
+for select to anon, authenticated using (true);
 
 -- Daily score rows themselves are private. The public leaderboard is exposed only
 -- through get_daily_leaderboard(), which returns an anonymous label rather than email.
@@ -184,21 +246,45 @@ as $$
   limit greatest(1, least(coalesce(p_limit, 10), 50));
 $$;
 
+create or replace function public.get_random_historic_players(
+  p_limit integer default 100
+) returns setof public.player_seasons
+language sql
+volatile
+security invoker
+set search_path = public
+as $$
+  with one_season_per_player as (
+    select distinct on (lower(ps.name)) ps.*
+    from public.player_seasons ps
+    order by lower(ps.name), random()
+  )
+  select *
+  from one_season_per_player
+  order by random()
+  limit greatest(1, least(coalesce(p_limit, 100), 100));
+$$;
+
 grant execute on function public.set_my_username(text,text) to authenticated;
 grant execute on function public.upsert_mode_high_score(text,text,integer,integer,numeric,integer,jsonb) to authenticated;
 grant execute on function public.upsert_daily_score(text,date,integer,integer,numeric,integer,jsonb) to authenticated;
 grant execute on function public.get_daily_leaderboard(date,integer) to authenticated;
+grant execute on function public.get_random_historic_players(integer) to anon, authenticated;
 
 -- Explicit API privileges and function execution hardening.
 grant select, insert on public.app_users to authenticated;
 grant select on public.high_scores to authenticated;
 revoke all on public.daily_scores from anon;
 revoke all on public.daily_scores from authenticated;
+revoke all on public.player_seasons from anon, authenticated;
+grant select on public.player_seasons to anon, authenticated;
 
 revoke execute on function public.set_my_username(text,text) from public, anon;
 revoke execute on function public.upsert_mode_high_score(text,text,integer,integer,numeric,integer,jsonb) from public, anon;
 revoke execute on function public.upsert_daily_score(text,date,integer,integer,numeric,integer,jsonb) from public, anon;
 revoke execute on function public.get_daily_leaderboard(date,integer) from public, anon;
+revoke execute on function public.get_random_historic_players(integer) from public;
 grant execute on function public.upsert_mode_high_score(text,text,integer,integer,numeric,integer,jsonb) to authenticated;
 grant execute on function public.upsert_daily_score(text,date,integer,integer,numeric,integer,jsonb) to authenticated;
 grant execute on function public.get_daily_leaderboard(date,integer) to authenticated;
+grant execute on function public.get_random_historic_players(integer) to anon, authenticated;

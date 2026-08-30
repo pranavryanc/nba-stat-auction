@@ -1,5 +1,7 @@
 import type { Difficulty, GameMode, Player } from '../types';
 import { supabase } from './supabase';
+import { analyzeTeam } from './gameLogic';
+import { E2E_DAILY_DATE, E2E_DAILY_LEADERBOARD, E2E_PLAYERS, E2E_RESETS_AT, E2E_SESSION_ID, E2E_TEST_MODE, E2E_TEST_USERNAME } from './e2eFixtures';
 
 export type SavedHighScore = {
   mode: GameMode;
@@ -124,6 +126,7 @@ function rowToPlayer(row: PlayerSeasonRow): Player {
 }
 
 export async function registerUserEmail(email: string) {
+  if (E2E_TEST_MODE) return;
   const client = requireSupabase();
   const {
     data: { user },
@@ -142,6 +145,7 @@ export async function registerUserEmail(email: string) {
 }
 
 export async function getMyUsername(email: string): Promise<string | null> {
+  if (E2E_TEST_MODE) return E2E_TEST_USERNAME;
   const client = requireSupabase();
   const { data, error } = await client
     .from('app_users')
@@ -157,6 +161,7 @@ export async function setMyUsername(
   email: string,
   username: string,
 ): Promise<string> {
+  if (E2E_TEST_MODE) return username.trim();
   const client = requireSupabase();
   const cleaned = username.trim();
 
@@ -179,6 +184,22 @@ export async function createGameSession(
   mode: GameMode,
   difficulty: Difficulty,
 ): Promise<SecureGameSession> {
+  if (E2E_TEST_MODE) {
+    const budget = mode === 'daily'
+      ? 150
+      : difficulty === 'easy'
+        ? 175
+        : difficulty === 'hard'
+          ? 125
+          : 150;
+    return {
+      sessionId: E2E_SESSION_ID,
+      budget,
+      challengeDate: mode === 'daily' ? E2E_DAILY_DATE : null,
+      resetsAt: E2E_RESETS_AT,
+      players: E2E_PLAYERS,
+    };
+  }
   const client = requireSupabase();
 
   const { data, error } = await client.rpc('create_game_session_secure', {
@@ -227,6 +248,17 @@ export async function saveGameScore(args: {
   sessionId: string;
   lineup: Player[];
 }): Promise<VerifiedScore> {
+  if (E2E_TEST_MODE) {
+    if (args.lineup.length !== 5) throw new Error('Exactly five players are required.');
+    const report = analyzeTeam(args.lineup);
+    return {
+      score: report.overall,
+      projected_wins: report.projectedWins,
+      net_rating: report.netRating,
+      spent: args.lineup.reduce((sum, player) => sum + player.price, 0),
+      challenge_date: null,
+    };
+  }
   const client = requireSupabase();
 
   if (args.lineup.length !== 5) {
@@ -249,6 +281,7 @@ export async function saveGameScore(args: {
 export async function getMyHighScores(
   email: string,
 ): Promise<SavedHighScore[]> {
+  if (E2E_TEST_MODE) return [];
   const client = requireSupabase();
 
   const { data, error } = await client
@@ -263,6 +296,7 @@ export async function getMyHighScores(
 export async function getDailyLeaderboard(
   _challengeDate?: string,
 ): Promise<DailyLeaderboardEntry[]> {
+  if (E2E_TEST_MODE) return E2E_DAILY_LEADERBOARD as DailyLeaderboardEntry[];
   const client = requireSupabase();
 
   const { data, error } = await client.rpc('get_daily_leaderboard_secure', {
@@ -277,6 +311,9 @@ export async function getServerClock(): Promise<{
   challengeDate: string;
   resetsAt: string;
 }> {
+  if (E2E_TEST_MODE) {
+    return { challengeDate: E2E_DAILY_DATE, resetsAt: E2E_RESETS_AT };
+  }
   const client = requireSupabase();
 
   const { data, error } = await client.rpc('get_nba_auction_clock');

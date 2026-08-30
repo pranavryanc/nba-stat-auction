@@ -9,6 +9,7 @@ import { isSupabaseConfigured, supabase } from './lib/supabase';
 import { createGameSession, getDailyLeaderboard, getMyHighScores, getMyUsername, registerUserEmail, saveGameScore, setMyUsername, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
 import { getCurrentPlayers, getHistoricPlayerPool } from './lib/playerBackend';
 import { analyzeTeam, canStillBuildValidRoster, eligibility, findIdealLineup, grade, isValidRoster, positionBreakdownText, positionText, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
+import { E2E_TEST_EMAIL, E2E_TEST_MODE } from './lib/e2eFixtures';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -214,6 +215,12 @@ function App() {
   }, [userEmail, mode, difficulty, poolKey]);
 
   useEffect(() => {
+    if (E2E_TEST_MODE) {
+      const signedOut = new URLSearchParams(window.location.search).has('e2eSignedOut');
+      setUserEmail(signedOut ? null : E2E_TEST_EMAIL);
+      setAuthLoading(false);
+      return;
+    }
     if (!supabase) {
       setAuthLoading(false);
       return;
@@ -581,7 +588,7 @@ function App() {
     return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><Trophy className="mx-auto mb-4 text-blue-400"/><p className="font-bold">Loading NBA Stat Auction…</p></div></div>;
   }
 
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured && !E2E_TEST_MODE) {
     return <div className="min-h-screen bg-[#050816] px-5 py-16 text-white"><div className="mx-auto max-w-xl rounded-3xl border border-amber-300/20 bg-amber-400/10 p-7"><h1 className="text-3xl font-black">Backend setup required</h1><p className="mt-3 leading-6 text-slate-300">Create a Supabase project, run <code>supabase/schema.sql</code>, and copy <code>.env.example</code> to <code>.env</code> with your project URL and anon key.</p></div></div>;
   }
 

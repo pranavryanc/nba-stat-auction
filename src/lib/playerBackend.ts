@@ -1,5 +1,6 @@
 import type { Player } from '../types';
 import { supabase } from './supabase';
+import { E2E_PLAYERS, E2E_TEST_MODE } from './e2eFixtures';
 
 type PlayerSeasonRow = {
   id: string;
@@ -83,6 +84,7 @@ function rowToPlayer(row: PlayerSeasonRow): Player {
 }
 
 export async function getCurrentPlayers(): Promise<Player[]> {
+  if (E2E_TEST_MODE) return E2E_PLAYERS;
   const client = requireSupabase();
   const { data, error } = await client
     .from('player_seasons')
@@ -97,6 +99,7 @@ export async function getCurrentPlayers(): Promise<Player[]> {
 }
 
 export async function getHistoricPlayerPool(size = 100): Promise<Player[]> {
+  if (E2E_TEST_MODE) return E2E_PLAYERS.slice(0, Math.min(size, E2E_PLAYERS.length));
   const client = requireSupabase();
   const { data, error } = await client.rpc('get_random_historic_players', {
     p_limit: size,

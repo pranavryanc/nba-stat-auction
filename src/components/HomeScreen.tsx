@@ -100,7 +100,7 @@ export function HomeScreen({
             </div>
 
             <div className="mt-8 grid gap-3 md:mt-10 md:grid-cols-2 md:gap-4">
-              {modes.map(item => (
+              {modes.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => onStartMode(item.id)}
@@ -125,8 +125,8 @@ export function HomeScreen({
                   <h3 className="font-black">My Records</h3>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-2">
-                  {recordModes.map(recordMode => {
-                    const record = highScores.find(item => item.mode === recordMode);
+                  {recordModes.map((recordMode) => {
+                    const record = highScores.find((item) => item.mode === recordMode);
                     return (
                       <div key={recordMode} className="rounded-xl bg-black/20 p-3">
                         <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
@@ -171,7 +171,7 @@ export function HomeScreen({
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-bold">{entry.player_label}</p>
                         <p className="truncate text-[10px] text-slate-500">
-                          {entry.lineup.map(player => player.name).join(' · ')}
+                          {entry.lineup.map((player) => player.name).join(' · ')}
                         </p>
                       </div>
                       <p className="text-xl font-black">{entry.score}</p>
@@ -180,7 +180,9 @@ export function HomeScreen({
 
                   {!dailyLeaderboard.length && (
                     <p className="rounded-xl bg-black/20 p-4 text-sm text-slate-500">
-                      {leaderboardLoading ? 'Loading leaderboard…' : 'No Daily scores yet. Be the first.'}
+                      {leaderboardLoading
+                        ? 'Loading leaderboard…'
+                        : 'No Daily scores yet. Be the first.'}
                     </p>
                   )}
                 </div>
@@ -189,7 +191,9 @@ export function HomeScreen({
 
             <div className="mx-auto mt-5 flex w-full max-w-md items-center justify-between rounded-2xl border border-white/10 bg-white/[.035] p-3">
               <div className="min-w-0 text-left">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Signed in as</p>
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                  Signed in as
+                </p>
                 <p className="truncate font-black text-blue-300">@{username}</p>
               </div>
               <div className="flex gap-2">

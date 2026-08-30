@@ -11,7 +11,10 @@ const startingFive = [
 async function enterMode(page: Page, mode: 'Classic' | 'Daily Challenge') {
   await page.goto('/');
   await expect(page.getByText('@PlaywrightGM')).toBeVisible();
-  await page.getByRole('button', { name: new RegExp(mode, 'i') }).first().click();
+  await page
+    .getByRole('button', { name: new RegExp(mode, 'i') })
+    .first()
+    .click();
 }
 
 async function selectPlayer(page: Page, name: string) {
@@ -28,8 +31,12 @@ test.describe('authenticated game flows', () => {
   test('opens an authenticated Classic game with a deterministic player pool', async ({ page }) => {
     await enterMode(page, 'Classic');
 
-    await expect(page.getByRole('heading', { name: 'Test Guard Alpha', exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Test Center Alpha', exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Test Guard Alpha', exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Test Center Alpha', exact: true }),
+    ).toBeVisible();
   });
 
   test('selects a valid starting five and produces a team analysis', async ({ page }, testInfo) => {
@@ -60,7 +67,10 @@ test.describe('authenticated game flows', () => {
   });
 
   test('saves and restores a lineup on desktop', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name === 'mobile-chromium', 'Save/Load controls are currently desktop-only.');
+    test.skip(
+      testInfo.project.name === 'mobile-chromium',
+      'Save/Load controls are currently desktop-only.',
+    );
 
     await enterMode(page, 'Classic');
     await selectPlayer(page, startingFive[0]);

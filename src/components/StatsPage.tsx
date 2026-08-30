@@ -4,14 +4,7 @@ import type { Player } from '../types';
 import { positionText } from '../lib/gameLogic';
 
 type StatsSort =
-  | 'name'
-  | 'price'
-  | 'points'
-  | 'rebounds'
-  | 'assists'
-  | 'steals'
-  | 'blocks'
-  | 'trueShooting';
+  'name' | 'price' | 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks' | 'trueShooting';
 
 type StatsPageProps = {
   players: Player[];
@@ -25,7 +18,7 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
 
   const perPage = 20;
   const filteredPlayers = players
-    .filter(player =>
+    .filter((player) =>
       (player.name + ' ' + player.teamAbbreviation + ' ' + positionText(player))
         .toLowerCase()
         .includes(search.toLowerCase()),
@@ -45,8 +38,10 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
   const safePage = Math.min(page, pageCount);
   const start = (safePage - 1) * perPage;
   const visiblePlayers = filteredPlayers.slice(start, start + perPage);
-  const visiblePages = Array.from({ length: pageCount }, (_, index) => index + 1)
-    .filter(candidate => candidate === 1 || candidate === pageCount || Math.abs(candidate - safePage) <= 1);
+  const visiblePages = Array.from({ length: pageCount }, (_, index) => index + 1).filter(
+    (candidate) =>
+      candidate === 1 || candidate === pageCount || Math.abs(candidate - safePage) <= 1,
+  );
 
   const changeSearch = (value: string) => {
     setSearch(value);
@@ -62,10 +57,13 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#18254a_0,_#050816_42%)] px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(2rem+env(safe-area-inset-top))] sm:px-5 md:p-10">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 pt-3 sm:pt-0">
-          <p className="text-xs font-bold uppercase tracking-[.3em] text-blue-400">League database</p>
+          <p className="text-xs font-bold uppercase tracking-[.3em] text-blue-400">
+            League database
+          </p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">Player Statistics</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400 sm:text-base">
-            Advanced metrics are visible here and in the post-auction team report. Prices include PTS + REB + AST + STL + BLK.
+            Advanced metrics are visible here and in the post-auction team report. Prices include
+            PTS + REB + AST + STL + BLK.
           </p>
         </div>
 
@@ -84,7 +82,7 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
             />
             <input
               value={search}
-              onChange={event => changeSearch(event.target.value)}
+              onChange={(event) => changeSearch(event.target.value)}
               placeholder="Search player, team, or position"
               className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 pl-10 pr-4 text-base outline-none placeholder:text-slate-600 focus:border-blue-500/60"
             />
@@ -92,7 +90,7 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
 
           <select
             value={sort}
-            onChange={event => changeSort(event.target.value as StatsSort)}
+            onChange={(event) => changeSort(event.target.value as StatsSort)}
             className="min-h-12 rounded-xl border border-white/10 bg-slate-900 px-4 text-base outline-none focus:border-blue-500/60"
           >
             <option value="name">Sort: Alphabetical</option>
@@ -129,13 +127,15 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
                     'PER',
                     'BPM',
                     'EPM',
-                  ].map(heading => (
-                    <th key={heading} className="whitespace-nowrap px-4 py-4">{heading}</th>
+                  ].map((heading) => (
+                    <th key={heading} className="whitespace-nowrap px-4 py-4">
+                      {heading}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {visiblePlayers.map(player => (
+                {visiblePlayers.map((player) => (
                   <tr key={player.id} className="border-t border-white/5 hover:bg-white/[.03]">
                     <td className="whitespace-nowrap px-4 py-3 font-semibold">
                       {player.name}
@@ -143,7 +143,10 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
                     </td>
                     <td className="whitespace-nowrap px-4">{player.season ?? '2025-26'}</td>
                     <td className="whitespace-nowrap px-4">{positionText(player)}</td>
-                    <td className="px-4">{'$'}{player.price}</td>
+                    <td className="px-4">
+                      {'$'}
+                      {player.price}
+                    </td>
                     <td className="px-4">{player.points.toFixed(1)}</td>
                     <td className="px-4">{player.rebounds.toFixed(1)}</td>
                     <td className="px-4">{player.assists.toFixed(1)}</td>
@@ -164,7 +167,9 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
           </div>
 
           {visiblePlayers.length === 0 && (
-            <div className="px-6 py-14 text-center text-slate-400">No players match that search.</div>
+            <div className="px-6 py-14 text-center text-slate-400">
+              No players match that search.
+            </div>
           )}
         </div>
 
@@ -172,7 +177,8 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
           <p className="text-center text-sm text-slate-400 sm:text-left">
             Showing{' '}
             <span className="font-bold text-white">
-              {filteredPlayers.length === 0 ? 0 : start + 1}–{Math.min(start + perPage, filteredPlayers.length)}
+              {filteredPlayers.length === 0 ? 0 : start + 1}–
+              {Math.min(start + perPage, filteredPlayers.length)}
             </span>{' '}
             of <span className="font-bold text-white">{filteredPlayers.length}</span> players
           </p>
@@ -180,7 +186,7 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
           <div className="flex flex-wrap items-center justify-center gap-2">
             <button
               disabled={safePage === 1}
-              onClick={() => setPage(current => Math.max(1, current - 1))}
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
               className="min-h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-35"
             >
               Previous
@@ -211,7 +217,7 @@ export function StatsPage({ players, onBack }: StatsPageProps) {
 
             <button
               disabled={safePage === pageCount}
-              onClick={() => setPage(current => Math.min(pageCount, current + 1))}
+              onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
               className="min-h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-35"
             >
               Next

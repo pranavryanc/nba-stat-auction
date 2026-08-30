@@ -36,13 +36,11 @@ npm run preview
 
 The included player JSON is a development/demo dataset shaped exactly for the requested 2025–26 schema. Before public release, replace or verify the statistical values against a licensed, authoritative 2025–26 regular-season data source. Player images and logos load from NBA CDN URLs and include fallback UI when an image is unavailable.
 
-
 ## Refresh the 2025–26 player database
 
 Run `npm run update-data` to download the completed 2025–26 regular-season player statistics from the NBA Stats endpoints and rebuild `src/data/players.json`. The updater includes every player who appeared in at least one regular-season game, including low-minute reserves.
 
 Pool selection is a uniform seeded shuffle. There are no guaranteed stars, no protected tiers, and no minimum number of high-price players.
-
 
 ## Refreshing player data
 
@@ -61,7 +59,6 @@ npm run update-history
 Historic data is downloaded once and stored locally in `src/data/historicalPlayers.json`. A historic entry represents one player in one specific season. The same player may therefore appear more than once in a 100-player pool if different seasons are randomly selected. Traditional steals and blocks are zero in seasons before the NBA officially tracked those categories.
 
 Auction price formula: `round(PTS + REB + AST + STL + BLK)`.
-
 
 ## Multi-position roster eligibility
 
@@ -120,4 +117,5 @@ This version uses Supabase for authentication and score storage.
 The application database stores email as its only personal user field. Supabase Auth itself necessarily maintains authentication/session identifiers and provider metadata. Public Daily leaderboard queries return an anonymous player label rather than the email address.
 
 ## Position-data quality update
+
 Primary positions now come from Basketball-Reference's listed `Pos` column when positional data is available. The PG/SG/SF/PF/C minute estimates are used only for a secondary position. A secondary must be adjacent to the primary and reach 25% of estimated minutes. Run `npm run update-data`, `npm run update-history`, `npm run sanitize-positions`, and `npm run audit-positions` after installing this version.

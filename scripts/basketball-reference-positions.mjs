@@ -13,7 +13,7 @@ const ADJACENT_POSITIONS = {
   C: ['PF'],
 };
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function decodeHtml(value) {
   return value
@@ -41,51 +41,68 @@ export function normalizePlayerName(value) {
 }
 
 function parsePercent(value) {
-  const parsed = Number(String(value ?? '').replace('%', '').trim());
+  const parsed = Number(
+    String(value ?? '')
+      .replace('%', '')
+      .trim(),
+  );
   if (!Number.isFinite(parsed)) return 0;
   return parsed > 1 ? parsed / 100 : parsed;
 }
 
 function getCells(rowHtml) {
-  return [...rowHtml.matchAll(/<(th|td)\b([^>]*)>([\s\S]*?)<\/\1>/gi)].map(match => ({
+  return [...rowHtml.matchAll(/<(th|td)\b([^>]*)>([\s\S]*?)<\/\1>/gi)].map((match) => ({
     text: decodeHtml(match[3]),
   }));
 }
 
 function findPositionTable(html) {
   const uncommented = html.replace(/<!--([\s\S]*?)-->/g, '$1');
-  const tables = [...uncommented.matchAll(/<table\b[^>]*>[\s\S]*?<\/table>/gi)].map(match => match[0]);
-  return tables.find(table => POSITION_ORDER.every(position => table.includes(`${position}%`))) ?? null;
+  const tables = [...uncommented.matchAll(/<table\b[^>]*>[\s\S]*?<\/table>/gi)].map(
+    (match) => match[0],
+  );
+  return (
+    tables.find((table) => POSITION_ORDER.every((position) => table.includes(`${position}%`))) ??
+    null
+  );
 }
 
 export function parseBasketballReferencePositions(html, threshold = DEFAULT_THRESHOLD) {
   const table = findPositionTable(html);
   if (!table) throw new Error('Could not find the Basketball-Reference positional-minutes table.');
 
-  const rows = [...table.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi)].map(match => match[0]);
+  const rows = [...table.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi)].map((match) => match[0]);
   let headers = [];
   for (const row of rows) {
-    const cells = getCells(row).map(cell => cell.text);
-    if (cells.includes('Player') && POSITION_ORDER.every(position => cells.includes(`${position}%`))) headers = cells;
+    const cells = getCells(row).map((cell) => cell.text);
+    if (
+      cells.includes('Player') &&
+      POSITION_ORDER.every((position) => cells.includes(`${position}%`))
+    )
+      headers = cells;
   }
   if (!headers.length) throw new Error('Could not identify position-percentage columns.');
 
   const playerIndex = headers.indexOf('Player');
   const teamIndex = headers.indexOf('Tm');
   const listedPositionIndex = headers.indexOf('Pos');
-  const positionIndexes = Object.fromEntries(POSITION_ORDER.map(position => [position, headers.indexOf(`${position}%`)]));
+  const positionIndexes = Object.fromEntries(
+    POSITION_ORDER.map((position) => [position, headers.indexOf(`${position}%`)]),
+  );
   const result = new Map();
 
   for (const row of rows) {
-    const cells = getCells(row).map(cell => cell.text);
+    const cells = getCells(row).map((cell) => cell.text);
     if (!cells.length || cells.includes('Player')) continue;
     const name = cells[playerIndex];
     if (!name) continue;
 
-    const percentages = Object.fromEntries(POSITION_ORDER.map(position => [
-      position,
-      positionIndexes[position] >= 0 ? parsePercent(cells[positionIndexes[position]]) : 0,
-    ]));
+    const percentages = Object.fromEntries(
+      POSITION_ORDER.map((position) => [
+        position,
+        positionIndexes[position] >= 0 ? parsePercent(cells[positionIndexes[position]]) : 0,
+      ]),
+    );
     const maxPercentage = Math.max(...Object.values(percentages));
     if (maxPercentage <= 0) continue;
 
@@ -94,20 +111,24 @@ export function parseBasketballReferencePositions(html, threshold = DEFAULT_THRE
     // only to grant an adjacent secondary position. This prevents a high
     // estimated percentage at an unusual spot from changing a player's
     // primary position (for example, turning a wing into a point guard).
-    const listedPositionText = listedPositionIndex >= 0 ? String(cells[listedPositionIndex] ?? '') : '';
-    const listedDetailedPosition = POSITION_ORDER.find(position =>
-      new RegExp(`(^|[^A-Z])${position}([^A-Z]|$)`).test(listedPositionText.toUpperCase())
+    const listedPositionText =
+      listedPositionIndex >= 0 ? String(cells[listedPositionIndex] ?? '') : '';
+    const listedDetailedPosition = POSITION_ORDER.find((position) =>
+      new RegExp(`(^|[^A-Z])${position}([^A-Z]|$)`).test(listedPositionText.toUpperCase()),
     );
-    const primaryDetailedPosition = listedDetailedPosition
-      ?? POSITION_ORDER.find(position => percentages[position] === maxPercentage)
-      ?? 'SF';
+    const primaryDetailedPosition =
+      listedDetailedPosition ??
+      POSITION_ORDER.find((position) => percentages[position] === maxPercentage) ??
+      'SF';
     const secondaryDetailedPosition = (ADJACENT_POSITIONS[primaryDetailedPosition] ?? [])
-      .filter(position => percentages[position] >= threshold)
+      .filter((position) => percentages[position] >= threshold)
       .sort((a, b) => percentages[b] - percentages[a])[0];
     const detailedPositions = secondaryDetailedPosition
       ? [primaryDetailedPosition, secondaryDetailedPosition]
       : [primaryDetailedPosition];
-    const eligiblePositions = [...new Set(detailedPositions.map(position => GROUP_BY_POSITION[position]))];
+    const eligiblePositions = [
+      ...new Set(detailedPositions.map((position) => GROUP_BY_POSITION[position])),
+    ];
     const entry = {
       name: name.replace(/\*/g, '').trim(),
       teamAbbreviation: cells[teamIndex] ?? '',
@@ -116,7 +137,9 @@ export function parseBasketballReferencePositions(html, threshold = DEFAULT_THRE
       listedDetailedPosition: listedDetailedPosition ?? primaryDetailedPosition,
       eligiblePositions,
       position: GROUP_BY_POSITION[primaryDetailedPosition],
-      positionPercentages: Object.fromEntries(POSITION_ORDER.map(position => [position, Math.round(percentages[position] * 1000) / 10])),
+      positionPercentages: Object.fromEntries(
+        POSITION_ORDER.map((position) => [position, Math.round(percentages[position] * 1000) / 10]),
+      ),
       positionSource: 'basketball-reference-position-estimate',
     };
     const key = normalizePlayerName(name);
@@ -130,9 +153,11 @@ export function parseBasketballReferencePositions(html, threshold = DEFAULT_THRE
 export function findPositionRecord(positionMap, playerName, teamAbbreviation = '') {
   const records = positionMap?.get(normalizePlayerName(playerName)) ?? [];
   if (!records.length) return null;
-  return records.find(record => record.teamAbbreviation === teamAbbreviation)
-    ?? records.find(record => record.teamAbbreviation === 'TOT')
-    ?? records[0];
+  return (
+    records.find((record) => record.teamAbbreviation === teamAbbreviation) ??
+    records.find((record) => record.teamAbbreviation === 'TOT') ??
+    records[0]
+  );
 }
 
 export async function fetchBasketballReferencePositions(season, options = {}) {
@@ -148,7 +173,8 @@ export async function fetchBasketballReferencePositions(season, options = {}) {
     const response = await fetch(url, { headers, signal: AbortSignal.timeout(30000) });
     if (response.ok) return parseBasketballReferencePositions(await response.text(), threshold);
     if (response.status === 404) return new Map();
-    if (attempt === 3) throw new Error(`Basketball-Reference request failed (${response.status}) for ${season}`);
+    if (attempt === 3)
+      throw new Error(`Basketball-Reference request failed (${response.status}) for ${season}`);
     await sleep(attempt * 2000);
   }
   return new Map();
@@ -161,12 +187,16 @@ export function isValidDetailedPositionPair(positions) {
   return (ADJACENT_POSITIONS[primary] ?? []).includes(secondary);
 }
 
-export function sanitizeDetailedPositions(positions, percentages = {}, threshold = DEFAULT_THRESHOLD) {
+export function sanitizeDetailedPositions(
+  positions,
+  percentages = {},
+  threshold = DEFAULT_THRESHOLD,
+) {
   if (!Array.isArray(positions) || !positions.length) return [];
   const primary = positions[0];
   if (!POSITION_ORDER.includes(primary)) return [];
   const secondary = (ADJACENT_POSITIONS[primary] ?? [])
-    .filter(position => Number(percentages[position] ?? 0) >= threshold)
+    .filter((position) => Number(percentages[position] ?? 0) >= threshold)
     .sort((a, b) => Number(percentages[b] ?? 0) - Number(percentages[a] ?? 0))[0];
   return secondary ? [primary, secondary] : [primary];
 }

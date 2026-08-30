@@ -1,7 +1,15 @@
 import type { Difficulty, GameMode, Player } from '../types';
 import { supabase } from './supabase';
 import { analyzeTeam } from './gameLogic';
-import { E2E_DAILY_DATE, E2E_DAILY_LEADERBOARD, E2E_PLAYERS, E2E_RESETS_AT, E2E_SESSION_ID, E2E_TEST_MODE, E2E_TEST_USERNAME } from './e2eFixtures';
+import {
+  E2E_DAILY_DATE,
+  E2E_DAILY_LEADERBOARD,
+  E2E_PLAYERS,
+  E2E_RESETS_AT,
+  E2E_SESSION_ID,
+  E2E_TEST_MODE,
+  E2E_TEST_USERNAME,
+} from './e2eFixtures';
 
 export type SavedHighScore = {
   mode: GameMode;
@@ -136,10 +144,7 @@ export async function registerUserEmail(email: string) {
 
   const { error } = await client
     .from('app_users')
-    .upsert(
-      { email, user_id: user.id },
-      { onConflict: 'email', ignoreDuplicates: false },
-    );
+    .upsert({ email, user_id: user.id }, { onConflict: 'email', ignoreDuplicates: false });
 
   if (error) throw error;
 }
@@ -157,10 +162,7 @@ export async function getMyUsername(email: string): Promise<string | null> {
   return data?.username ?? null;
 }
 
-export async function setMyUsername(
-  email: string,
-  username: string,
-): Promise<string> {
+export async function setMyUsername(email: string, username: string): Promise<string> {
   if (E2E_TEST_MODE) return username.trim();
   const client = requireSupabase();
   const cleaned = username.trim();
@@ -185,13 +187,8 @@ export async function createGameSession(
   difficulty: Difficulty,
 ): Promise<SecureGameSession> {
   if (E2E_TEST_MODE) {
-    const budget = mode === 'daily'
-      ? 150
-      : difficulty === 'easy'
-        ? 175
-        : difficulty === 'hard'
-          ? 125
-          : 150;
+    const budget =
+      mode === 'daily' ? 150 : difficulty === 'easy' ? 175 : difficulty === 'hard' ? 125 : 150;
     return {
       sessionId: E2E_SESSION_ID,
       budget,
@@ -224,7 +221,7 @@ export async function createGameSession(
   }
 
   const byId = new Map(
-    ((rows ?? []) as PlayerSeasonRow[]).map(row => [row.id, rowToPlayer(row)]),
+    ((rows ?? []) as PlayerSeasonRow[]).map((row) => [row.id, rowToPlayer(row)]),
   );
 
   const players = (session.pool_ids as string[])
@@ -267,7 +264,7 @@ export async function saveGameScore(args: {
 
   const { data, error } = await client.rpc('submit_game_score_secure', {
     p_session_id: args.sessionId,
-    p_player_ids: args.lineup.map(player => String(player.id)),
+    p_player_ids: args.lineup.map((player) => String(player.id)),
   });
 
   if (error) throw new Error(`Score could not be verified: ${error.message}`);
@@ -278,9 +275,7 @@ export async function saveGameScore(args: {
   return result as VerifiedScore;
 }
 
-export async function getMyHighScores(
-  email: string,
-): Promise<SavedHighScore[]> {
+export async function getMyHighScores(email: string): Promise<SavedHighScore[]> {
   if (E2E_TEST_MODE) return [];
   const client = requireSupabase();
 

@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 
 const FILES = ['src/data/players.json', 'src/data/historicalPlayers.json'];
-const ADJACENT = { PG:['SG'], SG:['PG','SF'], SF:['SG','PF'], PF:['SF','C'], C:['PF'] };
+const ADJACENT = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
 let issues = 0;
 for (const file of FILES) {
   const rows = JSON.parse(await readFile(file, 'utf8'));
@@ -9,8 +9,14 @@ for (const file of FILES) {
     const positions = player.detailedPositions ?? [];
     const primary = player.listedDetailedPosition ?? player.primaryDetailedPosition ?? positions[0];
     if (!primary) continue;
-    if (player.listedDetailedPosition && player.primaryDetailedPosition && player.listedDetailedPosition !== player.primaryDetailedPosition) {
-      console.log(`${file}: ${player.name}${player.season ? ` (${player.season})` : ''} primary ${player.primaryDetailedPosition} disagrees with listed ${player.listedDetailedPosition}`);
+    if (
+      player.listedDetailedPosition &&
+      player.primaryDetailedPosition &&
+      player.listedDetailedPosition !== player.primaryDetailedPosition
+    ) {
+      console.log(
+        `${file}: ${player.name}${player.season ? ` (${player.season})` : ''} primary ${player.primaryDetailedPosition} disagrees with listed ${player.listedDetailedPosition}`,
+      );
       issues += 1;
     }
     if (positions.length > 2) {
@@ -28,8 +34,12 @@ for (const file of FILES) {
   }
 }
 if (issues) {
-  console.error(`Position audit found ${issues} issue(s). Run npm run update-data / update-history, then sanitize again.`);
+  console.error(
+    `Position audit found ${issues} issue(s). Run npm run update-data / update-history, then sanitize again.`,
+  );
   process.exitCode = 1;
 } else {
-  console.log('Position audit passed. Primary positions, adjacency, and 25% secondary eligibility are consistent.');
+  console.log(
+    'Position audit passed. Primary positions, adjacency, and 25% secondary eligibility are consistent.',
+  );
 }

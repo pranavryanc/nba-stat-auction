@@ -1,6 +1,7 @@
 export type Position = 'G' | 'F' | 'C';
 export type DetailedPosition = 'PG' | 'SG' | 'SF' | 'PF' | 'C';
-export type PositionSource = 'basketball-reference-position-estimate' | 'listed-position' | 'statistical-fallback';
+export type PositionSource =
+  'basketball-reference-position-estimate' | 'listed-position' | 'statistical-fallback';
 export type PositionEligibility = Position[];
 export type GameMode = 'classic' | 'daily' | 'unlimited' | 'historic';
 export type Difficulty = 'easy' | 'normal' | 'hard';

@@ -10,15 +10,19 @@ export function useAuctionFilters(pool: Player[]) {
   const [sort, setSort] = useState('price-desc');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  const teams = useMemo(() => [...new Set(pool.map(player => player.teamAbbreviation))].sort(), [pool]);
+  const teams = useMemo(
+    () => [...new Set(pool.map((player) => player.teamAbbreviation))].sort(),
+    [pool],
+  );
 
   const displayed = useMemo(() => {
     const normalizedSearch = search.toLowerCase();
-    const list = pool.filter(player =>
-      player.name.toLowerCase().includes(normalizedSearch)
-      && (teamFilter === 'ALL' || player.teamAbbreviation === teamFilter)
-      && (positionFilter === 'ALL' || eligibility(player).includes(positionFilter))
-      && player.price <= maxPrice
+    const list = pool.filter(
+      (player) =>
+        player.name.toLowerCase().includes(normalizedSearch) &&
+        (teamFilter === 'ALL' || player.teamAbbreviation === teamFilter) &&
+        (positionFilter === 'ALL' || eligibility(player).includes(positionFilter)) &&
+        player.price <= maxPrice,
     );
 
     return [...list].sort((a, b) => {

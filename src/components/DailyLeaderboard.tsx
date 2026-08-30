@@ -13,11 +13,7 @@ type DailyLeaderboardProps = {
   onRefresh: () => void;
 };
 
-export function DailyLeaderboard({
-  entries,
-  loading,
-  onRefresh,
-}: DailyLeaderboardProps) {
+export function DailyLeaderboard({ entries, loading, onRefresh }: DailyLeaderboardProps) {
   return (
     <section className="mb-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3">
@@ -48,7 +44,7 @@ export function DailyLeaderboard({
             <div className="min-w-0">
               <p className="font-bold">{entry.player_label}</p>
               <p className="truncate text-xs text-slate-500">
-                {entry.lineup.map(player => player.name).join(' · ')}
+                {entry.lineup.map((player) => player.name).join(' · ')}
               </p>
             </div>
             <div className="text-right">

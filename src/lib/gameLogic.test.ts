@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Player, Position } from '../types';
-import {
-  analyzeTeam,
-  findIdealLineup,
-  isValidRoster,
-  sameLineup,
-} from './gameLogic';
+import { analyzeTeam, findIdealLineup, isValidRoster, sameLineup } from './gameLogic';
 
 const player = (
   id: string,
@@ -45,39 +40,89 @@ const player = (
 
 const balancedTeam = [
   player('g1', 'Guard One', 'G', {
-    points: 28, assists: 8, rebounds: 4, price: 30,
-    threePointPercentage: 39, trueShooting: 61,
-    defensiveRating: 110, usageRate: 28, assistPercentage: 30,
-    reboundPercentage: 8, stealPercentage: 2, blockPercentage: 1,
-    playerEfficiencyRating: 23, boxPlusMinus: 5, estimatedPlusMinus: 4,
+    points: 28,
+    assists: 8,
+    rebounds: 4,
+    price: 30,
+    threePointPercentage: 39,
+    trueShooting: 61,
+    defensiveRating: 110,
+    usageRate: 28,
+    assistPercentage: 30,
+    reboundPercentage: 8,
+    stealPercentage: 2,
+    blockPercentage: 1,
+    playerEfficiencyRating: 23,
+    boxPlusMinus: 5,
+    estimatedPlusMinus: 4,
   }),
   player('g2', 'Guard Two', 'G', {
-    points: 22, assists: 7, rebounds: 4, price: 27,
-    threePointPercentage: 38, trueShooting: 59,
-    defensiveRating: 112, usageRate: 24, assistPercentage: 27,
-    reboundPercentage: 7, stealPercentage: 1.7, blockPercentage: 0.5,
-    playerEfficiencyRating: 20, boxPlusMinus: 3, estimatedPlusMinus: 3,
+    points: 22,
+    assists: 7,
+    rebounds: 4,
+    price: 27,
+    threePointPercentage: 38,
+    trueShooting: 59,
+    defensiveRating: 112,
+    usageRate: 24,
+    assistPercentage: 27,
+    reboundPercentage: 7,
+    stealPercentage: 1.7,
+    blockPercentage: 0.5,
+    playerEfficiencyRating: 20,
+    boxPlusMinus: 3,
+    estimatedPlusMinus: 3,
   }),
   player('f1', 'Forward One', 'F', {
-    points: 20, assists: 4, rebounds: 8, price: 25,
-    threePointPercentage: 37, trueShooting: 58,
-    defensiveRating: 108, usageRate: 22, assistPercentage: 18,
-    reboundPercentage: 12, stealPercentage: 1.5, blockPercentage: 1.2,
-    playerEfficiencyRating: 21, boxPlusMinus: 4, estimatedPlusMinus: 4,
+    points: 20,
+    assists: 4,
+    rebounds: 8,
+    price: 25,
+    threePointPercentage: 37,
+    trueShooting: 58,
+    defensiveRating: 108,
+    usageRate: 22,
+    assistPercentage: 18,
+    reboundPercentage: 12,
+    stealPercentage: 1.5,
+    blockPercentage: 1.2,
+    playerEfficiencyRating: 21,
+    boxPlusMinus: 4,
+    estimatedPlusMinus: 4,
   }),
   player('f2', 'Forward Two', 'F', {
-    points: 18, assists: 3, rebounds: 9, price: 24,
-    threePointPercentage: 40, trueShooting: 60,
-    defensiveRating: 107, usageRate: 20, assistPercentage: 15,
-    reboundPercentage: 14, stealPercentage: 1.4, blockPercentage: 1.5,
-    playerEfficiencyRating: 21, boxPlusMinus: 4, estimatedPlusMinus: 4,
+    points: 18,
+    assists: 3,
+    rebounds: 9,
+    price: 24,
+    threePointPercentage: 40,
+    trueShooting: 60,
+    defensiveRating: 107,
+    usageRate: 20,
+    assistPercentage: 15,
+    reboundPercentage: 14,
+    stealPercentage: 1.4,
+    blockPercentage: 1.5,
+    playerEfficiencyRating: 21,
+    boxPlusMinus: 4,
+    estimatedPlusMinus: 4,
   }),
   player('c1', 'Center One', 'C', {
-    points: 16, assists: 2, rebounds: 12, price: 23,
-    threePointPercentage: 34, trueShooting: 62,
-    defensiveRating: 105, usageRate: 18, assistPercentage: 10,
-    reboundPercentage: 18, stealPercentage: 1.2, blockPercentage: 3,
-    playerEfficiencyRating: 24, boxPlusMinus: 5, estimatedPlusMinus: 5,
+    points: 16,
+    assists: 2,
+    rebounds: 12,
+    price: 23,
+    threePointPercentage: 34,
+    trueShooting: 62,
+    defensiveRating: 105,
+    usageRate: 18,
+    assistPercentage: 10,
+    reboundPercentage: 18,
+    stealPercentage: 1.2,
+    blockPercentage: 3,
+    playerEfficiencyRating: 24,
+    boxPlusMinus: 5,
+    estimatedPlusMinus: 5,
   }),
 ];
 
@@ -161,7 +206,7 @@ describe('ideal lineup search', () => {
     });
 
     const lineup = findIdealLineup([...balancedTeam, duplicateSeason], 150);
-    const names = lineup.map(p => p.name);
+    const names = lineup.map((p) => p.name);
     expect(new Set(names).size).toBe(names.length);
   });
 });

@@ -9,11 +9,7 @@ export const formatCountdown = (milliseconds: number) => {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-export function useDailyClock(
-  resetsAt: string,
-  mode: GameMode,
-  onDailyReset: () => void,
-) {
+export function useDailyClock(resetsAt: string, mode: GameMode, onDailyReset: () => void) {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {

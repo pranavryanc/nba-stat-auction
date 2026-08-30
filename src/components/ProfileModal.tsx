@@ -52,14 +52,18 @@ export function ProfileModal({
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.97 }}
-            onClick={event => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
             className="my-6 w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950 p-6 shadow-2xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-black uppercase tracking-[.2em] text-blue-400">Profile</p>
+                <p className="text-xs font-black uppercase tracking-[.2em] text-blue-400">
+                  Profile
+                </p>
                 <h2 className="mt-1 text-3xl font-black">@{username}</h2>
-                <p className="mt-2 text-sm text-slate-500">Your account and NBA Stat Auction records.</p>
+                <p className="mt-2 text-sm text-slate-500">
+                  Your account and NBA Stat Auction records.
+                </p>
               </div>
               <button
                 onClick={onClose}
@@ -71,15 +75,20 @@ export function ProfileModal({
             </div>
 
             <div className="mt-5 rounded-2xl border border-white/10 bg-white/[.035] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Google account</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Google account
+              </p>
               <p className="mt-1 break-all text-sm font-semibold text-slate-300">{userEmail}</p>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-2">
-              {recordModes.map(recordMode => {
-                const record = highScores.find(item => item.mode === recordMode);
+              {recordModes.map((recordMode) => {
+                const record = highScores.find((item) => item.mode === recordMode);
                 return (
-                  <div key={recordMode} className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <div
+                    key={recordMode}
+                    className="rounded-xl border border-white/10 bg-black/20 p-3"
+                  >
                     <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
                       {recordMode}
                     </p>
@@ -108,8 +117,8 @@ export function ProfileModal({
 
               <input
                 value={usernameDraft}
-                onChange={event => onUsernameDraftChange(event.target.value)}
-                onKeyDown={event => {
+                onChange={(event) => onUsernameDraftChange(event.target.value)}
+                onKeyDown={(event) => {
                   if (event.key === 'Enter') onSaveUsername();
                 }}
                 maxLength={20}

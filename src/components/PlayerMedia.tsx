@@ -6,7 +6,11 @@ export function PlayerImage({ player }: { player: Player }) {
 
   return failed ? (
     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-3xl font-black text-slate-300">
-      {player.name.split(' ').map(name => name[0]).slice(0, 2).join('')}
+      {player.name
+        .split(' ')
+        .map((name) => name[0])
+        .slice(0, 2)
+        .join('')}
     </div>
   ) : (
     <img

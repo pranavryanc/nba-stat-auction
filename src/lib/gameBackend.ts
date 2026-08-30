@@ -1,4 +1,4 @@
-import type { GameMode, Player, TeamReport } from '../types';
+import type { Difficulty, GameMode, Player } from '../types';
 import { supabase } from './supabase';
 
 export type SavedHighScore = {
@@ -16,108 +16,279 @@ export type DailyLeaderboardEntry = {
   projected_wins: number;
   net_rating: number;
   spent: number;
-  lineup: Array<{ id: string | number; name: string; season?: string; positions: string; price: number }>;
+  lineup: Array<{
+    id: string | number;
+    name: string;
+    season?: string;
+    positions: string;
+    price: number;
+  }>;
   achieved_at: string;
 };
 
-const lineupSnapshot = (lineup: Player[]) => lineup.map(player => ({
-  id: player.id,
-  name: player.name,
-  season: player.season,
-  positions: player.detailedPositions?.join('/') ?? player.eligiblePositions?.join('/') ?? player.position,
-  price: player.price,
-}));
+export type SecureGameSession = {
+  sessionId: string;
+  budget: number;
+  challengeDate: string | null;
+  resetsAt: string;
+  players: Player[];
+};
+
+export type VerifiedScore = {
+  score: number;
+  projected_wins: number;
+  net_rating: number;
+  spent: number;
+  challenge_date: string | null;
+};
+
+type PlayerSeasonRow = {
+  id: string;
+  original_player_id: number;
+  name: string;
+  season: string;
+  team_name: string | null;
+  team_abbreviation: string;
+  position: string;
+  eligible_positions: string[];
+  detailed_positions: string[] | null;
+  primary_detailed_position: string | null;
+  listed_detailed_position: string | null;
+  position_percentages: Player['positionPercentages'] | null;
+  position_source: string;
+  photo: string | null;
+  team_logo: string | null;
+  points: number;
+  rebounds: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  price: number;
+  three_point_percentage: number;
+  true_shooting: number;
+  offensive_rating: number;
+  defensive_rating: number;
+  usage_rate: number;
+  assist_percentage: number;
+  rebound_percentage: number;
+  steal_percentage: number;
+  block_percentage: number;
+  player_efficiency_rating: number;
+  win_shares: number;
+  box_plus_minus: number;
+  estimated_plus_minus: number;
+};
+
+function requireSupabase() {
+  if (!supabase) throw new Error('Supabase is not configured.');
+  return supabase;
+}
+
+function rowToPlayer(row: PlayerSeasonRow): Player {
+  return {
+    id: row.id,
+    originalPlayerId: row.original_player_id,
+    name: row.name,
+    team: row.team_name ?? row.team_abbreviation,
+    teamAbbreviation: row.team_abbreviation,
+    position: row.position,
+    eligiblePositions: row.eligible_positions,
+    detailedPositions: row.detailed_positions ?? undefined,
+    primaryDetailedPosition: row.primary_detailed_position ?? undefined,
+    listedDetailedPosition: row.listed_detailed_position ?? undefined,
+    positionPercentages: row.position_percentages ?? undefined,
+    positionSource: row.position_source,
+    season: row.season,
+    photo: row.photo ?? '',
+    teamLogo: row.team_logo ?? '',
+    points: row.points,
+    rebounds: row.rebounds,
+    assists: row.assists,
+    steals: row.steals,
+    blocks: row.blocks,
+    price: row.price,
+    threePointPercentage: row.three_point_percentage,
+    trueShooting: row.true_shooting,
+    offensiveRating: row.offensive_rating,
+    defensiveRating: row.defensive_rating,
+    usageRate: row.usage_rate,
+    assistPercentage: row.assist_percentage,
+    reboundPercentage: row.rebound_percentage,
+    stealPercentage: row.steal_percentage,
+    blockPercentage: row.block_percentage,
+    playerEfficiencyRating: row.player_efficiency_rating,
+    winShares: row.win_shares,
+    boxPlusMinus: row.box_plus_minus,
+    estimatedPlusMinus: row.estimated_plus_minus,
+  } as Player;
+}
 
 export async function registerUserEmail(email: string) {
-  if (!supabase) return;
-  const { error } = await supabase.from('app_users').upsert({ email }, { onConflict: 'email', ignoreDuplicates: true });
+  const client = requireSupabase();
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+
+  if (!user) throw new Error('You must be signed in.');
+
+  const { error } = await client
+    .from('app_users')
+    .upsert(
+      { email, user_id: user.id },
+      { onConflict: 'email', ignoreDuplicates: false },
+    );
+
   if (error) throw error;
 }
 
 export async function getMyUsername(email: string): Promise<string | null> {
-  if (!supabase) return null;
-  const { data, error } = await supabase
+  const client = requireSupabase();
+  const { data, error } = await client
     .from('app_users')
     .select('username')
     .eq('email', email)
     .maybeSingle();
+
   if (error) throw error;
   return data?.username ?? null;
 }
 
-export async function setMyUsername(email: string, username: string): Promise<string> {
-  if (!supabase) throw new Error('Supabase is not configured.');
+export async function setMyUsername(
+  email: string,
+  username: string,
+): Promise<string> {
+  const client = requireSupabase();
   const cleaned = username.trim();
+
   if (!/^[A-Za-z0-9_.]{3,20}$/.test(cleaned)) {
-    throw new Error('Username must be 3-20 characters and use only letters, numbers, underscores, or periods.');
+    throw new Error(
+      'Username must be 3-20 characters and use only letters, numbers, underscores, or periods.',
+    );
   }
-  const { data, error } = await supabase.rpc('set_my_username', {
+
+  const { data, error } = await client.rpc('set_my_username', {
     p_email: email,
     p_username: cleaned,
   });
+
   if (error) throw error;
   return String(data ?? cleaned);
 }
 
-export async function saveGameScore(args: {
-  email: string;
-  mode: GameMode;
-  challengeDate: string;
-  lineup: Player[];
-  report: TeamReport;
-  spent: number;
-}) {
-  if (!supabase) return;
-  const payload = {
-    email: args.email,
-    score: args.report.overall,
-    projected_wins: args.report.projectedWins,
-    net_rating: args.report.netRating,
-    spent: args.spent,
-    lineup: lineupSnapshot(args.lineup),
-  };
+export async function createGameSession(
+  mode: GameMode,
+  difficulty: Difficulty,
+): Promise<SecureGameSession> {
+  const client = requireSupabase();
 
-  const { error: highScoreError } = await supabase.rpc('upsert_mode_high_score', {
-    p_email: args.email,
-    p_mode: args.mode,
-    p_score: payload.score,
-    p_projected_wins: payload.projected_wins,
-    p_net_rating: payload.net_rating,
-    p_spent: payload.spent,
-    p_lineup: payload.lineup,
+  const { data, error } = await client.rpc('create_game_session_secure', {
+    p_mode: mode,
+    p_difficulty: difficulty,
   });
-  if (highScoreError) throw highScoreError;
 
-  if (args.mode === 'daily') {
-    const { error: dailyError } = await supabase.rpc('upsert_daily_score', {
-      p_email: args.email,
-      p_challenge_date: args.challengeDate,
-      p_score: payload.score,
-      p_projected_wins: payload.projected_wins,
-      p_net_rating: payload.net_rating,
-      p_spent: payload.spent,
-      p_lineup: payload.lineup,
-    });
-    if (dailyError) throw dailyError;
+  if (error) throw new Error(`Game session could not be created: ${error.message}`);
+
+  const session = Array.isArray(data) ? data[0] : data;
+  if (!session?.session_id || !Array.isArray(session.pool_ids)) {
+    throw new Error('The server returned an invalid game session.');
   }
+
+  const { data: rows, error: playerError } = await client
+    .from('player_seasons')
+    .select('*')
+    .in('id', session.pool_ids);
+
+  if (playerError) {
+    throw new Error(`Game-session players could not be loaded: ${playerError.message}`);
+  }
+
+  const byId = new Map(
+    ((rows ?? []) as PlayerSeasonRow[]).map(row => [row.id, rowToPlayer(row)]),
+  );
+
+  const players = (session.pool_ids as string[])
+    .map((id: string) => byId.get(id))
+    .filter((player: Player | undefined): player is Player => Boolean(player));
+
+  if (players.length !== session.pool_ids.length) {
+    throw new Error('One or more players from the server session could not be loaded.');
+  }
+
+  return {
+    sessionId: String(session.session_id),
+    budget: Number(session.budget),
+    challengeDate: session.challenge_date ?? null,
+    resetsAt: String(session.resets_at),
+    players,
+  };
 }
 
-export async function getMyHighScores(email: string): Promise<SavedHighScore[]> {
-  if (!supabase) return [];
-  const { data, error } = await supabase
+export async function saveGameScore(args: {
+  sessionId: string;
+  lineup: Player[];
+}): Promise<VerifiedScore> {
+  const client = requireSupabase();
+
+  if (args.lineup.length !== 5) {
+    throw new Error('Exactly five players are required.');
+  }
+
+  const { data, error } = await client.rpc('submit_game_score_secure', {
+    p_session_id: args.sessionId,
+    p_player_ids: args.lineup.map(player => String(player.id)),
+  });
+
+  if (error) throw new Error(`Score could not be verified: ${error.message}`);
+
+  const result = Array.isArray(data) ? data[0] : data;
+  if (!result) throw new Error('The server did not return a verified score.');
+
+  return result as VerifiedScore;
+}
+
+export async function getMyHighScores(
+  email: string,
+): Promise<SavedHighScore[]> {
+  const client = requireSupabase();
+
+  const { data, error } = await client
     .from('high_scores')
     .select('mode,score,projected_wins,net_rating,spent,achieved_at')
     .eq('email', email);
+
   if (error) throw error;
   return (data ?? []) as SavedHighScore[];
 }
 
-export async function getDailyLeaderboard(challengeDate: string): Promise<DailyLeaderboardEntry[]> {
-  if (!supabase) return [];
-  const { data, error } = await supabase.rpc('get_daily_leaderboard', {
-    p_challenge_date: challengeDate,
+export async function getDailyLeaderboard(
+  _challengeDate?: string,
+): Promise<DailyLeaderboardEntry[]> {
+  const client = requireSupabase();
+
+  const { data, error } = await client.rpc('get_daily_leaderboard_secure', {
     p_limit: 10,
   });
+
   if (error) throw error;
   return (data ?? []) as DailyLeaderboardEntry[];
+}
+
+export async function getServerClock(): Promise<{
+  challengeDate: string;
+  resetsAt: string;
+}> {
+  const client = requireSupabase();
+
+  const { data, error } = await client.rpc('get_nba_auction_clock');
+  if (error) throw error;
+
+  const clock = Array.isArray(data) ? data[0] : data;
+  if (!clock?.challenge_date || !clock?.resets_at) {
+    throw new Error('The server clock is unavailable.');
+  }
+
+  return {
+    challengeDate: String(clock.challenge_date),
+    resetsAt: String(clock.resets_at),
+  };
 }

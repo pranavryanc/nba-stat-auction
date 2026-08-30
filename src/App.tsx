@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import type { DetailedPosition, Difficulty, GameMode, Player, Position, TeamReport } from './types';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
-import { getDailyLeaderboard, getMyHighScores, getMyUsername, registerUserEmail, saveGameScore, setMyUsername, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
+import { createGameSession, getDailyLeaderboard, getMyHighScores, getMyUsername, registerUserEmail, saveGameScore, setMyUsername, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
 import { getCurrentPlayers, getHistoricPlayerPool } from './lib/playerBackend';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
@@ -515,21 +515,18 @@ function App() {
   const [highScores, setHighScores] = useState<SavedHighScore[]>([]);
   const [dailyLeaderboard, setDailyLeaderboard] = useState<DailyLeaderboardEntry[]>([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
-  const [dailyDate, setDailyDate] = useState(() => localDateKey());
-  const [dailyTimeLeft, setDailyTimeLeft] = useState(() => {
-    const now = new Date();
-    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    return nextMidnight.getTime() - now.getTime();
-  });
-
-  const budget = mode === 'daily' ? DAILY_BUDGET : BUDGETS[difficulty];
+  const [gameSessionId, setGameSessionId] = useState<string | null>(null);
+  const [sessionPool, setSessionPool] = useState<Player[]>([]);
+  const [sessionBudget, setSessionBudget] = useState(150);
+  const [sessionLoading, setSessionLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dailyDate, setDailyDate] = useState('');
+  const [dailyResetsAt, setDailyResetsAt] = useState('');
+  const [dailyTimeLeft, setDailyTimeLeft] = useState(0);
+  const budget = sessionBudget || (mode === 'daily' ? DAILY_BUDGET : BUDGETS[difficulty]);
   const spent = selected.reduce((sum, p) => sum + p.price, 0);
   const remaining = budget - spent;
-  const pool = useMemo(() => {
-    if (mode === 'historic') return historicalPlayers;
-    const seed = mode === 'daily' ? `daily-${dailyDate}` : `${mode}-${poolKey}`;
-    return seededShuffle(players, seed).slice(0, Math.min(80, players.length));
-  }, [mode, poolKey, dailyDate, players, historicalPlayers]);
+  const pool = sessionPool;
 
   const teams = useMemo(() => [...new Set(pool.map(p => p.teamAbbreviation))].sort(), [pool]);
 
@@ -584,33 +581,36 @@ function App() {
   }, [playerDataReloadKey]);
 
   useEffect(() => {
-    if (mode !== 'historic') {
-      setHistoricalPoolLoading(false);
-      return;
-    }
-    if (!supabase) return;
+    if (!userEmail) return;
 
     let cancelled = false;
-    setHistoricalPoolLoading(true);
-    setHistoricalPlayers([]);
+    setSessionLoading(true);
     setPlayerDataError('');
 
-    getHistoricPlayerPool(100)
-      .then(data => {
-        if (!cancelled) setHistoricalPlayers(data.map(normalizePlayer));
+    createGameSession(mode, difficulty)
+      .then(session => {
+        if (cancelled) return;
+        setGameSessionId(session.sessionId);
+        setSessionBudget(session.budget);
+        setSessionPool(session.players.map(normalizePlayer));
+        if (session.challengeDate) setDailyDate(session.challengeDate);
+        else setDailyDate('');
+        setDailyResetsAt(session.resetsAt);
       })
       .catch(error => {
         console.error(error);
         if (!cancelled) {
-          setPlayerDataError(error instanceof Error ? error.message : 'Historic player data could not be loaded.');
+          setGameSessionId(null);
+          setSessionPool([]);
+          setPlayerDataError(error instanceof Error ? error.message : 'Game session could not be created.');
         }
       })
       .finally(() => {
-        if (!cancelled) setHistoricalPoolLoading(false);
+        if (!cancelled) setSessionLoading(false);
       });
 
     return () => { cancelled = true; };
-  }, [mode, poolKey, playerDataReloadKey]);
+  }, [userEmail, mode, difficulty, poolKey]);
 
   useEffect(() => {
     if (!supabase) {
@@ -730,17 +730,18 @@ function App() {
   }, [toast]);
 
   useEffect(() => {
+    if (!dailyResetsAt) return;
     const updateDailyClock = () => {
-      const now = new Date();
-      const currentDate = localDateKey(now);
-      const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-      setDailyTimeLeft(nextMidnight.getTime() - now.getTime());
-      setDailyDate(previousDate => previousDate === currentDate ? previousDate : currentDate);
+      const milliseconds = Math.max(0, new Date(dailyResetsAt).getTime() - Date.now());
+      setDailyTimeLeft(milliseconds);
+      if (mode === 'daily' && milliseconds === 0) {
+        setPoolKey(crypto.randomUUID());
+      }
     };
     updateDailyClock();
     const timer = window.setInterval(updateDailyClock, 1000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [dailyResetsAt, mode]);
 
   const assignment = rosterAssignment(selected);
   const guardCount = assignment.guards.length;
@@ -804,25 +805,48 @@ function App() {
   };
 
   const submitLineup = async () => {
-    const ideal = findIdealLineup(pool, budget);
-    const userReport = analyzeTeam(selected);
-    const perfect = sameLineup(selected, ideal);
-    const submitted = [...selected];
-    setSubmittedLineup(submitted);
-    setIdealLineup(ideal);
-    setRevealIdeal(mode === 'classic' || mode === 'historic' || perfect);
-    setReport(userReport);
-    if (userEmail) {
-      try {
-        await saveGameScore({ email: userEmail, mode, challengeDate: dailyDate, lineup: submitted, report: userReport, spent });
+    if (isSubmitting) return;
+    if (!gameSessionId) {
+      setToast('The secure game session is not ready yet.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const ideal = findIdealLineup(pool, budget);
+      const userReport = analyzeTeam(selected);
+      const perfect = sameLineup(selected, ideal);
+      const submitted = [...selected];
+
+      setSubmittedLineup(submitted);
+      setIdealLineup(ideal);
+      setRevealIdeal(mode === 'classic' || mode === 'historic' || perfect);
+      setReport(userReport);
+
+      if (userEmail) {
+        const verified = await saveGameScore({
+          sessionId: gameSessionId,
+          lineup: submitted,
+        });
+
+        if (
+          verified.score !== userReport.overall ||
+          verified.projected_wins !== userReport.projectedWins ||
+          Number(verified.net_rating) !== userReport.netRating ||
+          verified.spent !== spent
+        ) {
+          console.warn('Server/client score mismatch', { verified, userReport, spent });
+        }
+
         await refreshAccountData(userEmail);
-      } catch (error) {
-        console.error(error);
-        setToast('Score could not be saved. Your game result is still available.');
       }
+    } catch (error) {
+      console.error(error);
+      setToast(error instanceof Error ? error.message : 'Score could not be securely verified.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
   const playAgain = () => {
     if (mode === 'daily') return;
     resetAuctionFilters();
@@ -843,8 +867,103 @@ function App() {
   };
 
   const saveLineup = () => {
-    localStorage.setItem('nba-stat-auction-best', JSON.stringify(selected));
-    setToast('Lineup saved on this device.');
+    try {
+      localStorage.setItem(
+        'nba-stat-auction-best',
+        JSON.stringify({
+          version: 1,
+          sessionId: gameSessionId,
+          mode,
+          playerIds: selected.map(player => String(player.id)),
+          savedAt: new Date().toISOString(),
+        }),
+      );
+      setToast('Lineup saved on this device.');
+    } catch (error) {
+      console.error(error);
+      setToast('This lineup could not be saved on this device.');
+    }
+  };
+
+  const loadSavedLineup = () => {
+    try {
+      const raw = localStorage.getItem('nba-stat-auction-best');
+      if (!raw) {
+        setToast('No saved lineup was found on this device.');
+        return;
+      }
+
+      const parsed = JSON.parse(raw);
+
+      // Backward compatibility: the old app stored the entire Player[] directly.
+      if (Array.isArray(parsed)) {
+        const legacyIds = parsed
+          .map(player => String(player?.id ?? ''))
+          .filter(Boolean);
+
+        const restoredLegacy = legacyIds
+          .map(id => pool.find(player => String(player.id) === id))
+          .filter((player): player is Player => Boolean(player));
+
+        if (
+          legacyIds.length > 0 &&
+          restoredLegacy.length === legacyIds.length
+        ) {
+          setSelected(restoredLegacy);
+
+          localStorage.setItem(
+            'nba-stat-auction-best',
+            JSON.stringify({
+              version: 1,
+              sessionId: gameSessionId,
+              mode,
+              playerIds: legacyIds,
+              savedAt: new Date().toISOString(),
+            }),
+          );
+
+          setToast('Saved lineup restored and upgraded.');
+          return;
+        }
+
+        localStorage.removeItem('nba-stat-auction-best');
+        setToast('Your old saved lineup belonged to a different player pool, so it was cleared.');
+        return;
+      }
+
+      const saved = parsed as {
+        version?: number;
+        sessionId?: string;
+        playerIds?: string[];
+      };
+
+      if (!Array.isArray(saved.playerIds) || saved.playerIds.length === 0) {
+        localStorage.removeItem('nba-stat-auction-best');
+        setToast('The saved lineup was invalid and has been cleared.');
+        return;
+      }
+
+      if (saved.sessionId !== gameSessionId) {
+        setToast('That lineup belongs to a different player pool and cannot be restored.');
+        return;
+      }
+
+      const restored = saved.playerIds
+        .map(id => pool.find(player => String(player.id) === id))
+        .filter((player): player is Player => Boolean(player));
+
+      if (restored.length !== saved.playerIds.length) {
+        setToast('Some saved players are no longer available in this pool.');
+        return;
+      }
+
+      setSelected(restored);
+      setToast('Saved lineup restored.');
+    } catch (error) {
+      console.error(error);
+      localStorage.removeItem('nba-stat-auction-best');
+      setToast('The saved lineup was corrupted and has been cleared.');
+    }
   };
 
   const shareLineup = async () => {
@@ -877,8 +996,8 @@ function App() {
     return <div className="min-h-screen bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.25),transparent_30%),radial-gradient(circle_at_90%_10%,rgba(225,29,72,.18),transparent_28%)] px-5 py-16 text-white"><div className="mx-auto flex min-h-[75vh] max-w-lg flex-col items-center justify-center text-center"><div className="grid h-20 w-20 place-items-center rounded-[26px] bg-gradient-to-br from-blue-500 to-rose-500 shadow-[0_20px_70px_rgba(59,130,246,.35)]"><Users size={34}/></div><p className="mt-6 text-xs font-black uppercase tracking-[.3em] text-blue-400">One last step</p><h1 className="mt-2 text-4xl font-black">Choose your username</h1><p className="mt-4 leading-6 text-slate-400">This is the name other players will see on Daily leaderboards. Your email stays private.</p><input autoFocus value={usernameDraft} onChange={event => { setUsernameDraft(event.target.value); setUsernameError(''); }} onKeyDown={event => { if (event.key === 'Enter') saveUsername(); }} maxLength={20} placeholder="Example: PranavHoops" className="mt-7 min-h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-center text-lg font-bold outline-none placeholder:text-slate-600 focus:border-blue-500/60"/><div className="mt-2 flex w-full justify-between px-1 text-xs"><span className={usernameError ? 'text-rose-400' : 'text-slate-600'}>{usernameError || 'Letters, numbers, _ and . only'}</span><span className="text-slate-600">{usernameDraft.trim().length}/20</span></div><button onClick={saveUsername} disabled={usernameSaving || !usernameDraft.trim()} className="mt-5 min-h-14 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-rose-500 px-5 font-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40">{usernameSaving ? 'Saving…' : 'Enter NBA Stat Auction'}</button><button onClick={signOut} className="mt-3 min-h-11 px-4 text-sm font-bold text-slate-500 hover:text-white">Use a different Google account</button></div></div>;
   }
 
-  if (playerDataLoading || (mode === 'historic' && historicalPoolLoading)) {
-    return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><RefreshCcw className="mx-auto mb-4 animate-spin text-blue-400"/><p className="font-bold">{mode === 'historic' ? 'Building a historic player pool…' : 'Loading player database…'}</p></div></div>;
+  if (playerDataLoading || sessionLoading) {
+    return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><RefreshCcw className="mx-auto mb-4 animate-spin text-blue-400"/><p className="font-bold">{sessionLoading ? 'Building a secure game session…' : 'Loading player database…'}</p></div></div>;
   }
 
   if (playerDataError) {
@@ -1008,8 +1127,8 @@ function App() {
           <aside className="hidden xl:sticky xl:top-24 xl:block xl:self-start"><div className="glass overflow-hidden rounded-3xl shadow-2xl"><div className="border-b border-white/10 bg-gradient-to-r from-blue-500/15 to-rose-500/10 p-5"><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">Your roster</p><h3 className="text-2xl font-black">Starting Five</h3></div><Users className="text-slate-500"/></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Remaining</p><motion.p key={remaining} initial={{scale:1.15}} animate={{scale:1}} className="text-2xl font-black text-emerald-400">${remaining}</motion.p></div><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Spent</p><p className="text-2xl font-black">${spent}</p></div></div></div>
             <div className="p-5"><div className="mb-5 grid grid-cols-3 gap-2"><div className={`rounded-xl border p-2 text-center ${guardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">GUARDS</p><p className="font-black">{guardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${forwardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">FORWARDS</p><p className="font-black">{forwardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${centerCount === 1?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">CENTER</p><p className="font-black">{centerCount}/1</p></div></div>
               <div className="space-y-2"><AnimatePresence mode="popLayout">{selected.map(p=><motion.div layout initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:20}} key={p.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-2.5"><div className="h-12 w-12 overflow-hidden rounded-lg bg-slate-800"><PlayerImage player={p}/></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{p.name}</p><p className="text-xs text-slate-500">{positionText(p)} · {p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''} · ${p.price}</p></div><button onClick={()=>selectPlayer(p)} className="rounded-lg p-2 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400" aria-label={`Remove ${p.name}`}><X size={16}/></button></motion.div>)}</AnimatePresence>{Array.from({length:5-selected.length}).map((_,i)=><div key={i} className="flex h-[69px] items-center justify-center rounded-xl border border-dashed border-white/10 text-xs font-semibold text-slate-700">Empty roster slot</div>)}</div>
-              <button disabled={!validRoster} onClick={submitLineup} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 py-4 font-black shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-40"><Gauge size={18}/>Analyze My Team</button>
-              <div className="mt-3 grid grid-cols-2 gap-2"><button disabled={!selected.length} onClick={saveLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Crown className="mr-1 inline" size={14}/>Save lineup</button><button disabled={!selected.length} onClick={shareLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Share2 className="mr-1 inline" size={14}/>Share</button></div>
+              <button disabled={!validRoster || isSubmitting || !gameSessionId} onClick={submitLineup} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 py-4 font-black shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-40"><Gauge size={18}/>Analyze My Team</button>
+              <div className="mt-3 grid grid-cols-3 gap-2"><button disabled={!selected.length} onClick={saveLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Crown className="mr-1 inline" size={14}/>Save</button><button onClick={loadSavedLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5">Load</button><button disabled={!selected.length} onClick={shareLineup} className="rounded-xl border border-white/10 py-2.5 text-xs font-bold hover:bg-white/5 disabled:opacity-30"><Share2 className="mr-1 inline" size={14}/>Share</button></div>
             </div></div></aside>
         </div>
       </main>
@@ -1042,7 +1161,7 @@ function App() {
           <div className="space-y-2">{selected.map(player => <div key={player.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2.5"><div className="h-12 w-12 overflow-hidden rounded-lg"><PlayerImage player={player}/></div><div className="min-w-0 flex-1"><p className="truncate font-bold">{player.name}</p><p className="text-xs text-slate-500">{positionText(player)} · ${player.price}</p></div><button onClick={() => selectPlayer(player)} className="grid h-11 w-11 place-items-center rounded-xl bg-rose-500/10 text-rose-300"><X size={17}/></button></div>)}</div>
           {!selected.length && <div className="rounded-2xl border border-dashed border-white/10 py-10 text-center text-sm text-slate-500">Select players to build your lineup.</div>}
           <div className="mt-5 grid grid-cols-2 gap-2"><div className="rounded-xl bg-white/5 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Remaining</p><p className="text-2xl font-black text-emerald-400">${remaining}</p></div><div className="rounded-xl bg-white/5 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Spent</p><p className="text-2xl font-black">${spent}</p></div></div>
-          <button disabled={!validRoster} onClick={() => { setMobileRosterOpen(false); submitLineup(); }} className="mt-4 min-h-14 w-full rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 font-black disabled:grayscale disabled:opacity-40">Analyze My Team</button>
+          <button disabled={!validRoster || isSubmitting || !gameSessionId} onClick={() => { setMobileRosterOpen(false); submitLineup(); }} className="mt-4 min-h-14 w-full rounded-xl bg-gradient-to-r from-blue-500 to-rose-500 font-black disabled:grayscale disabled:opacity-40">Analyze My Team</button>
         </motion.section>
       </motion.div>}</AnimatePresence>
 

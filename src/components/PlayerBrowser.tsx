@@ -52,12 +52,14 @@ export function PlayerBrowser({
             <input
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
+              aria-label="Search players"
               placeholder="Search players..."
               className="col-span-2 w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-3 text-sm placeholder:text-slate-600"
             />
           </label>
 
           <select
+            aria-label="Filter by team"
             value={teamFilter}
             onChange={(event) => onTeamFilterChange(event.target.value)}
             className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"
@@ -69,6 +71,7 @@ export function PlayerBrowser({
           </select>
 
           <select
+            aria-label="Filter by position"
             value={positionFilter}
             onChange={(event) => onPositionFilterChange(event.target.value as 'ALL' | Position)}
             className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"
@@ -80,6 +83,7 @@ export function PlayerBrowser({
           </select>
 
           <select
+            aria-label="Sort players"
             value={sort}
             onChange={(event) => onSortChange(event.target.value)}
             className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"
@@ -111,6 +115,7 @@ export function PlayerBrowser({
           <span className="text-xs font-bold text-slate-500">Max price ${maxPrice}</span>
           <input
             type="range"
+            aria-label={`Maximum player price: $${maxPrice}`}
             min="0"
             max="80"
             value={maxPrice}
@@ -199,6 +204,8 @@ export function PlayerBrowser({
                   <button
                     onClick={() => onSelectPlayer(player)}
                     disabled={unavailable}
+                    aria-pressed={active}
+                    aria-label={`${active ? 'Remove' : 'Select'} ${player.name}, $${player.price}`}
                     className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-black transition ${active ? 'bg-blue-500 text-white hover:bg-blue-400' : unavailable ? 'cursor-not-allowed bg-white/5 text-slate-600' : 'bg-white text-slate-950 hover:bg-blue-100'}`}
                   >
                     {active ? (

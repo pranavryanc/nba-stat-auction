@@ -25,14 +25,16 @@ export function DailyLeaderboard({ entries, loading, onRefresh }: DailyLeaderboa
         </div>
         <button
           onClick={onRefresh}
+          disabled={loading}
           className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5"
-          aria-label="Refresh leaderboard"
+          aria-label={loading ? 'Refreshing leaderboard' : 'Refresh leaderboard'}
+          aria-busy={loading}
         >
-          <RefreshCcw size={16} />
+          <RefreshCcw size={16} className={loading ? 'animate-spin' : undefined} />
         </button>
       </div>
 
-      <div className="mt-4 grid gap-2">
+      <div className="mt-4 grid gap-2" aria-live="polite" aria-busy={loading}>
         {entries.map((entry, index) => (
           <div
             key={entry.player_label + '-' + index}

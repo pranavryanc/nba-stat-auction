@@ -27,7 +27,10 @@ type MobileGameControlsProps = {
 export function MobileGameControls(props: MobileGameControlsProps) {
   return (
     <>
-      <nav className="mobile-tab-bar fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-slate-950/95 px-2 pb-[max(.55rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl xl:hidden">
+      <nav
+        aria-label="Game navigation"
+        className="mobile-tab-bar fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-slate-950/95 px-2 pb-[max(.55rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl xl:hidden"
+      >
         <div className="mx-auto grid max-w-lg grid-cols-4 gap-1">
           <button onClick={props.onHome} className="mobile-tab">
             <Home size={19} />
@@ -63,6 +66,9 @@ export function MobileGameControls(props: MobileGameControlsProps) {
             onClick={props.onCloseFilters}
           >
             <motion.section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="mobile-filters-title"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -76,10 +82,13 @@ export function MobileGameControls(props: MobileGameControlsProps) {
                   <p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">
                     Find players
                   </p>
-                  <h3 className="text-2xl font-black">Search & Filters</h3>
+                  <h3 id="mobile-filters-title" className="text-2xl font-black">
+                    Search & Filters
+                  </h3>
                 </div>
                 <button
                   onClick={props.onCloseFilters}
+                  aria-label="Close search and filters"
                   className="grid h-11 w-11 place-items-center rounded-full bg-white/5"
                 >
                   <X size={20} />
@@ -92,6 +101,7 @@ export function MobileGameControls(props: MobileGameControlsProps) {
                 />
                 <input
                   autoFocus
+                  aria-label="Search players"
                   value={props.search}
                   onChange={(e) => props.onSearchChange(e.target.value)}
                   placeholder="Search player name"
@@ -100,6 +110,7 @@ export function MobileGameControls(props: MobileGameControlsProps) {
               </label>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <select
+                  aria-label="Filter by team"
                   value={props.teamFilter}
                   onChange={(e) => props.onTeamFilterChange(e.target.value)}
                   className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3"
@@ -110,6 +121,7 @@ export function MobileGameControls(props: MobileGameControlsProps) {
                   ))}
                 </select>
                 <select
+                  aria-label="Filter by position"
                   value={props.positionFilter}
                   onChange={(e) => props.onPositionFilterChange(e.target.value as 'ALL' | Position)}
                   className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3"
@@ -121,6 +133,7 @@ export function MobileGameControls(props: MobileGameControlsProps) {
                 </select>
               </div>
               <select
+                aria-label="Sort players"
                 value={props.sort}
                 onChange={(e) => props.onSortChange(e.target.value)}
                 className="mt-3 w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-3"
@@ -141,6 +154,7 @@ export function MobileGameControls(props: MobileGameControlsProps) {
                 </div>
                 <input
                   type="range"
+                  aria-label={`Maximum player price: $${props.maxPrice}`}
                   min="0"
                   max="80"
                   value={props.maxPrice}

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { LogOut, X } from 'lucide-react';
 import type { GameMode } from '../types';
@@ -38,6 +39,15 @@ export function ProfileModal({
   onSaveUsername,
   onSignOut,
 }: ProfileModalProps) {
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [open, onClose]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -49,6 +59,9 @@ export function ProfileModal({
           onClick={onClose}
         >
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-title"
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.97 }}
@@ -60,7 +73,9 @@ export function ProfileModal({
                 <p className="text-xs font-black uppercase tracking-[.2em] text-blue-400">
                   Profile
                 </p>
-                <h2 className="mt-1 text-3xl font-black">@{username}</h2>
+                <h2 id="profile-title" className="mt-1 text-3xl font-black">
+                  @{username}
+                </h2>
                 <p className="mt-2 text-sm text-slate-500">
                   Your account and NBA Stat Auction records.
                 </p>
@@ -117,6 +132,9 @@ export function ProfileModal({
 
               <input
                 value={usernameDraft}
+                aria-label="Change username"
+                aria-describedby="profile-username-help"
+                aria-invalid={Boolean(usernameError)}
                 onChange={(event) => onUsernameDraftChange(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') onSaveUsername();
@@ -125,8 +143,11 @@ export function ProfileModal({
                 className="mt-4 min-h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-lg font-bold outline-none focus:border-blue-500/60"
               />
 
-              <div className="mt-2 flex justify-between text-xs">
-                <span className={usernameError ? 'text-rose-400' : 'text-slate-600'}>
+              <div id="profile-username-help" className="mt-2 flex justify-between text-xs">
+                <span
+                  role={usernameError ? 'alert' : undefined}
+                  className={usernameError ? 'text-rose-400' : 'text-slate-600'}
+                >
                   {usernameError || '3–20 characters · letters, numbers, _ or .'}
                 </span>
                 <span className="text-slate-600">{usernameDraft.trim().length}/20</span>

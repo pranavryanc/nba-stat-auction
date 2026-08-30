@@ -13,7 +13,7 @@ export function LoadingScreen({ profile = false }: { profile?: boolean }) {
   const Icon = profile ? Users : Trophy;
   return (
     <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300">
-      <div className="text-center">
+      <div className="text-center" role="status" aria-live="polite">
         <Icon className="mx-auto mb-4 text-blue-400" />
         <p className="font-bold">
           {profile ? 'Loading your profile…' : 'Loading NBA Stat Auction…'}
@@ -49,7 +49,7 @@ export function SignInScreen({ onSignIn }: { onSignIn: () => void }) {
         </p>
         <h1 className="mt-2 text-4xl font-black">Sign in to play</h1>
         <p className="mt-4 leading-6 text-slate-400">
-          Use Google to save records, compete in the Daily Challenge, and appear anonymously on the
+          Use Google to save records, compete in the Daily Challenge, and appear by username on the
           leaderboard.
         </p>
         <button
@@ -99,11 +99,17 @@ export function UsernameSetupScreen({
             if (event.key === 'Enter') onSave();
           }}
           maxLength={20}
-          placeholder="Example: PranavHoops"
+          aria-label="Username"
+          aria-describedby="username-help"
+          aria-invalid={Boolean(usernameError)}
+          placeholder="Example: KingJames"
           className="mt-7 min-h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-center text-lg font-bold outline-none placeholder:text-slate-600 focus:border-blue-500/60"
         />
-        <div className="mt-2 flex w-full justify-between px-1 text-xs">
-          <span className={usernameError ? 'text-rose-400' : 'text-slate-600'}>
+        <div id="username-help" className="mt-2 flex w-full justify-between px-1 text-xs">
+          <span
+            role={usernameError ? 'alert' : undefined}
+            className={usernameError ? 'text-rose-400' : 'text-slate-600'}
+          >
             {usernameError || 'Letters, numbers, _ and . only'}
           </span>
           <span className="text-slate-600">{usernameDraft.trim().length}/20</span>
@@ -129,7 +135,7 @@ export function UsernameSetupScreen({
 export function PlayerDataLoadingScreen({ sessionLoading }: { sessionLoading: boolean }) {
   return (
     <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300">
-      <div className="text-center">
+      <div className="text-center" role="status" aria-live="polite">
         <RefreshCcw className="mx-auto mb-4 animate-spin text-blue-400" />
         <p className="font-bold">
           {sessionLoading ? 'Building a secure game session…' : 'Loading player database…'}
@@ -144,7 +150,9 @@ export function PlayerDataErrorScreen({ error, onRetry }: { error: string; onRet
     <div className="min-h-screen bg-[#050816] px-5 py-16 text-white">
       <div className="mx-auto max-w-xl rounded-3xl border border-rose-300/20 bg-rose-400/10 p-7">
         <h1 className="text-3xl font-black">Player database unavailable</h1>
-        <p className="mt-3 leading-6 text-slate-300">{error}</p>
+        <p className="mt-3 leading-6 text-slate-300" role="alert">
+          {error}
+        </p>
         <button
           onClick={onRetry}
           className="mt-6 rounded-xl bg-white px-5 py-3 font-black text-slate-950"

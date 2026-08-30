@@ -20,7 +20,7 @@ async function enterMode(page: Page, mode: 'Classic' | 'Daily Challenge') {
 async function selectPlayer(page: Page, name: string) {
   const card = page.locator('article').filter({ hasText: name });
   await expect(card).toBeVisible();
-  await card.getByRole('button', { name: 'Select Player' }).click();
+  await card.getByRole('button', { name: /^Select / }).click();
 }
 
 test.describe('authenticated game flows', () => {
@@ -44,7 +44,7 @@ test.describe('authenticated game flows', () => {
 
     for (const name of startingFive) await selectPlayer(page, name);
 
-    await expect(page.getByRole('button', { name: 'Selected' })).toHaveCount(5);
+    await expect(page.getByRole('button', { pressed: true })).toHaveCount(5);
 
     if (testInfo.project.name === 'mobile-chromium') {
       await page.getByRole('button', { name: 'Lineup' }).click();
@@ -80,11 +80,11 @@ test.describe('authenticated game flows', () => {
     await expect(page.getByText('Lineup saved on this device.')).toBeVisible();
 
     const firstCard = page.locator('article').filter({ hasText: startingFive[0] });
-    await firstCard.getByRole('button', { name: 'Selected' }).click();
-    await expect(page.getByRole('button', { name: 'Selected' })).toHaveCount(1);
+    await firstCard.getByRole('button', { pressed: true }).click();
+    await expect(page.getByRole('button', { pressed: true })).toHaveCount(1);
 
     await page.getByRole('button', { name: 'Load', exact: true }).click();
     await expect(page.getByText('Saved lineup restored.')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Selected' })).toHaveCount(2);
+    await expect(page.getByRole('button', { pressed: true })).toHaveCount(2);
   });
 });

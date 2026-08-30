@@ -1,29 +1,212 @@
 # NBA Stat Auction
 
-A polished, responsive React + TypeScript roster-building game. Players receive a randomized 80-player pool and must draft exactly 2 guards, 2 forwards, and 1 center without exceeding the chosen salary cap. Secondary positions can satisfy any eligible slot.
+NBA Stat Auction is a responsive NBA roster-building game built with React, TypeScript, Vite, Tailwind CSS, and Supabase.
 
-## Included
+Players receive a randomized pool of NBA players and must construct a five-player roster while staying under a salary cap. After submitting a valid lineup, the game evaluates the team using player statistics and produces an overall rating, projected record, advanced ratings, strengths, weaknesses, and other results.
 
-- Classic, Daily Challenge, and Unlimited modes
-- Easy ($175), Normal ($150), and Hard ($125) difficulties
-- Search, team/position/price filters, and sorting
-- Animated player selection and budget updates
-- Responsive desktop/mobile roster panel
-- Position and salary-cap validation
-- Post-submit evaluation model with overall rating, record projection, offensive/defensive/net ratings, category grades, strengths, and weaknesses
-- Local lineup saving and clipboard sharing
-- Statistics page with advanced metrics
-- JSON player dataset
-- NBA CDN image URLs with graceful fallbacks
+## Game modes
 
-## Run locally
+### Classic
+
+Build the best possible five-player roster from a randomized pool of 80 current NBA players.
+
+Choose a difficulty:
+
+- Easy — $175 budget
+- Normal — $150 budget
+- Hard — $125 budget
+
+After submitting a lineup, the game evaluates the roster and compares it with the model's best lineup from the same pool.
+
+### Daily Challenge
+
+Every player receives the same server-controlled Daily Challenge pool for the day.
+
+The Daily Challenge:
+
+- Uses a $150 budget
+- Uses a deterministic daily player pool
+- Uses the server's America/New_York date rather than the browser clock
+- Cannot be manually rerolled
+- Automatically changes when the next Daily Challenge begins
+- Supports a Daily leaderboard
+- Verifies submitted scores on the backend
+
+### Unlimited
+
+Unlimited mode allows repeated attempts with the same player pool.
+
+Players can continue experimenting with combinations until they find the ideal lineup or choose to start over.
+
+### Historic
+
+Historic mode builds a 100-player pool using NBA player-seasons from historical seasons.
+
+Each entry represents a player during a specific NBA season. Historic pools prevent multiple seasons of the same named player from appearing in the same pool.
+
+Historical data is stored in Supabase rather than being shipped to the browser as a large local JSON dataset.
+
+## Roster rules
+
+Every submitted team must contain exactly five players and be assignable to:
+
+- 2 Guards
+- 2 Forwards
+- 1 Center
+
+Players may have a primary position and at most one eligible secondary position.
+
+Secondary positions are based on season-specific positional information and must satisfy the game's eligibility rules. Hybrid players can fill whichever eligible roster slot produces a valid lineup.
+
+The backend independently verifies roster validity before accepting a score.
+
+## Player prices
+
+Auction prices are calculated using:
+
+`round(PTS + REB + AST + STL + BLK)`
+
+The server independently verifies the total lineup cost when a score is submitted.
+
+## Team evaluation
+
+Submitted teams receive a detailed evaluation that includes:
+
+- Overall team rating
+- Letter grade
+- Projected regular-season wins
+- Projected playoff finish
+- Offensive rating
+- Defensive rating
+- Net rating
+- Category ratings
+- Team strengths
+- Team weaknesses
+
+The scoring model is implemented in shared game logic and covered by automated regression tests.
+
+## Secure game sessions
+
+Gameplay uses server-created game sessions.
+
+When a game begins, the backend determines and stores the official:
+
+- Game mode
+- Difficulty
+- Salary cap
+- Player pool
+- Challenge date when applicable
+- Session expiration
+
+The browser does not submit a trusted score.
+
+When a lineup is analyzed, the browser sends the game session ID and selected player IDs. The backend then verifies:
+
+- The authenticated user owns the session
+- The session has not expired
+- All submitted players belong to the official pool
+- Player IDs are unique
+- Duplicate player identities are not used
+- The salary cap is satisfied
+- The roster can fill exactly 2G / 2F / 1C
+- The Daily Challenge date is valid
+
+The backend then recalculates the official score, ratings, projected wins, and amount spent before storing the result.
+
+## Authentication and profiles
+
+NBA Stat Auction uses Supabase Authentication with Google sign-in.
+
+Users choose a public username used on the Daily leaderboard.
+
+Authentication and score data are stored through Supabase. Leaderboard results expose usernames rather than player email addresses.
+
+## Player data
+
+Current and historical NBA player-season data are stored in Supabase.
+
+The application loads only the player records required for the active server-created game session instead of shipping the complete historical dataset to every browser.
+
+Data maintenance scripts are available in `scripts/`.
+
+Useful commands include:
+
+```bash
+npm run update-data
+npm run update-history
+npm run sanitize-positions
+npm run audit-positions
+```
+
+## Position eligibility
+
+Primary positions come from season-specific position data when available.
+
+Basketball-Reference positional-minute estimates can be used by the data maintenance scripts to determine secondary-position eligibility.
+
+The position system follows these general rules:
+
+- Every player has a primary position.
+- A player can receive at most one secondary position.
+- A secondary position must meet the required positional-minute threshold.
+- Secondary positions must satisfy the game's adjacency rules.
+- Missing position estimates fall back safely rather than preventing data updates.
+
+The browser does not scrape Basketball-Reference during gameplay.
+
+## Saved lineups
+
+Lineups can be saved locally in the browser and restored later when they are still compatible with the active game session and player pool.
+
+The loader also supports upgrading older saved-lineup data when possible and rejects invalid or corrupted saves safely.
+
+## Mobile experience
+
+NBA Stat Auction includes a mobile-specific game flow.
+
+On smaller screens, players receive:
+
+- Mobile navigation
+- Player browsing
+- Search and filter controls
+- Lineup bottom sheets
+- Responsive roster management
+- Full-screen team results
+
+Desktop and mobile behavior are both covered by Playwright browser tests.
+
+## Technology
+
+The project uses:
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Supabase
+- Vitest
+- Playwright
+- ESLint
+- Prettier
+- GitHub Actions
+
+## Local development
+
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Create the required Supabase environment configuration using `.env.example`.
+
+Then start the development server:
+
+```bash
 npm run dev
 ```
 
-Then open the local URL shown by Vite.
+Open the local URL displayed by Vite.
 
 ## Production build
 
@@ -32,90 +215,77 @@ npm run build
 npm run preview
 ```
 
-## Data note
+## Automated testing
 
-The included player JSON is a development/demo dataset shaped exactly for the requested 2025–26 schema. Before public release, replace or verify the statistical values against a licensed, authoritative 2025–26 regular-season data source. Player images and logos load from NBA CDN URLs and include fallback UI when an image is unavailable.
-
-## Refresh the 2025–26 player database
-
-Run `npm run update-data` to download the completed 2025–26 regular-season player statistics from the NBA Stats endpoints and rebuild `src/data/players.json`. The updater includes every player who appeared in at least one regular-season game, including low-minute reserves.
-
-Pool selection is a uniform seeded shuffle. There are no guaranteed stars, no protected tiers, and no minimum number of high-price players.
-
-## Refreshing player data
-
-Current-season data and prices:
+Run unit tests:
 
 ```bash
-npm run update-data
+npm test
 ```
 
-Historic Mode data (all available regular seasons from 1946-47 through 2025-26):
+Run ESLint:
 
 ```bash
-npm run update-history
+npm run lint
 ```
 
-Historic data is downloaded once and stored locally in `src/data/historicalPlayers.json`. A historic entry represents one player in one specific season. The same player may therefore appear more than once in a 100-player pool if different seasons are randomly selected. Traditional steals and blocks are zero in seasons before the NBA officially tracked those categories.
-
-Auction price formula: `round(PTS + REB + AST + STL + BLK)`.
-
-## Multi-position roster eligibility
-
-Every player can have one or more eligible positions (`G`, `F`, `C`). The lineup must be assignable as exactly two guards, two forwards, and one center. Hybrid players such as `G/F` or `F/C` are assigned dynamically to whichever eligible slot makes the lineup valid. The data update scripts estimate season-specific secondary positions from that season's statistical role when an authoritative position feed is unavailable.
-
-## Position eligibility
-
-The data updaters use Basketball-Reference's season play-by-play positional-minute estimates when available. A player receives eligibility at every five-man position where the estimate is at least **25%** of his minutes:
-
-- PG and SG map to the game's Guard group.
-- SF and PF map to Forward eligibility.
-- C maps to Center eligibility.
-- A player above the threshold in both groups can fill either type of roster slot.
-- If no estimated position reaches 25%, the position with the largest share is retained.
-- Seasons or players without a matching estimate retain the statistical fallback so the database update never fails solely because position data is missing.
-
-The updater stores `detailedPositions`, `positionPercentages`, and `positionSource` in the JSON. Basketball-Reference percentages are downloaded only by the updater; the browser never scrapes or contacts Basketball-Reference, so gameplay performance is unchanged.
-
-Run:
+Check formatting:
 
 ```bash
-npm run update-data
-npm run update-history
+npm run format:check
 ```
 
-Historical updates deliberately pause between Basketball-Reference season requests. You can set `BREF_POSITION_START_YEAR` to change the first season for which the updater attempts position estimates.
+Run Playwright end-to-end tests:
 
-## Updated lineup and replay rules
+```bash
+npm run test:e2e
+```
 
-- Players have one primary position and at most one secondary position.
-- A secondary position is granted only when Basketball-Reference estimates at least 25% of minutes there.
-- If several secondary positions reach 25%, only the highest-percentage secondary position is retained.
-- Classic and Historic results reveal the model-optimal lineup and require a new pool to play again.
-- Unlimited allows repeated attempts with the same pool until the player succeeds or gives up.
-- Daily Challenge keeps its fixed daily pool and cannot be reset.
+Format the codebase:
 
-## Daily Challenge behavior
+```bash
+npm run format
+```
 
-Daily Challenge uses the player's local calendar date as a deterministic seed. The same date always produces the same 80-player pool from the same dataset. While the app remains open, a one-second clock detects local midnight, clears the prior attempt, and automatically loads the next day's pool. Daily pools cannot be manually reset.
+## Continuous integration
 
-## Native-style mobile flow
+GitHub Actions automatically validates pushes to `main` and pull requests targeting `main`.
 
-On phone-sized screens the app now opens on a dedicated game-mode home screen. During a draft, a persistent bottom navigation provides Home, Players, Search, and Lineup destinations. Search and lineup controls open as touch-friendly bottom sheets, and team analysis uses a full-screen scrollable results view. Desktop behavior remains unchanged.
+CI checks:
 
-## Google login, records, and Daily leaderboard
+1. Prettier formatting
+2. ESLint
+3. Vitest unit tests
+4. Production build
+5. Playwright end-to-end tests
 
-This version uses Supabase for authentication and score storage.
+This provides an automated safety check before changes are incorporated into the production codebase.
+
+## Supabase setup
+
+For a new deployment:
 
 1. Create a Supabase project.
-2. In Supabase SQL Editor, run `supabase/schema.sql`.
-3. In Supabase Authentication > Providers, enable Google and add your Google OAuth Client ID and Client Secret.
-4. In Supabase Authentication > URL Configuration, add your local and production URLs (for example `http://localhost:5173` and your Vercel domain) as redirect URLs.
-5. Copy `.env.example` to `.env` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from Supabase Project Settings > API.
-6. Run `npm install` and `npm run dev`.
+2. Apply the SQL schema and migrations in the project.
+3. Enable Google authentication in Supabase.
+4. Configure the appropriate local and production redirect URLs.
+5. Copy `.env.example` to `.env`.
+6. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+7. Install dependencies.
+8. Start the application.
 
-The application database stores email as its only personal user field. Supabase Auth itself necessarily maintains authentication/session identifiers and provider metadata. Public Daily leaderboard queries return an anonymous player label rather than the email address.
+See `BACKEND_SETUP.md` for additional backend setup information.
 
-## Position-data quality update
+## Development safety checks
 
-Primary positions now come from Basketball-Reference's listed `Pos` column when positional data is available. The PG/SG/SF/PF/C minute estimates are used only for a secondary position. A secondary must be adjacent to the primary and reach 25% of estimated minutes. Run `npm run update-data`, `npm run update-history`, `npm run sanitize-positions`, and `npm run audit-positions` after installing this version.
+Before pushing significant changes, run:
+
+```bash
+npm run format:check
+npm run lint
+npm test
+npm run build
+npm run test:e2e
+```
+
+The same core checks are also enforced by GitHub Actions.

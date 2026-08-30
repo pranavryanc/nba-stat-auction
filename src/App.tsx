@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { RefreshCcw, Sparkles } from 'lucide-react';
-import type { DetailedPosition, Difficulty, GameMode, Player, Position, TeamReport } from './types';
+import type { DetailedPosition, Difficulty, GameMode, Player, TeamReport } from './types';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
 import { createGameSession, getDailyLeaderboard, getMyHighScores, getMyUsername, registerUserEmail, saveGameScore, setMyUsername, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
 import { getCurrentPlayers, getHistoricPlayerPool } from './lib/playerBackend';
-import { analyzeTeam, canStillBuildValidRoster, eligibility, findIdealLineup, grade, isValidRoster, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
+import { analyzeTeam, canStillBuildValidRoster, findIdealLineup, grade, isValidRoster, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
 import { E2E_TEST_EMAIL, E2E_TEST_MODE } from './lib/e2eFixtures';
 import { PlayerBrowser } from './components/PlayerBrowser';
 import { DesktopRosterSidebar, MobileRosterSheet } from './components/RosterPanels';
@@ -17,6 +17,8 @@ import { DailyLeaderboard } from './components/DailyLeaderboard';
 import { AppHeader } from './components/AppHeader';
 import { BackendSetupScreen, LoadingScreen, PlayerDataErrorScreen, PlayerDataLoadingScreen, SignInScreen, UsernameSetupScreen } from './components/AuthScreens';
 import { MobileGameControls } from './components/MobileGameControls';
+import { useAuctionFilters } from './hooks/useAuctionFilters';
+import { useDailyClock } from './hooks/useDailyClock';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -46,33 +48,6 @@ const normalizePlayer = (player: Player): Player => {
 const BUDGETS: Record<Difficulty, number> = { easy: 175, normal: 150, hard: 125 };
 const DAILY_BUDGET = 150;
 
-const localDateKey = (date = new Date()) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-const formatCountdown = (milliseconds: number) => {
-  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-};
-
-const seededShuffle = <T,>(items: T[], seed: string) => {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i += 1) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
-  const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i -= 1) {
-    h += h << 13; h ^= h >>> 7; h += h << 3; h ^= h >>> 17; h += h << 5;
-    const j = Math.abs(h) % (i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
-
 function App() {
   const [mode, setMode] = useState<GameMode>('classic');
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
@@ -84,11 +59,6 @@ function App() {
   const [playerDataError, setPlayerDataError] = useState('');
   const [playerDataReloadKey, setPlayerDataReloadKey] = useState(0);
   const [selected, setSelected] = useState<Player[]>([]);
-  const [search, setSearch] = useState('');
-  const [teamFilter, setTeamFilter] = useState('ALL');
-  const [positionFilter, setPositionFilter] = useState<'ALL' | Position>('ALL');
-  const [maxPrice, setMaxPrice] = useState(80);
-  const [sort, setSort] = useState('price-desc');
   const [report, setReport] = useState<TeamReport | null>(null);
   const [submittedLineup, setSubmittedLineup] = useState<Player[]>([]);
   const [idealLineup, setIdealLineup] = useState<Player[]>([]);
@@ -97,7 +67,6 @@ function App() {
   const [toast, setToast] = useState('');
   const [mobileRosterOpen, setMobileRosterOpen] = useState(false);
   const [mobileHomeOpen, setMobileHomeOpen] = useState(true);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -116,36 +85,38 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dailyDate, setDailyDate] = useState('');
   const [dailyResetsAt, setDailyResetsAt] = useState('');
-  const [dailyTimeLeft, setDailyTimeLeft] = useState(0);
   const budget = sessionBudget || (mode === 'daily' ? DAILY_BUDGET : BUDGETS[difficulty]);
   const spent = selected.reduce((sum, p) => sum + p.price, 0);
   const remaining = budget - spent;
   const pool = sessionPool;
 
-  const teams = useMemo(() => [...new Set(pool.map(p => p.teamAbbreviation))].sort(), [pool]);
+  const {
+    search,
+    setSearch,
+    teamFilter,
+    setTeamFilter,
+    positionFilter,
+    setPositionFilter,
+    maxPrice,
+    setMaxPrice,
+    sort,
+    setSort,
+    mobileFiltersOpen,
+    setMobileFiltersOpen,
+    teams,
+    displayed,
+    resetAuctionFilters,
+  } = useAuctionFilters(pool);
 
-  const displayed = useMemo(() => {
-    const list = pool.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) && (teamFilter === 'ALL' || p.teamAbbreviation === teamFilter) && (positionFilter === 'ALL' || eligibility(p).includes(positionFilter)) && p.price <= maxPrice);
-    return [...list].sort((a,b) => {
-      if (sort === 'price-asc') return a.price - b.price;
-      if (sort === 'price-desc') return b.price - a.price;
-      if (sort === 'points') return b.points - a.points;
-      if (sort === 'rebounds') return b.rebounds - a.rebounds;
-      if (sort === 'assists') return b.assists - a.assists;
-      if (sort === 'steals') return b.steals - a.steals;
-      if (sort === 'blocks') return b.blocks - a.blocks;
-      return a.name.localeCompare(b.name);
-    });
-  }, [pool, search, teamFilter, positionFilter, maxPrice, sort]);
+  const refreshDailyPool = useCallback(() => {
+    setPoolKey(crypto.randomUUID());
+  }, []);
 
-  const resetAuctionFilters = () => {
-    setSearch('');
-    setTeamFilter('ALL');
-    setPositionFilter('ALL');
-    setMaxPrice(80);
-    setSort('price-desc');
-    setMobileFiltersOpen(false);
-  };
+  const { countdown: dailyCountdown } = useDailyClock(
+    dailyResetsAt,
+    mode,
+    refreshDailyPool,
+  );
 
   useEffect(() => {
     if (!supabase) {
@@ -328,20 +299,6 @@ function App() {
     const t = setTimeout(() => setToast(''), 2200);
     return () => clearTimeout(t);
   }, [toast]);
-
-  useEffect(() => {
-    if (!dailyResetsAt) return;
-    const updateDailyClock = () => {
-      const milliseconds = Math.max(0, new Date(dailyResetsAt).getTime() - Date.now());
-      setDailyTimeLeft(milliseconds);
-      if (mode === 'daily' && milliseconds === 0) {
-        setPoolKey(crypto.randomUUID());
-      }
-    };
-    updateDailyClock();
-    const timer = window.setInterval(updateDailyClock, 1000);
-    return () => window.clearInterval(timer);
-  }, [dailyResetsAt, mode]);
 
   const assignment = rosterAssignment(selected);
   const guardCount = assignment.guards.length;
@@ -677,12 +634,12 @@ function App() {
         <section className="mb-4 sm:hidden">
           <div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-400">{mode === 'daily' ? 'Daily Challenge' : mode}</p><h2 className="text-2xl font-black">Draft Your Five</h2></div><button onClick={newPool} disabled={mode === 'daily'} className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5 disabled:opacity-30" aria-label="Reset player pool"><RefreshCcw size={18}/></button></div>
           <div className="mt-3 grid grid-cols-3 gap-2"><div className="rounded-xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-bold uppercase text-slate-500">Budget</p><p className="text-xl font-black text-emerald-400">${remaining}</p></div><div className="rounded-xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-bold uppercase text-slate-500">Lineup</p><p className="text-xl font-black">{selected.length}/5</p></div><button onClick={() => setMobileFiltersOpen(true)} className="rounded-xl border border-white/10 bg-white/5 p-3 text-left"><p className="text-[9px] font-bold uppercase text-slate-500">Pool</p><p className="text-xl font-black">{pool.length}</p></button></div>
-          {mode === 'daily' && <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-400/10 px-3 py-2 text-xs text-amber-100">New challenge in <span className="font-mono font-black">{formatCountdown(dailyTimeLeft)}</span></div>}
+          {mode === 'daily' && <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-400/10 px-3 py-2 text-xs text-amber-100">New challenge in <span className="font-mono font-black">{dailyCountdown}</span></div>}
         </section>
 
         {mode === 'daily' && <section className="mb-4 hidden sm:flex flex-col gap-3 rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Daily Challenge</p><p className="text-sm font-semibold text-slate-200">{new Date(`${dailyDate}T12:00:00`).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} · The same 80-player pool for everyone using this calendar date.</p></div>
-          <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">New pool in</p><p className="font-mono text-lg font-black text-amber-200">{formatCountdown(dailyTimeLeft)}</p></div>
+          <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">New pool in</p><p className="font-mono text-lg font-black text-amber-200">{dailyCountdown}</p></div>
         </section>}
 
         {mode === 'daily' && (
@@ -792,7 +749,7 @@ function App() {
         idealReport={idealReport}
         idealPlayoffFinish={idealPlayoffFinish}
         dailyBudget={DAILY_BUDGET}
-        dailyCountdown={formatCountdown(dailyTimeLeft)}
+        dailyCountdown={dailyCountdown}
         onShareLineup={shareLineup}
         onContinueUnlimited={continueUnlimited}
         onRevealIdeal={() => setRevealIdeal(true)}

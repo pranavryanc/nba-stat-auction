@@ -1,8 +1,10 @@
+import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Crown, Gauge, Share2, Users, X } from 'lucide-react';
 import type { Player } from '../types';
 import { positionText } from '../lib/gameLogic';
 import { PlayerImage } from './PlayerMedia';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 type RosterBaseProps = {
   selected: Player[];
@@ -49,7 +51,9 @@ export function DesktopRosterSidebar({
               <p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">
                 Your roster
               </p>
-              <h3 className="text-2xl font-black">Starting Five</h3>
+              <h3 id="mobile-roster-title" className="text-2xl font-black">
+                Starting Five
+              </h3>
             </div>
             <Users className="text-slate-500" />
           </div>
@@ -181,6 +185,10 @@ export function MobileRosterSheet({
   onAnalyze,
   onClose,
 }: MobileRosterSheetProps) {
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  useDialogFocus(open, dialogRef, { onEscape: onClose, initialFocusRef: closeButtonRef });
+
   return (
     <AnimatePresence>
       {open && (
@@ -192,6 +200,10 @@ export function MobileRosterSheet({
           onClick={onClose}
         >
           <motion.section
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-roster-title"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -206,9 +218,12 @@ export function MobileRosterSheet({
                 <p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">
                   Your roster
                 </p>
-                <h3 className="text-2xl font-black">Starting Five</h3>
+                <h3 id="mobile-roster-title" className="text-2xl font-black">
+                  Starting Five
+                </h3>
               </div>
               <button
+                ref={closeButtonRef}
                 onClick={onClose}
                 className="grid h-11 w-11 place-items-center rounded-full bg-white/5"
                 aria-label="Close roster"

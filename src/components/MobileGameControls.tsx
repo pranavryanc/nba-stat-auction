@@ -1,6 +1,8 @@
+import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Home, Layers3, ListFilter, Search, Users, X } from 'lucide-react';
 import type { Position } from '../types';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 type MobileGameControlsProps = {
   filtersOpen: boolean;
@@ -25,6 +27,13 @@ type MobileGameControlsProps = {
 };
 
 export function MobileGameControls(props: MobileGameControlsProps) {
+  const filtersDialogRef = useRef<HTMLElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  useDialogFocus(props.filtersOpen, filtersDialogRef, {
+    onEscape: props.onCloseFilters,
+    initialFocusRef: searchInputRef,
+  });
+
   return (
     <>
       <nav
@@ -66,6 +75,7 @@ export function MobileGameControls(props: MobileGameControlsProps) {
             onClick={props.onCloseFilters}
           >
             <motion.section
+              ref={filtersDialogRef}
               role="dialog"
               aria-modal="true"
               aria-labelledby="mobile-filters-title"
@@ -100,7 +110,7 @@ export function MobileGameControls(props: MobileGameControlsProps) {
                   size={18}
                 />
                 <input
-                  autoFocus
+                  ref={searchInputRef}
                   aria-label="Search players"
                   value={props.search}
                   onChange={(e) => props.onSearchChange(e.target.value)}

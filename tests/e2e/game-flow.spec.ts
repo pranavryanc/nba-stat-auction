@@ -55,8 +55,30 @@ test.describe('authenticated game flows', () => {
     await analyze.click();
 
     await expect(page.getByText('Front office report', { exact: false })).toBeVisible();
-    await expect(page.getByText(/Team Analysis|Congratulations!/)).toBeVisible();
+    const resultsHeading = page.getByRole('heading', { name: /Team Analysis|Congratulations!/ });
+    await expect(resultsHeading).toBeVisible();
+    await expect(resultsHeading).toBeFocused();
     await expect(page.getByText('Projected Record')).toBeVisible();
+  });
+
+  test('manages keyboard focus for the profile dialog', async ({ page }, testInfo) => {
+    test.skip(
+      testInfo.project.name === 'mobile-chromium',
+      'Desktop header exposes the Profile button.',
+    );
+
+    await enterMode(page, 'Classic');
+    const profileButton = page.getByRole('banner').getByRole('button', { name: 'Profile' });
+    await profileButton.focus();
+    await profileButton.press('Enter');
+
+    const dialog = page.getByRole('dialog', { name: /@PlaywrightGM/ });
+    await expect(dialog).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Close profile' })).toBeFocused();
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(profileButton).toBeFocused();
   });
 
   test('shows the server-owned Daily Challenge and leaderboard fixture', async ({ page }) => {

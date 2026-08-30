@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { LogOut, X } from 'lucide-react';
 import type { GameMode } from '../types';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 type HighScore = {
   mode: GameMode;
@@ -39,14 +40,9 @@ export function ProfileModal({
   onSaveUsername,
   onSignOut,
 }: ProfileModalProps) {
-  useEffect(() => {
-    if (!open) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [open, onClose]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  useDialogFocus(open, dialogRef, { onEscape: onClose, initialFocusRef: closeButtonRef });
 
   return (
     <AnimatePresence>
@@ -59,6 +55,7 @@ export function ProfileModal({
           onClick={onClose}
         >
           <motion.div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="profile-title"
@@ -81,6 +78,7 @@ export function ProfileModal({
                 </p>
               </div>
               <button
+                ref={closeButtonRef}
                 onClick={onClose}
                 className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/5"
                 aria-label="Close profile"

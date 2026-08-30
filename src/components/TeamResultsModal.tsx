@@ -1,8 +1,10 @@
+import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Copy, RefreshCcw, Shield, Trophy, X } from 'lucide-react';
 import type { GameMode, Player, TeamReport } from '../types';
 import { grade, positionText } from '../lib/gameLogic';
 import { PlayerImage } from './PlayerMedia';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 type TeamResultsModalProps = {
   report: TeamReport | null;
@@ -41,6 +43,13 @@ export function TeamResultsModal({
   onPlayAgain,
   onCloseDaily,
 }: TeamResultsModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useDialogFocus(Boolean(report), dialogRef, {
+    onEscape: mode === 'daily' ? onCloseDaily : undefined,
+    initialFocusRef: headingRef,
+  });
+
   return (
     <AnimatePresence>
       {report && (
@@ -51,6 +60,11 @@ export function TeamResultsModal({
           exit={{ opacity: 0 }}
         >
           <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="team-results-title"
+            tabIndex={-1}
             initial={{ opacity: 0, y: 30, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -60,7 +74,12 @@ export function TeamResultsModal({
               <p className="text-xs font-black uppercase tracking-[.28em] text-blue-400">
                 Front office report
               </p>
-              <h2 className="mt-2 text-3xl font-black md:text-5xl">
+              <h2
+                ref={headingRef}
+                id="team-results-title"
+                tabIndex={-1}
+                className="mt-2 text-3xl font-black outline-none md:text-5xl"
+              >
                 {isIdeal ? 'Congratulations!' : 'Team Analysis'}
               </h2>
               <p className="mt-2 text-slate-400">

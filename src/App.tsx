@@ -1,23 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  BarChart3, Check, ChevronRight, CircleDollarSign, Copy, Crown, Gauge,
-  RefreshCcw, Search, Share2, Shield, Sparkles, Trophy, Users, X, Home, ListFilter, Layers3, LogOut, Medal,
-} from 'lucide-react';
+import { RefreshCcw, Sparkles } from 'lucide-react';
 import type { DetailedPosition, Difficulty, GameMode, Player, Position, TeamReport } from './types';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
 import { createGameSession, getDailyLeaderboard, getMyHighScores, getMyUsername, registerUserEmail, saveGameScore, setMyUsername, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
 import { getCurrentPlayers, getHistoricPlayerPool } from './lib/playerBackend';
-import { analyzeTeam, canStillBuildValidRoster, eligibility, findIdealLineup, grade, isValidRoster, positionBreakdownText, positionText, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
+import { analyzeTeam, canStillBuildValidRoster, eligibility, findIdealLineup, grade, isValidRoster, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
 import { E2E_TEST_EMAIL, E2E_TEST_MODE } from './lib/e2eFixtures';
 import { PlayerBrowser } from './components/PlayerBrowser';
-import { PlayerImage } from './components/PlayerMedia';
 import { DesktopRosterSidebar, MobileRosterSheet } from './components/RosterPanels';
 import { TeamResultsModal } from './components/TeamResultsModal';
 import { StatsPage } from './components/StatsPage';
 import { HomeScreen } from './components/HomeScreen';
 import { ProfileModal } from './components/ProfileModal';
 import { DailyLeaderboard } from './components/DailyLeaderboard';
+import { AppHeader } from './components/AppHeader';
+import { BackendSetupScreen, LoadingScreen, PlayerDataErrorScreen, PlayerDataLoadingScreen, SignInScreen, UsernameSetupScreen } from './components/AuthScreens';
+import { MobileGameControls } from './components/MobileGameControls';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -577,32 +576,43 @@ function App() {
     }
   };
 
-  if (authLoading) {
-    return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><Trophy className="mx-auto mb-4 text-blue-400"/><p className="font-bold">Loading NBA Stat Auction…</p></div></div>;
-  }
+  if (authLoading) return <LoadingScreen />;
 
-  if (!isSupabaseConfigured && !E2E_TEST_MODE) {
-    return <div className="min-h-screen bg-[#050816] px-5 py-16 text-white"><div className="mx-auto max-w-xl rounded-3xl border border-amber-300/20 bg-amber-400/10 p-7"><h1 className="text-3xl font-black">Backend setup required</h1><p className="mt-3 leading-6 text-slate-300">Create a Supabase project, run <code>supabase/schema.sql</code>, and copy <code>.env.example</code> to <code>.env</code> with your project URL and anon key.</p></div></div>;
-  }
+  if (!isSupabaseConfigured && !E2E_TEST_MODE) return <BackendSetupScreen />;
 
-  if (!userEmail) {
-    return <div className="min-h-screen bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.25),transparent_30%),radial-gradient(circle_at_90%_10%,rgba(225,29,72,.18),transparent_28%)] px-5 py-16 text-white"><div className="mx-auto flex min-h-[75vh] max-w-lg flex-col items-center justify-center text-center"><div className="grid h-24 w-24 place-items-center rounded-[30px] bg-gradient-to-br from-blue-500 to-rose-500 shadow-[0_20px_70px_rgba(59,130,246,.35)]"><Trophy size={42}/></div><p className="mt-6 text-xs font-black uppercase tracking-[.3em] text-blue-400">NBA Stat Auction</p><h1 className="mt-2 text-4xl font-black">Sign in to play</h1><p className="mt-4 leading-6 text-slate-400">Use Google to save records, compete in the Daily Challenge, and appear anonymously on the leaderboard.</p><button onClick={signInWithGoogle} className="mt-7 flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 font-black text-slate-950 transition hover:bg-slate-100 active:scale-[.98]"><span className="grid h-7 w-7 place-items-center rounded-full border border-slate-200 text-sm font-black text-blue-600">G</span>Continue with Google</button><p className="mt-4 text-xs leading-5 text-slate-600">NBA Stat Auction stores your email as the only personal field in its application database. Google handles authentication and session data.</p></div></div>;
-  }
+  if (!userEmail) return <SignInScreen onSignIn={signInWithGoogle} />;
 
-  if (usernameLoading) {
-    return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><Users className="mx-auto mb-4 text-blue-400"/><p className="font-bold">Loading your profile…</p></div></div>;
-  }
+  if (usernameLoading) return <LoadingScreen profile />;
 
   if (!username) {
-    return <div className="min-h-screen bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.25),transparent_30%),radial-gradient(circle_at_90%_10%,rgba(225,29,72,.18),transparent_28%)] px-5 py-16 text-white"><div className="mx-auto flex min-h-[75vh] max-w-lg flex-col items-center justify-center text-center"><div className="grid h-20 w-20 place-items-center rounded-[26px] bg-gradient-to-br from-blue-500 to-rose-500 shadow-[0_20px_70px_rgba(59,130,246,.35)]"><Users size={34}/></div><p className="mt-6 text-xs font-black uppercase tracking-[.3em] text-blue-400">One last step</p><h1 className="mt-2 text-4xl font-black">Choose your username</h1><p className="mt-4 leading-6 text-slate-400">This is the name other players will see on Daily leaderboards. Your email stays private.</p><input autoFocus value={usernameDraft} onChange={event => { setUsernameDraft(event.target.value); setUsernameError(''); }} onKeyDown={event => { if (event.key === 'Enter') saveUsername(); }} maxLength={20} placeholder="Example: PranavHoops" className="mt-7 min-h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-center text-lg font-bold outline-none placeholder:text-slate-600 focus:border-blue-500/60"/><div className="mt-2 flex w-full justify-between px-1 text-xs"><span className={usernameError ? 'text-rose-400' : 'text-slate-600'}>{usernameError || 'Letters, numbers, _ and . only'}</span><span className="text-slate-600">{usernameDraft.trim().length}/20</span></div><button onClick={saveUsername} disabled={usernameSaving || !usernameDraft.trim()} className="mt-5 min-h-14 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-rose-500 px-5 font-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40">{usernameSaving ? 'Saving…' : 'Enter NBA Stat Auction'}</button><button onClick={signOut} className="mt-3 min-h-11 px-4 text-sm font-bold text-slate-500 hover:text-white">Use a different Google account</button></div></div>;
+    return (
+      <UsernameSetupScreen
+        usernameDraft={usernameDraft}
+        usernameError={usernameError}
+        usernameSaving={usernameSaving}
+        onDraftChange={value => {
+          setUsernameDraft(value);
+          setUsernameError('');
+        }}
+        onSave={saveUsername}
+        onSignOut={signOut}
+      />
+    );
   }
 
-  if (playerDataLoading || sessionLoading) {
-    return <div className="grid min-h-screen place-items-center bg-[#050816] text-slate-300"><div className="text-center"><RefreshCcw className="mx-auto mb-4 animate-spin text-blue-400"/><p className="font-bold">{sessionLoading ? 'Building a secure game session…' : 'Loading player database…'}</p></div></div>;
-  }
+  if (playerDataLoading || sessionLoading) return <PlayerDataLoadingScreen sessionLoading={sessionLoading} />;
 
   if (playerDataError) {
-    return <div className="min-h-screen bg-[#050816] px-5 py-16 text-white"><div className="mx-auto max-w-xl rounded-3xl border border-rose-300/20 bg-rose-400/10 p-7"><h1 className="text-3xl font-black">Player database unavailable</h1><p className="mt-3 leading-6 text-slate-300">{playerDataError}</p><button onClick={() => { setPlayerDataError(''); setPlayerDataReloadKey(value => value + 1); setPoolKey(crypto.randomUUID()); }} className="mt-6 rounded-xl bg-white px-5 py-3 font-black text-slate-950">Try Again</button></div></div>;
+    return (
+      <PlayerDataErrorScreen
+        error={playerDataError}
+        onRetry={() => {
+          setPlayerDataError('');
+          setPlayerDataReloadKey(value => value + 1);
+          setPoolKey(crypto.randomUUID());
+        }}
+      />
+    );
   }
 
   if (view === 'stats') {
@@ -630,13 +640,22 @@ function App() {
         onSignOut={signOut}
       />
 
-      <header className="safe-header sticky top-0 z-50 border-b border-white/10 bg-[#050816]/80 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4 md:px-7">
-          <div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-rose-500 shadow-glow"><Trophy size={23}/></div><div><p className="hidden text-[10px] font-black uppercase tracking-[.25em] text-blue-400 sm:block">Build five. Beat the cap.</p><h1 className="text-base font-black sm:text-lg md:text-2xl">NBA Stat Auction</h1></div></div>
-          <div className="hidden items-center gap-2 lg:flex"><button onClick={leaveGameMode} className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-white/5"><Home className="mr-2 inline" size={16}/>Home</button><button onClick={() => setView('stats')} className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-white/5"><BarChart3 className="mr-2 inline" size={16}/>Statistics</button><button onClick={() => { setUsernameDraft(username); setUsernameError(''); setUsernameEditorOpen(true); }} className="rounded-xl px-3 py-2 text-sm font-semibold text-blue-300 hover:bg-white/5"><Users className="mr-2 inline" size={16}/>Profile</button><button onClick={signOut} title={userEmail ?? ''} className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-400 hover:bg-white/5 hover:text-white"><LogOut className="mr-2 inline" size={16}/>Sign out</button></div>
-          <div className="flex items-center gap-2 md:gap-4"><div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-right"><p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Budget left</p><motion.p key={remaining} initial={{scale:1.2}} animate={{scale:1}} className={`text-lg font-black ${remaining < 20 ? 'text-rose-400':'text-emerald-400'}`}>${remaining}</motion.p></div><div className="min-w-[112px] rounded-xl border border-white/10 bg-white/5 px-2.5 py-2 text-right sm:min-w-[150px]"><p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Lineup</p><div className="flex items-end justify-end gap-2"><p className="text-lg font-black">{selected.length}/5</p><p className="pb-0.5 text-[9px] font-black text-slate-400">G {guardCount}/2 · F {forwardCount}/2 · C {centerCount}/1</p></div></div></div>
-        </div>
-      </header>
+      <AppHeader
+        remaining={remaining}
+        selectedCount={selected.length}
+        guardCount={guardCount}
+        forwardCount={forwardCount}
+        centerCount={centerCount}
+        userEmail={userEmail}
+        onHome={leaveGameMode}
+        onStatistics={() => setView('stats')}
+        onProfile={() => {
+          setUsernameDraft(username);
+          setUsernameError('');
+          setUsernameEditorOpen(true);
+        }}
+        onSignOut={signOut}
+      />
 
       <HomeScreen
         open={mobileHomeOpen}
@@ -721,25 +740,31 @@ function App() {
         </div>
       </main>
 
-      <nav className="mobile-tab-bar fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-slate-950/95 px-2 pb-[max(.55rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl xl:hidden">
-        <div className="mx-auto grid max-w-lg grid-cols-4 gap-1">
-          <button onClick={leaveGameMode} className="mobile-tab"><Home size={19}/><span>Home</span></button>
-          <button onClick={() => { setMobileHomeOpen(false); setMobileFiltersOpen(false); window.scrollTo({top:0,behavior:'smooth'}); }} className="mobile-tab mobile-tab-active"><Layers3 size={19}/><span>Players</span></button>
-          <button onClick={() => setMobileFiltersOpen(true)} className="mobile-tab"><ListFilter size={19}/><span>Search</span></button>
-          <button onClick={() => setMobileRosterOpen(true)} className="mobile-tab relative"><Users size={19}/><span>Lineup</span>{selected.length > 0 && <span className="absolute right-3 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-blue-500 px-1 text-[10px] font-black">{selected.length}</span>}</button>
-        </div>
-      </nav>
-
-      <AnimatePresence>{mobileFiltersOpen && <motion.div className="fixed inset-0 z-[64] bg-black/70 backdrop-blur-sm xl:hidden" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={() => setMobileFiltersOpen(false)}>
-        <motion.section initial={{y:'100%'}} animate={{y:0}} exit={{y:'100%'}} transition={{type:'spring',damping:28,stiffness:280}} onClick={event => event.stopPropagation()} className="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-3xl border-t border-white/10 bg-slate-950 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-white/20"/><div className="mb-5 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">Find players</p><h3 className="text-2xl font-black">Search & Filters</h3></div><button onClick={() => setMobileFiltersOpen(false)} className="grid h-11 w-11 place-items-center rounded-full bg-white/5"><X size={20}/></button></div>
-          <label className="relative block"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18}/><input autoFocus value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search player name" className="w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-3"/></label>
-          <div className="mt-3 grid grid-cols-2 gap-3"><select value={teamFilter} onChange={e=>setTeamFilter(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3"><option value="ALL">All teams</option>{teams.map(t=><option key={t}>{t}</option>)}</select><select value={positionFilter} onChange={e=>setPositionFilter(e.target.value as 'ALL'|Position)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3"><option value="ALL">All positions</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select></div>
-          <select value={sort} onChange={e=>setSort(e.target.value)} className="mt-3 w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-3"><option value="price-desc">Price: high to low</option><option value="price-asc">Price: low to high</option><option value="points">Points</option><option value="rebounds">Rebounds</option><option value="assists">Assists</option><option value="steals">Steals</option><option value="blocks">Blocks</option><option value="alpha">Alphabetical</option></select>
-          <div className="mt-5"><div className="mb-2 flex justify-between text-xs font-bold"><span>Maximum price</span><span>${maxPrice}</span></div><input type="range" min="0" max="80" value={maxPrice} onChange={e=>setMaxPrice(Number(e.target.value))} className="w-full accent-blue-500"/></div>
-          <button onClick={() => setMobileFiltersOpen(false)} className="mt-6 min-h-14 w-full rounded-xl bg-blue-500 font-black">Show {displayed.length} Players</button>
-        </motion.section>
-      </motion.div>}</AnimatePresence>
+      <MobileGameControls
+        filtersOpen={mobileFiltersOpen}
+        selectedCount={selected.length}
+        displayedCount={displayed.length}
+        teams={teams}
+        search={search}
+        teamFilter={teamFilter}
+        positionFilter={positionFilter}
+        sort={sort}
+        maxPrice={maxPrice}
+        onHome={leaveGameMode}
+        onPlayers={() => {
+          setMobileHomeOpen(false);
+          setMobileFiltersOpen(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenFilters={() => setMobileFiltersOpen(true)}
+        onOpenRoster={() => setMobileRosterOpen(true)}
+        onCloseFilters={() => setMobileFiltersOpen(false)}
+        onSearchChange={setSearch}
+        onTeamFilterChange={setTeamFilter}
+        onPositionFilterChange={setPositionFilter}
+        onSortChange={setSort}
+        onMaxPriceChange={setMaxPrice}
+      />
 
       <MobileRosterSheet
         open={mobileRosterOpen}

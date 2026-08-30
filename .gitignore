@@ -6,3 +6,7 @@ dist/
 *.tsbuildinfo
 .DS_Store
 .env.migration.local
+
+# Playwright
+playwright-report/
+test-results/

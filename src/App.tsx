@@ -17,6 +17,7 @@ import { TeamResultsModal } from './components/TeamResultsModal';
 import { StatsPage } from './components/StatsPage';
 import { HomeScreen } from './components/HomeScreen';
 import { ProfileModal } from './components/ProfileModal';
+import { DailyLeaderboard } from './components/DailyLeaderboard';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -665,7 +666,16 @@ function App() {
           <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">New pool in</p><p className="font-mono text-lg font-black text-amber-200">{formatCountdown(dailyTimeLeft)}</p></div>
         </section>}
 
-        {mode === 'daily' && <section className="mb-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 sm:p-5"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[.2em] text-amber-300">Daily leaderboard</p><h3 className="text-xl font-black">Top lineups today</h3></div><button onClick={() => { setLeaderboardLoading(true); refreshAccountData().finally(()=>setLeaderboardLoading(false)); }} className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5" aria-label="Refresh leaderboard"><RefreshCcw size={16}/></button></div><div className="mt-4 grid gap-2">{dailyLeaderboard.map((entry,index)=><div key={`${entry.player_label}-${index}`} className="grid grid-cols-[36px_1fr_auto] items-center gap-3 rounded-xl border border-white/5 bg-black/20 p-3"><span className="grid h-9 w-9 place-items-center rounded-full bg-amber-400/10 text-sm font-black text-amber-200">{index+1}</span><div className="min-w-0"><p className="font-bold">{entry.player_label}</p><p className="truncate text-xs text-slate-500">{entry.lineup.map(player=>player.name).join(' · ')}</p></div><div className="text-right"><p className="text-xl font-black">{entry.score}</p><p className="text-[10px] text-slate-500">{entry.projected_wins}-{82 - entry.projected_wins}</p></div></div>)}{!dailyLeaderboard.length && <p className="rounded-xl bg-black/20 p-4 text-sm text-slate-500">{leaderboardLoading ? 'Loading leaderboard…' : 'No Daily scores have been submitted yet.'}</p>}</div></section>}
+        {mode === 'daily' && (
+          <DailyLeaderboard
+            entries={dailyLeaderboard}
+            loading={leaderboardLoading}
+            onRefresh={() => {
+              setLeaderboardLoading(true);
+              refreshAccountData().finally(() => setLeaderboardLoading(false));
+            }}
+          />
+        )}
 
         <section className="mb-6 hidden overflow-hidden rounded-3xl sm:block border border-white/10 bg-gradient-to-br from-blue-950/70 via-slate-950/75 to-rose-950/60 p-5 shadow-2xl md:p-8">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between"><div className="max-w-3xl"><div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-300"><Sparkles size={13}/>{mode === 'historic' ? 'Historic NBA · 100 Player-Seasons' : '2025–26 Regular Season · 80-Player Pool'}</div><h2 className="text-3xl font-black leading-tight md:text-5xl"><span className="text-gradient">Draft the perfect five.</span><br/>Every dollar matters.</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400 md:text-base">Choose exactly 2 guards, 2 forwards, and 1 center. Secondary positions can satisfy any eligible roster slot. Player prices equal rounded points + rebounds + assists + steals + blocks. Historic Mode uses each player's statistics from the season shown.</p></div>

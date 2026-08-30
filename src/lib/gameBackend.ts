@@ -182,6 +182,14 @@ export async function setMyUsername(email: string, username: string): Promise<st
   return String(data ?? cleaned);
 }
 
+export async function deleteMyAccount(): Promise<void> {
+  if (E2E_TEST_MODE) return;
+  const client = requireSupabase();
+
+  const { error } = await client.rpc('delete_my_account');
+  if (error) throw new Error(`Account could not be deleted: ${error.message}`);
+}
+
 export async function createGameSession(
   mode: GameMode,
   difficulty: Difficulty,

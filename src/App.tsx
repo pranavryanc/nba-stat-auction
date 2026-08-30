@@ -5,6 +5,7 @@ import type { DetailedPosition, Difficulty, GameMode, Player, TeamReport } from 
 import { isSupabaseConfigured, supabase } from './lib/supabase';
 import {
   createGameSession,
+  deleteMyAccount,
   getDailyLeaderboard,
   getMyHighScores,
   getMyUsername,
@@ -112,6 +113,8 @@ function App() {
   const [usernameError, setUsernameError] = useState('');
   const [usernameSaving, setUsernameSaving] = useState(false);
   const [usernameEditorOpen, setUsernameEditorOpen] = useState(false);
+  const [accountDeleting, setAccountDeleting] = useState(false);
+  const [accountDeleteError, setAccountDeleteError] = useState('');
   const [highScores, setHighScores] = useState<SavedHighScore[]>([]);
   const [dailyLeaderboard, setDailyLeaderboard] = useState<DailyLeaderboardEntry[]>([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
@@ -340,6 +343,32 @@ function App() {
     setUsername(null);
     setUsernameEditorOpen(false);
     setMobileHomeOpen(true);
+  };
+
+  const deleteAccount = async () => {
+    setAccountDeleting(true);
+    setAccountDeleteError('');
+    try {
+      await deleteMyAccount();
+      localStorage.removeItem('nba-stat-auction-best');
+      if (supabase) await supabase.auth.signOut({ scope: 'local' });
+      setUsername(null);
+      setUsernameDraft('');
+      setHighScores([]);
+      setDailyLeaderboard([]);
+      setUsernameEditorOpen(false);
+      setMobileHomeOpen(true);
+      setUserEmail(null);
+    } catch (error) {
+      console.error(error);
+      setAccountDeleteError(
+        error instanceof Error
+          ? error.message
+          : 'Your account could not be deleted. Please try again.',
+      );
+    } finally {
+      setAccountDeleting(false);
+    }
   };
 
   useEffect(() => {
@@ -668,6 +697,9 @@ function App() {
         }}
         onSaveUsername={saveUsername}
         onSignOut={signOut}
+        accountDeleting={accountDeleting}
+        accountDeleteError={accountDeleteError}
+        onDeleteAccount={deleteAccount}
       />
 
       <AppHeader

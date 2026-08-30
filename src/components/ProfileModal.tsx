@@ -1,6 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LogOut, X } from 'lucide-react';
+import { LogOut, Trash2, X } from 'lucide-react';
 import type { GameMode } from '../types';
 import { useDialogFocus } from '../hooks/useDialogFocus';
 
@@ -23,6 +23,9 @@ type ProfileModalProps = {
   onUsernameDraftChange: (value: string) => void;
   onSaveUsername: () => void;
   onSignOut: () => void;
+  accountDeleting: boolean;
+  accountDeleteError: string;
+  onDeleteAccount: () => void;
 };
 
 const recordModes: GameMode[] = ['classic', 'daily', 'unlimited', 'historic'];
@@ -39,7 +42,12 @@ export function ProfileModal({
   onUsernameDraftChange,
   onSaveUsername,
   onSignOut,
+  accountDeleting,
+  accountDeleteError,
+  onDeleteAccount,
 }: ProfileModalProps) {
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   useDialogFocus(open, dialogRef, { onEscape: onClose, initialFocusRef: closeButtonRef });
@@ -167,6 +175,65 @@ export function ProfileModal({
               <LogOut className="mr-2 inline" size={16} />
               Sign out
             </button>
+
+            <div className="mt-6 border-t border-rose-500/20 pt-5">
+              <p className="text-sm font-black text-rose-300">Danger zone</p>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                Permanently delete your account, saved scores, Daily results, and game sessions.
+                This cannot be undone.
+              </p>
+
+              {!deleteConfirmOpen ? (
+                <button
+                  onClick={() => setDeleteConfirmOpen(true)}
+                  className="mt-4 min-h-12 w-full rounded-xl border border-rose-500/30 bg-rose-500/10 font-black text-rose-300 hover:bg-rose-500/20"
+                >
+                  <Trash2 className="mr-2 inline" size={16} />
+                  Delete account
+                </button>
+              ) : (
+                <div className="mt-4 rounded-2xl border border-rose-500/25 bg-rose-500/[.06] p-4">
+                  <label
+                    htmlFor="delete-account-confirmation"
+                    className="text-xs font-bold text-slate-300"
+                  >
+                    Type DELETE to confirm
+                  </label>
+                  <input
+                    id="delete-account-confirmation"
+                    value={deleteConfirmation}
+                    onChange={(event) => setDeleteConfirmation(event.target.value)}
+                    disabled={accountDeleting}
+                    autoComplete="off"
+                    className="mt-2 min-h-12 w-full rounded-xl border border-rose-500/25 bg-black/20 px-3 font-bold outline-none focus:border-rose-400"
+                  />
+                  {accountDeleteError && (
+                    <p role="alert" className="mt-2 text-xs text-rose-300">
+                      {accountDeleteError}
+                    </p>
+                  )}
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        setDeleteConfirmOpen(false);
+                        setDeleteConfirmation('');
+                      }}
+                      disabled={accountDeleting}
+                      className="min-h-11 rounded-xl border border-white/10 font-bold text-slate-300 disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={onDeleteAccount}
+                      disabled={accountDeleting || deleteConfirmation !== 'DELETE'}
+                      className="min-h-11 rounded-xl bg-rose-500 font-black text-white hover:bg-rose-400 disabled:opacity-40"
+                    >
+                      {accountDeleting ? 'Deleting…' : 'Delete forever'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </motion.div>
         </motion.div>
       )}

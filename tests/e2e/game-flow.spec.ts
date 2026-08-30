@@ -81,6 +81,25 @@ test.describe('authenticated game flows', () => {
     await expect(profileButton).toBeFocused();
   });
 
+  test('requires explicit confirmation before deleting an account', async ({ page }, testInfo) => {
+    test.skip(
+      testInfo.project.name === 'mobile-chromium',
+      'Desktop header exposes the Profile button.',
+    );
+
+    await enterMode(page, 'Classic');
+    await page.getByRole('banner').getByRole('button', { name: 'Profile' }).click();
+    await page.getByRole('button', { name: 'Delete account' }).click();
+
+    const deleteForever = page.getByRole('button', { name: 'Delete forever' });
+    await expect(deleteForever).toBeDisabled();
+    await page.getByLabel('Type DELETE to confirm').fill('DELETE');
+    await expect(deleteForever).toBeEnabled();
+    await deleteForever.click();
+
+    await expect(page.getByRole('button', { name: /Continue with Google/i })).toBeVisible();
+  });
+
   test('shows the server-owned Daily Challenge and leaderboard fixture', async ({ page }) => {
     await enterMode(page, 'Daily Challenge');
 

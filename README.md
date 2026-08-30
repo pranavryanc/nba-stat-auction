@@ -289,3 +289,9 @@ npm run test:e2e
 ```
 
 The same core checks are also enforced by GitHub Actions.
+
+## Account deletion and privacy
+
+Signed-in users can permanently delete their NBA Stat Auction account from the Profile danger zone. Deletion requires an explicit `DELETE` confirmation and is performed by the authenticated `delete_my_account` database function, so no service-role credential is exposed to the browser.
+
+The deletion flow removes the user's application profile, high scores, Daily Challenge scores, active game sessions, and Supabase Auth account. Local saved-lineup data is also cleared after a successful deletion.

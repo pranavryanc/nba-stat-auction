@@ -198,3 +198,11 @@ npm run test:e2e
 ```
 
 GitHub Actions also runs the core validation suite automatically for pushes and pull requests.
+
+## Account deletion migration
+
+To enable self-service account deletion on an existing deployment, run:
+
+`supabase/delete-account-migration.sql`
+
+The `delete_my_account` function is available only to authenticated users and derives the account identity from `auth.uid()`. It removes the caller's application records and Auth account without exposing a service-role key to the frontend.

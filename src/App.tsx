@@ -4,8 +4,8 @@ import { RefreshCcw, Sparkles } from 'lucide-react';
 import type { DetailedPosition, Difficulty, GameMode, Player, TeamReport } from './types';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
 import { createGameSession, getDailyLeaderboard, getMyHighScores, getMyUsername, registerUserEmail, saveGameScore, setMyUsername, type DailyLeaderboardEntry, type SavedHighScore } from './lib/gameBackend';
-import { getCurrentPlayers, getHistoricPlayerPool } from './lib/playerBackend';
-import { analyzeTeam, canStillBuildValidRoster, findIdealLineup, grade, isValidRoster, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
+import { getCurrentPlayers } from './lib/playerBackend';
+import { analyzeTeam, canStillBuildValidRoster, findIdealLineup, isValidRoster, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
 import { E2E_TEST_EMAIL, E2E_TEST_MODE } from './lib/e2eFixtures';
 import { PlayerBrowser } from './components/PlayerBrowser';
 import { DesktopRosterSidebar, MobileRosterSheet } from './components/RosterPanels';
@@ -53,9 +53,7 @@ function App() {
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   const [poolKey, setPoolKey] = useState(() => crypto.randomUUID());
   const [players, setPlayers] = useState<Player[]>([]);
-  const [historicalPlayers, setHistoricalPlayers] = useState<Player[]>([]);
   const [playerDataLoading, setPlayerDataLoading] = useState(true);
-  const [historicalPoolLoading, setHistoricalPoolLoading] = useState(false);
   const [playerDataError, setPlayerDataError] = useState('');
   const [playerDataReloadKey, setPlayerDataReloadKey] = useState(0);
   const [selected, setSelected] = useState<Player[]>([]);
@@ -201,16 +199,21 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  const refreshAccountData = async (email = userEmail) => {
+  const refreshAccountData = useCallback(async (email = userEmail) => {
     if (!email) return;
+  
     try {
-      const [records, daily] = await Promise.all([getMyHighScores(email), getDailyLeaderboard(dailyDate)]);
+      const [records, daily] = await Promise.all([
+        getMyHighScores(email),
+        getDailyLeaderboard(dailyDate),
+      ]);
+  
       setHighScores(records);
       setDailyLeaderboard(daily);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [userEmail, dailyDate]);
 
   useEffect(() => {
     if (!userEmail) {
@@ -260,10 +263,15 @@ function App() {
   };
 
   useEffect(() => {
-    if (!userEmail) { setHighScores([]); setDailyLeaderboard([]); return; }
+    if (!userEmail) {
+      setHighScores([]);
+      setDailyLeaderboard([]);
+      return;
+    }
+  
     setLeaderboardLoading(true);
     refreshAccountData(userEmail).finally(() => setLeaderboardLoading(false));
-  }, [userEmail, dailyDate]);
+  }, [userEmail, refreshAccountData]);
 
   const signInWithGoogle = async () => {
     if (!supabase) return;
@@ -292,7 +300,7 @@ function App() {
 
   useEffect(() => {
     resetAuctionFilters();
-  }, [mode, poolKey, dailyDate]);
+  }, [mode, poolKey, dailyDate, resetAuctionFilters]);
 
   useEffect(() => {
     if (!toast) return;
@@ -343,7 +351,6 @@ function App() {
   const newPool = () => {
     if (mode === 'daily') return;
     resetAuctionFilters();
-    if (mode === 'historic') setHistoricalPoolLoading(true);
     setPoolKey(crypto.randomUUID());
   };
 
@@ -412,7 +419,6 @@ function App() {
     setSubmittedLineup([]);
     setIdealLineup([]);
     setRevealIdeal(false);
-    if (mode === 'historic') setHistoricalPoolLoading(true);
     setPoolKey(crypto.randomUUID());
   };
 

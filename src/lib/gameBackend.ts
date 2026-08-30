@@ -294,8 +294,9 @@ export async function getMyHighScores(
 }
 
 export async function getDailyLeaderboard(
-  _challengeDate?: string,
+  challengeDate?: string,
 ): Promise<DailyLeaderboardEntry[]> {
+  void challengeDate;
   if (E2E_TEST_MODE) return E2E_DAILY_LEADERBOARD as DailyLeaderboardEntry[];
   const client = requireSupabase();
 

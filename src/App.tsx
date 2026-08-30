@@ -16,6 +16,7 @@ import { DesktopRosterSidebar, MobileRosterSheet } from './components/RosterPane
 import { TeamResultsModal } from './components/TeamResultsModal';
 import { StatsPage } from './components/StatsPage';
 import { HomeScreen } from './components/HomeScreen';
+import { ProfileModal } from './components/ProfileModal';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -611,15 +612,22 @@ function App() {
     <div className="app-shell min-h-screen overflow-x-hidden bg-[#050816] bg-[radial-gradient(circle_at_20%_0%,rgba(37,99,235,.22),transparent_28%),radial-gradient(circle_at_95%_10%,rgba(225,29,72,.16),transparent_24%)]">
       <AnimatePresence>{toast && <motion.div initial={{opacity:0,y:-20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}} className="safe-toast fixed left-1/2 top-4 z-[80] -translate-x-1/2 rounded-full border border-white/15 bg-slate-900/90 px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur-xl">{toast}</motion.div>}</AnimatePresence>
 
-      <AnimatePresence>{usernameEditorOpen && <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-[90] grid place-items-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm" onClick={() => setUsernameEditorOpen(false)}>
-        <motion.div initial={{opacity:0,y:20,scale:.97}} animate={{opacity:1,y:0,scale:1}} exit={{opacity:0,y:15,scale:.97}} onClick={event => event.stopPropagation()} className="my-6 w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
-          <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.2em] text-blue-400">Profile</p><h2 className="mt-1 text-3xl font-black">@{username}</h2><p className="mt-2 text-sm text-slate-500">Your account and NBA Stat Auction records.</p></div><button onClick={() => setUsernameEditorOpen(false)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/5"><X size={18}/></button></div>
-          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[.035] p-4"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Google account</p><p className="mt-1 break-all text-sm font-semibold text-slate-300">{userEmail}</p></div>
-          <div className="mt-4 grid grid-cols-2 gap-2">{(['classic','daily','unlimited','historic'] as GameMode[]).map(recordMode => { const record = highScores.find(item => item.mode === recordMode); return <div key={recordMode} className="rounded-xl border border-white/10 bg-black/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{recordMode}</p><p className="mt-1 text-2xl font-black">{record?.score ?? '—'}</p><p className="text-[10px] text-slate-500">{record ? `${record.projected_wins}-${82 - record.projected_wins} · ${record.net_rating > 0 ? '+' : ''}${record.net_rating} net` : 'No record yet'}</p></div>; })}</div>
-          <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-black">Change username</p><p className="mt-1 text-xs leading-5 text-slate-500">This is the public name shown on Daily leaderboards. Usernames are unique.</p><input value={usernameDraft} onChange={event => { setUsernameDraft(event.target.value); setUsernameError(''); }} onKeyDown={event => { if (event.key === 'Enter') saveUsername(); }} maxLength={20} className="mt-4 min-h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-lg font-bold outline-none focus:border-blue-500/60"/><div className="mt-2 flex justify-between text-xs"><span className={usernameError ? 'text-rose-400' : 'text-slate-600'}>{usernameError || '3–20 characters · letters, numbers, _ or .'}</span><span className="text-slate-600">{usernameDraft.trim().length}/20</span></div><button onClick={saveUsername} disabled={usernameSaving || usernameDraft.trim() === username} className="mt-4 min-h-13 w-full rounded-xl bg-blue-500 py-3 font-black hover:bg-blue-400 disabled:opacity-40">{usernameSaving ? 'Saving…' : 'Save Username'}</button></div>
-          <button onClick={signOut} className="mt-3 min-h-12 w-full rounded-xl border border-white/10 bg-white/5 font-bold text-slate-400 hover:bg-white/10 hover:text-white"><LogOut className="mr-2 inline" size={16}/>Sign out</button>
-        </motion.div>
-      </motion.div>}</AnimatePresence>
+      <ProfileModal
+        open={usernameEditorOpen}
+        username={username}
+        userEmail={userEmail}
+        highScores={highScores}
+        usernameDraft={usernameDraft}
+        usernameError={usernameError}
+        usernameSaving={usernameSaving}
+        onClose={() => setUsernameEditorOpen(false)}
+        onUsernameDraftChange={value => {
+          setUsernameDraft(value);
+          setUsernameError('');
+        }}
+        onSaveUsername={saveUsername}
+        onSignOut={signOut}
+      />
 
       <header className="safe-header sticky top-0 z-50 border-b border-white/10 bg-[#050816]/80 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4 md:px-7">

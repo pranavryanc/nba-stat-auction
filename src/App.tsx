@@ -14,6 +14,7 @@ import { PlayerBrowser } from './components/PlayerBrowser';
 import { PlayerImage } from './components/PlayerMedia';
 import { DesktopRosterSidebar, MobileRosterSheet } from './components/RosterPanels';
 import { TeamResultsModal } from './components/TeamResultsModal';
+import { StatsPage } from './components/StatsPage';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -91,9 +92,6 @@ function App() {
   const [idealLineup, setIdealLineup] = useState<Player[]>([]);
   const [revealIdeal, setRevealIdeal] = useState(false);
   const [view, setView] = useState<'game' | 'stats'>('game');
-  const [statsPage, setStatsPage] = useState(1);
-  const [statsSearch, setStatsSearch] = useState('');
-  const [statsSort, setStatsSort] = useState<'name' | 'price' | 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks' | 'trueShooting'>('name');
   const [toast, setToast] = useState('');
   const [mobileRosterOpen, setMobileRosterOpen] = useState(false);
   const [mobileHomeOpen, setMobileHomeOpen] = useState(true);
@@ -605,54 +603,7 @@ function App() {
   }
 
   if (view === 'stats') {
-    const statsPerPage = 20;
-    const filteredStats = players
-      .filter(player => `${player.name} ${player.teamAbbreviation} ${positionText(player)}`.toLowerCase().includes(statsSearch.toLowerCase()))
-      .sort((a, b) => {
-        if (statsSort === 'price') return b.price - a.price;
-        if (statsSort === 'points') return b.points - a.points;
-        if (statsSort === 'rebounds') return b.rebounds - a.rebounds;
-        if (statsSort === 'assists') return b.assists - a.assists;
-        if (statsSort === 'steals') return b.steals - a.steals;
-        if (statsSort === 'blocks') return b.blocks - a.blocks;
-        if (statsSort === 'trueShooting') return b.trueShooting - a.trueShooting;
-        return a.name.localeCompare(b.name);
-      });
-
-    const statsPageCount = Math.max(1, Math.ceil(filteredStats.length / statsPerPage));
-    const safeStatsPage = Math.min(statsPage, statsPageCount);
-    const statsStart = (safeStatsPage - 1) * statsPerPage;
-    const statsPlayers = filteredStats.slice(statsStart, statsStart + statsPerPage);
-    const visiblePages = Array.from({ length: statsPageCount }, (_, index) => index + 1)
-      .filter(page => page === 1 || page === statsPageCount || Math.abs(page - safeStatsPage) <= 1);
-
-    return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#18254a_0,_#050816_42%)] px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(2rem+env(safe-area-inset-top))] sm:px-5 md:p-10">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 pt-3 sm:pt-0"><p className="text-xs font-bold uppercase tracking-[.3em] text-blue-400">League database</p><h1 className="mt-2 text-3xl font-black sm:text-4xl">Player Statistics</h1><p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400 sm:text-base">Advanced metrics are visible here and in the post-auction team report. Prices include PTS + REB + AST + STL + BLK.</p></div>
-          <button onClick={() => setView('game')} className="mb-7 min-h-12 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold hover:bg-white/10 active:scale-[.98]">← Back to game</button>
-          <div className="mb-5 grid gap-3 rounded-2xl border border-white/10 bg-slate-950/55 p-3 sm:grid-cols-[1fr_220px]">
-            <label className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18}/><input value={statsSearch} onChange={event => { setStatsSearch(event.target.value); setStatsPage(1); }} placeholder="Search player, team, or position" className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 pl-10 pr-4 text-base outline-none placeholder:text-slate-600 focus:border-blue-500/60"/></label>
-            <select value={statsSort} onChange={event => { setStatsSort(event.target.value as typeof statsSort); setStatsPage(1); }} className="min-h-12 rounded-xl border border-white/10 bg-slate-900 px-4 text-base outline-none focus:border-blue-500/60"><option value="name">Sort: Alphabetical</option><option value="price">Sort: Price</option><option value="points">Sort: Points</option><option value="rebounds">Sort: Rebounds</option><option value="assists">Sort: Assists</option><option value="steals">Sort: Steals</option><option value="blocks">Sort: Blocks</option><option value="trueShooting">Sort: True Shooting</option></select>
-          </div>
-          <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60">
-            <div className="overflow-x-auto"><table className="min-w-full text-left text-sm"><thead className="bg-white/5 text-xs uppercase text-slate-400"><tr>{['Player','Season','Pos','Price','PTS','REB','AST','STL','BLK','TS%','3P%','ORtg','DRtg','USG%','PER','BPM','EPM'].map(h => <th key={h} className="whitespace-nowrap px-4 py-4">{h}</th>)}</tr></thead><tbody>{statsPlayers.map(p => <tr key={p.id} className="border-t border-white/5 hover:bg-white/[.03]"><td className="whitespace-nowrap px-4 py-3 font-semibold">{p.name}<span className="ml-2 text-xs text-slate-500">{p.teamAbbreviation}</span></td><td className="whitespace-nowrap px-4">{p.season ?? '2025-26'}</td><td className="whitespace-nowrap px-4">{positionText(p)}</td><td className="px-4">${p.price}</td><td className="px-4">{p.points.toFixed(1)}</td><td className="px-4">{p.rebounds.toFixed(1)}</td><td className="px-4">{p.assists.toFixed(1)}</td><td className="px-4">{p.steals.toFixed(1)}</td><td className="px-4">{p.blocks.toFixed(1)}</td><td className="px-4">{p.trueShooting.toFixed(1)}</td><td className="px-4">{p.threePointPercentage.toFixed(1)}</td><td className="px-4">{p.offensiveRating}</td><td className="px-4">{p.defensiveRating}</td><td className="px-4">{p.usageRate.toFixed(1)}</td><td className="px-4">{p.playerEfficiencyRating.toFixed(1)}</td><td className="px-4">{p.boxPlusMinus.toFixed(1)}</td><td className="px-4">{p.estimatedPlusMinus.toFixed(1)}</td></tr>)}</tbody></table></div>
-            {statsPlayers.length === 0 && <div className="px-6 py-14 text-center text-slate-400">No players match that search.</div>}
-          </div>
-          <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-center text-sm text-slate-400 sm:text-left">Showing <span className="font-bold text-white">{filteredStats.length === 0 ? 0 : statsStart + 1}–{Math.min(statsStart + statsPerPage, filteredStats.length)}</span> of <span className="font-bold text-white">{filteredStats.length}</span> players</p>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <button disabled={safeStatsPage === 1} onClick={() => setStatsPage(page => Math.max(1, page - 1))} className="min-h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-35">Previous</button>
-              {visiblePages.map((page, index) => {
-                const previous = visiblePages[index - 1];
-                return <span key={page} className="contents">{previous && page - previous > 1 ? <span className="px-1 text-slate-500">…</span> : null}<button onClick={() => setStatsPage(page)} aria-current={page === safeStatsPage ? 'page' : undefined} className={`grid h-11 min-w-11 place-items-center rounded-xl border text-sm font-black ${page === safeStatsPage ? 'border-blue-400 bg-blue-500 text-white' : 'border-white/10 bg-white/5 text-slate-300'}`}>{page}</button></span>;
-              })}
-              <button disabled={safeStatsPage === statsPageCount} onClick={() => setStatsPage(page => Math.min(statsPageCount, page + 1))} className="min-h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-35">Next</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <StatsPage players={players} onBack={() => setView('game')} />;
   }
 
   return (

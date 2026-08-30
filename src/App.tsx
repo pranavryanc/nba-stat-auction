@@ -10,6 +10,8 @@ import { createGameSession, getDailyLeaderboard, getMyHighScores, getMyUsername,
 import { getCurrentPlayers, getHistoricPlayerPool } from './lib/playerBackend';
 import { analyzeTeam, canStillBuildValidRoster, eligibility, findIdealLineup, grade, isValidRoster, positionBreakdownText, positionText, projectPlayoffFinish, rosterAssignment, sameLineup } from './lib/gameLogic';
 import { E2E_TEST_EMAIL, E2E_TEST_MODE } from './lib/e2eFixtures';
+import { PlayerBrowser } from './components/PlayerBrowser';
+import { PlayerImage } from './components/PlayerMedia';
 
 const POSITION_ORDER = ['PG', 'SG', 'SF', 'PF', 'C'] as const;
 const ADJACENT_POSITIONS: Record<DetailedPosition, DetailedPosition[]> = { PG: ['SG'], SG: ['PG', 'SF'], SF: ['SG', 'PF'], PF: ['SF', 'C'], C: ['PF'] };
@@ -65,18 +67,6 @@ const seededShuffle = <T,>(items: T[], seed: string) => {
   }
   return arr;
 };
-
-function PlayerImage({ player }: { player: Player }) {
-  const [failed, setFailed] = useState(false);
-  return failed ? (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-3xl font-black text-slate-300">{player.name.split(' ').map(n => n[0]).slice(0,2).join('')}</div>
-  ) : <img src={player.photo} alt={player.name} onError={() => setFailed(true)} className="h-full w-full object-cover object-top" loading="lazy" />;
-}
-
-function Logo({ player }: { player: Player }) {
-  const [failed, setFailed] = useState(false);
-  return failed ? <span className="text-[10px] font-black">{player.teamAbbreviation}</span> : <img src={player.teamLogo} alt={player.team} onError={() => setFailed(true)} className="h-8 w-8 object-contain" />;
-}
 
 function App() {
   const [mode, setMode] = useState<GameMode>('classic');
@@ -721,17 +711,25 @@ function App() {
         </section>
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-          <div>
-            <div className="glass mb-4 hidden rounded-2xl p-3 sm:mb-5 sm:block"><div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-[1.4fr_.7fr_.7fr_.8fr_auto]"><label className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search players..." className="col-span-2 w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-3 text-sm placeholder:text-slate-600"/></label><select value={teamFilter} onChange={e=>setTeamFilter(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All teams</option>{teams.map(t=><option key={t}>{t}</option>)}</select><select value={positionFilter} onChange={e=>setPositionFilter(e.target.value as 'ALL'|Position)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="ALL">All positions</option><option value="G">Guards</option><option value="F">Forwards</option><option value="C">Centers</option></select><select value={sort} onChange={e=>setSort(e.target.value)} className="rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-sm"><option value="price-desc">Price: high to low</option><option value="price-asc">Price: low to high</option><option value="points">Points</option><option value="rebounds">Rebounds</option><option value="assists">Assists</option><option value="steals">Steals</option><option value="blocks">Blocks</option><option value="alpha">Alphabetical</option></select><button onClick={newPool} disabled={mode==='daily'} title={mode==='daily'?'Daily pool is fixed for everyone':'Generate a new player pool'} className="col-span-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold sm:col-span-1 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"><RefreshCcw className="mr-1 inline" size={17}/><span className="hidden 2xl:inline">Reset pool</span></button></div><div className="mt-3 flex items-center gap-3 px-1"><span className="text-xs font-bold text-slate-500">Max price ${maxPrice}</span><input type="range" min="0" max="80" value={maxPrice} onChange={e=>setMaxPrice(Number(e.target.value))} className="h-1 flex-1 accent-blue-500"/><span className="text-xs text-slate-600">{displayed.length} players</span></div></div>
-
-            <motion.div layout className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-4">
-              <AnimatePresence>{displayed.map((p,index) => { const active=selected.some(s=>s.id===p.id); const unavailable=!active && (p.price>remaining || selected.length>=5 || !canStillBuildValidRoster([...selected, p])); return <motion.article layout initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} exit={{opacity:0,scale:.95}} transition={{delay:Math.min(index*.015,.25)}} key={p.id} className={`group relative overflow-hidden rounded-2xl border transition duration-300 touch-manipulation ${active?'border-blue-400 bg-blue-500/10 shadow-[0_0_35px_rgba(59,130,246,.22)]':'border-white/10 bg-slate-900/60 hover:-translate-y-1 hover:border-white/25 hover:bg-slate-900/90'}`}>
-                <div className="relative h-44 overflow-hidden bg-gradient-to-b from-slate-700 to-slate-950"><PlayerImage player={p}/><div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950 to-transparent"/><div className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-slate-950/75 backdrop-blur"><Logo player={p}/></div><div title={positionBreakdownText(p)} className="absolute right-3 top-3 rounded-full border border-white/10 bg-slate-950/80 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider">{positionText(p)}</div><div className="absolute bottom-3 left-4 right-4 flex items-end justify-between"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''}</p><h3 className="max-w-[155px] text-lg font-black leading-tight">{p.name}</h3></div><div className="rounded-xl bg-emerald-400 px-3 py-2 text-lg font-black text-emerald-950">${p.price}</div></div></div>
-                <div className="p-2.5 sm:p-4"><div className="mb-3 grid grid-cols-5 sm:mb-4 divide-x divide-white/10 rounded-xl bg-black/20 py-3 text-center"><div><p className="text-[9px] font-bold text-slate-500">PTS</p><p className="font-black">{p.points.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">REB</p><p className="font-black">{p.rebounds.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">AST</p><p className="font-black">{p.assists.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">STL</p><p className="font-black">{p.steals.toFixed(1)}</p></div><div><p className="text-[9px] font-bold text-slate-500">BLK</p><p className="font-black">{p.blocks.toFixed(1)}</p></div></div><button onClick={()=>selectPlayer(p)} disabled={unavailable} className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-black transition ${active?'bg-blue-500 text-white hover:bg-blue-400':unavailable?'cursor-not-allowed bg-white/5 text-slate-600':'bg-white text-slate-950 hover:bg-blue-100'}`}>{active?<><Check size={17}/>Selected</>:<>Select Player<ChevronRight size={17}/></>}</button></div>
-              </motion.article>})}</AnimatePresence>
-            </motion.div>
-          </div>
-
+          <PlayerBrowser
+            displayed={displayed}
+            selected={selected}
+            remaining={remaining}
+            teams={teams}
+            search={search}
+            teamFilter={teamFilter}
+            positionFilter={positionFilter}
+            sort={sort}
+            maxPrice={maxPrice}
+            mode={mode}
+            onSearchChange={setSearch}
+            onTeamFilterChange={setTeamFilter}
+            onPositionFilterChange={setPositionFilter}
+            onSortChange={setSort}
+            onMaxPriceChange={setMaxPrice}
+            onNewPool={newPool}
+            onSelectPlayer={selectPlayer}
+          />
           <aside className="hidden xl:sticky xl:top-24 xl:block xl:self-start"><div className="glass overflow-hidden rounded-3xl shadow-2xl"><div className="border-b border-white/10 bg-gradient-to-r from-blue-500/15 to-rose-500/10 p-5"><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-blue-400">Your roster</p><h3 className="text-2xl font-black">Starting Five</h3></div><Users className="text-slate-500"/></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Remaining</p><motion.p key={remaining} initial={{scale:1.15}} animate={{scale:1}} className="text-2xl font-black text-emerald-400">${remaining}</motion.p></div><div className="rounded-xl bg-black/20 p-3"><p className="text-[10px] font-bold uppercase text-slate-500">Spent</p><p className="text-2xl font-black">${spent}</p></div></div></div>
             <div className="p-5"><div className="mb-5 grid grid-cols-3 gap-2"><div className={`rounded-xl border p-2 text-center ${guardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">GUARDS</p><p className="font-black">{guardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${forwardCount === 2?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">FORWARDS</p><p className="font-black">{forwardCount}/2</p></div><div className={`rounded-xl border p-2 text-center ${centerCount === 1?'border-emerald-400/30 bg-emerald-400/10':'border-white/10 bg-white/5'}`}><p className="text-[9px] font-bold text-slate-500">CENTER</p><p className="font-black">{centerCount}/1</p></div></div>
               <div className="space-y-2"><AnimatePresence mode="popLayout">{selected.map(p=><motion.div layout initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:20}} key={p.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-2.5"><div className="h-12 w-12 overflow-hidden rounded-lg bg-slate-800"><PlayerImage player={p}/></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{p.name}</p><p className="text-xs text-slate-500">{positionText(p)} · {p.teamAbbreviation}{p.season ? ` · ${p.season}` : ''} · ${p.price}</p></div><button onClick={()=>selectPlayer(p)} className="rounded-lg p-2 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400" aria-label={`Remove ${p.name}`}><X size={16}/></button></motion.div>)}</AnimatePresence>{Array.from({length:5-selected.length}).map((_,i)=><div key={i} className="flex h-[69px] items-center justify-center rounded-xl border border-dashed border-white/10 text-xs font-semibold text-slate-700">Empty roster slot</div>)}</div>
